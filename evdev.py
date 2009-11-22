@@ -149,7 +149,7 @@ class DeviceGroup:
             self.fds.append(device.fd)        
             
     def next_event(self):
-        r, w, x = select.select(self.fds, [], [], 0.2)
+        r, w, x = select.select(self.fds, [], [], 0.1)
         for fd in self.fds:
             if fd in r:
                 buffer = os.read(fd, self.packetSize)

@@ -86,11 +86,21 @@ class TwoStateImage(gtk.Image):
     gtk.Image.__init__(self)
     self.pixbufs = pixbufs
     self.normal = normal
+    self.count_down = None
     self.SwitchTo(self.normal)
 
   def SwitchTo(self, name):
     self.set_from_pixbuf(self.pixbufs.Get(name))
+    self.count_down = 3
     self.show()
+
+  def EmptyEvent(self):
+    if not self.count_down:
+      return
+    self.count_down -= 1
+    if self.count_down == 0:
+      self.SwitchTo(self.normal)
+      self.count_down = None
     
 class KeyMon:
   def __init__(self):
@@ -117,7 +127,7 @@ class KeyMon:
     self.hbox = gtk.HBox(False, 0)
     self.event_box.add(self.hbox)
 
-    self.mouse_image = TwoStateImage(self.pixbufs, 'BTN_MIDDLE')
+    self.mouse_image = TwoStateImage(self.pixbufs, 'MOUSE')
     self.hbox.pack_start(self.mouse_image, False, True, 0)
     self.shift_image = TwoStateImage(self.pixbufs, 'SHIFT')
     self.hbox.pack_start(self.shift_image, False, True, 0)
@@ -127,6 +137,8 @@ class KeyMon:
     self.hbox.pack_start(self.alt_image, False, True, 0)
     self.key_image = TwoStateImage(self.pixbufs, 'KEY_UP_EMPTY')
     self.hbox.pack_start(self.key_image, False, True, 0)
+
+    self.buttons = [self.mouse_image, self.shift_image, self.alt_image, self.key_image]
     
     self.hbox.show()
     self.AddEvents()
@@ -147,6 +159,8 @@ class KeyMon:
     
   def HandleEvent(self, event):
     if not event:
+      for button in self.buttons:
+        button.EmptyEvent()
       return
     if event.type == "EV_KEY" and event.value == 1:
       if event.code.startswith("KEY"):
