@@ -29,6 +29,9 @@ def FixSvgKey(bytes, from_str, to_str):
 
 NAME_FNAMES = {
   'MOUSE': ['svg/mouse.svg',],
+  'BTN_LEFT': ['svg/mouse.svg', 'svg/left-mouse.svg'],
+  'BTN_RIGHT': ['svg/mouse.svg', 'svg/right-mouse.svg'],
+  'BTN_MIDDLE': ['svg/mouse.svg', 'svg/middle-mouse.svg'],
   'SHIFT': ['svg/shift.svg'],
   'CTRL': ['svg/ctrl.svg'],
   'ALT': ['svg/alt.svg'],
@@ -37,7 +40,7 @@ NAME_FNAMES = {
 }
 
 
-class LazyImageCreator():
+class LazyPixbufCreator():
   """Class to create SVG images on the fly."""
   def __init__(self, name_fnames):
     """Initialize with empty.
@@ -45,16 +48,15 @@ class LazyImageCreator():
     Args:
       name_fnames: List of names to filename list.
     """
-    self.images = {}
+    self.pixbufs = {}
     self.name_fnames = name_fnames
 
   def Get(self, name):
-    if name not in self.images:
-      name = self.CreateImage(name)
-    self.images[name].show()
-    return self.images[name]
+    if name not in self.pixbufs:
+      name = self.CreatePixbuf(name)
+    return self.pixbufs[name]
 
-  def CreateImage(self, name):
+  def CreatePixbuf(self, name):
     """Creates the image.
     Args:
       name: name of the image we are to create.
@@ -64,15 +66,31 @@ class LazyImageCreator():
     if name not in self.name_fnames:
       logging.error('Don\'t understand the name %r' % name)
       return 'KEY_UP_EMPTY'
+    print 'Creating %s' % name
     ops = self.name_fnames[name]
     if len(ops) == 1:
-      self.images[name] = gtk.Image()
-      self.images[name].set_from_file(ops[0])
+      self.pixbufs[name] = gtk.gdk.pixbuf_new_from_file(ops[0])
+    elif len(ops) == 2:
+      img1 = gtk.gdk.pixbuf_new_from_file(ops[1])
+      img2 = gtk.gdk.pixbuf_new_from_file(ops[0])
+      img1.composite(img2, 0, 0, img1.props.width, img1.props.height,
+          0, 0, 1.0, 1.0, gtk.gdk.INTERP_HYPER, 127)
+      self.pixbufs[name] = img2
     else:
       print ops
 
     return name
-    
+
+class TwoStateImage(gtk.Image):    
+  def __init__(self, pixbufs, normal):
+    gtk.Image.__init__(self)
+    self.pixbufs = pixbufs
+    self.normal = normal
+    self.SwitchTo(self.normal)
+
+  def SwitchTo(self, name):
+    self.set_from_pixbuf(self.pixbufs.Get(name))
+    self.show()
     
 class KeyMon:
   def __init__(self):
@@ -83,12 +101,11 @@ class KeyMon:
 
     self.GetKeyboard(bus, hal)
     self.GetMouse(bus, hal) 
-    self.images = LazyImageCreator(NAME_FNAMES)
+    self.pixbufs = LazyPixbufCreator(NAME_FNAMES)
     self.CreateWindow()
 
   def CreateWindow(self):
     self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-
 
     self.window.set_title('Keyboard Status Monitor')
     self.window.set_default_size(328, 48)
@@ -100,11 +117,16 @@ class KeyMon:
     self.hbox = gtk.HBox(False, 0)
     self.event_box.add(self.hbox)
 
-    self.hbox.pack_start(self.images.Get('MOUSE'), False, False, 0)
-    self.hbox.pack_start(self.images.Get('SHIFT'), False, False, 0)
-    self.hbox.pack_start(self.images.Get('CTRL'), False, False, 0)
-    self.hbox.pack_start(self.images.Get('ALT'), False, False, 0)
-    self.hbox.pack_start(self.images.Get('KEY_UP_EMPTY'), False, False, 0)
+    self.mouse_image = TwoStateImage(self.pixbufs, 'BTN_MIDDLE')
+    self.hbox.pack_start(self.mouse_image, False, True, 0)
+    self.shift_image = TwoStateImage(self.pixbufs, 'SHIFT')
+    self.hbox.pack_start(self.shift_image, False, True, 0)
+    self.ctrl_image = TwoStateImage(self.pixbufs, 'CTRL')
+    self.hbox.pack_start(self.ctrl_image, False, True, 0)
+    self.alt_image = TwoStateImage(self.pixbufs, 'ALT')
+    self.hbox.pack_start(self.alt_image, False, True, 0)
+    self.key_image = TwoStateImage(self.pixbufs, 'KEY_UP_EMPTY')
+    self.hbox.pack_start(self.key_image, False, True, 0)
     
     self.hbox.show()
     self.AddEvents()
@@ -137,9 +159,12 @@ class KeyMon:
 
   def HandleKey(self, code):
     print 'Key %s pressed' % code
+    if code.endswith('SHIFT'):
+      print 'shift'
 
   def HandleMouseButton(self, code):
     print 'Mouse %s pressed' % code
+    self.mouse_image.SwitchTo(code)
 
   def HandleMouseScroll(self, dir):
     print 'Mouse scroll %d' % dir

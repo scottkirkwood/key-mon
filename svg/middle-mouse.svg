@@ -185,6 +185,13 @@
        x2="3.7717557"
        y2="8.404974"
        gradientTransform="translate(0,-0.11693104)" />
+    <inkscape:perspective
+       id="perspective7079"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
   </defs>
   <sodipodi:namedview
      inkscape:window-y="25"
@@ -193,7 +200,7 @@
      inkscape:window-width="1680"
      inkscape:current-layer="layer1"
      inkscape:cy="28.981381"
-     inkscape:cx="23.526705"
+     inkscape:cx="16.387839"
      inkscape:zoom="25.354167"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
@@ -211,7 +218,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
         <cc:license
            rdf:resource="http://creativecommons.org/licenses/by/3.0/" />
         <dc:creator>
@@ -240,13 +247,13 @@
      inkscape:groupmode="layer"
      inkscape:label="Layer 1">
     <rect
-       style="fill:#2a2a2a;fill-opacity:0.46696035;stroke:none"
+       style="fill:#000000;fill-opacity:0.88627452;stroke:none"
        id="rect4669"
-       width="6.3475585"
-       height="9.8972712"
-       x="27.511515"
-       y="14.653666"
-       rx="3.2740889"
+       width="9.7000647"
+       height="14.945751"
+       x="23.488508"
+       y="6.2132387"
+       rx="5.0033212"
        ry="0" />
   </g>
 </svg>
