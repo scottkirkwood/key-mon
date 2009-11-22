@@ -115,8 +115,21 @@ class KeyMon:
     gtk.main_quit()
 
   def RightClickHandler(self, widget, event):
-    print 'Clicked'
-    
+    if event.button != 3:
+      return
+
+    menu = gtk.Menu()
+    toggle_chrome = gtk.MenuItem('Window chrome')
+    toggle_chrome.connect_object('activate', self.ToggleChrome, None)
+    menu.append(toggle_chrome)
+
+    toggle_chrome.show()
+    menu.show()
+    menu.popup(None, None, None, event.button, event.time)
+
+  def ToggleChrome(self, data):
+    current = self.window.get_decorated()
+    self.window.set_decorated(not current) 
 
   def GetKeyboard(self, bus, hal):
     self.keyboard_devices = hal.FindDeviceByCapability("input.keyboard")
