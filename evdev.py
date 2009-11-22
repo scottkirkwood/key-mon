@@ -145,11 +145,11 @@ class DeviceGroup:
         for fileName in fileNames:
             self.devices.append(Device(fileName))
         for device in self.devices:
-            print repr(device)
+            #print repr(device)
             self.fds.append(device.fd)        
             
     def next_event(self):
-        r, w, x = select.select(self.fds, [], [], 1)
+        r, w, x = select.select(self.fds, [], [], 0.2)
         for fd in self.fds:
             if fd in r:
                 buffer = os.read(fd, self.packetSize)

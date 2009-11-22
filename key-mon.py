@@ -13,6 +13,7 @@ import sys
 import pygtk
 pygtk.require('2.0')
 import gtk
+import gobject
 import logging
 
 import evdev
@@ -30,6 +31,7 @@ NAME_FNAMES = {
   'MOUSE': ['svg/mouse.svg',],
   'SHIFT': ['svg/shift.svg'],
   'CTRL': ['svg/ctrl.svg'],
+  'ALT': ['svg/alt.svg'],
   'KEY_UP_EMPTY': ['svg/key-template.svg',],
   'KEY_DOWN_LETTER': ['svg/key-template_dark.svg', FixSvgKey]
 }
@@ -101,6 +103,8 @@ class KeyMon:
     self.hbox.pack_start(self.images.Get('MOUSE'), False, False, 0)
     self.hbox.pack_start(self.images.Get('SHIFT'), False, False, 0)
     self.hbox.pack_start(self.images.Get('CTRL'), False, False, 0)
+    self.hbox.pack_start(self.images.Get('ALT'), False, False, 0)
+    self.hbox.pack_start(self.images.Get('KEY_UP_EMPTY'), False, False, 0)
     
     self.hbox.show()
     self.AddEvents()
@@ -111,6 +115,15 @@ class KeyMon:
     self.window.connect('destroy', self.Destroy)
     self.event_box.connect('button_release_event', self.RightClickHandler)
 
+    self.devices = evdev.DeviceGroup(self.keyboard_filenames + self.mouse_filenames)
+    gobject.idle_add(self.OnIdle)
+
+  def OnIdle(self):
+    print 'Poll in'
+    select = self.devices.next_event()
+    print 'Poll', select
+    return True  # continue calling
+    
   def Destroy(self, widget, data=None):
     gtk.main_quit()
 
@@ -119,15 +132,21 @@ class KeyMon:
       return
 
     menu = gtk.Menu()
-    toggle_chrome = gtk.MenuItem('Window chrome')
+
+    toggle_chrome = gtk.MenuItem('Window _Chrome')
     toggle_chrome.connect_object('activate', self.ToggleChrome, None)
+    toggle_chrome.show()
     menu.append(toggle_chrome)
 
-    toggle_chrome.show()
+    quit = gtk.MenuItem('_Quit')
+    quit.connect_object('activate', self.Destroy, None)
+    quit.show()
+    menu.append(quit)
+
     menu.show()
     menu.popup(None, None, None, event.button, event.time)
 
-  def ToggleChrome(self, data):
+  def ToggleChrome(self):
     current = self.window.get_decorated()
     self.window.set_decorated(not current) 
 
