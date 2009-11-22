@@ -119,11 +119,31 @@ class KeyMon:
     gobject.idle_add(self.OnIdle)
 
   def OnIdle(self):
-    print 'Poll in'
-    select = self.devices.next_event()
-    print 'Poll', select
+    event = self.devices.next_event()
+    self.HandleEvent(event)
     return True  # continue calling
     
+  def HandleEvent(self, event):
+    if not event:
+      return
+    if event.type == "EV_KEY" and event.value == 1:
+      if event.code.startswith("KEY"):
+        self.HandleKey(event.code)
+      elif event.code.startswith("BTN"):
+        self.HandleMouseButton(event.code)
+    elif event.type.startswith("EV_REL") and event.code == 'REL_WHEEL':
+      print event
+      self.HandleMouseScroll(event.value)
+
+  def HandleKey(self, code):
+    print 'Key %s pressed' % code
+
+  def HandleMouseButton(self, code):
+    print 'Mouse %s pressed' % code
+
+  def HandleMouseScroll(self, dir):
+    print 'Mouse scroll %d' % dir
+
   def Destroy(self, widget, data=None):
     gtk.main_quit()
 
