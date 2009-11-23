@@ -14,7 +14,7 @@ import pygtk
 pygtk.require('2.0')
 import gtk
 
-class TwoStateImage(gtk.Image):    
+class TwoStateImage(gtk.Image):
   def __init__(self, pixbufs, normal):
     gtk.Image.__init__(self)
     self.pixbufs = pixbufs
@@ -23,14 +23,20 @@ class TwoStateImage(gtk.Image):
     self.SwitchTo(self.normal)
 
   def SwitchTo(self, name):
-    self.set_from_pixbuf(self.pixbufs.Get(name))
     self.count_down = 3
+    self._SwitchTo(name)
+
+  def _SwitchTo(self, name):
+    self.set_from_pixbuf(self.pixbufs.Get(name))
     self.show()
+
+  def SwitchToDefault(self):
+    self._SwitchTo(self.normal)
+    self.count_down = None
 
   def EmptyEvent(self):
     if not self.count_down:
       return
     self.count_down -= 1
     if self.count_down == 0:
-      self.SwitchTo(self.normal)
-      self.count_down = None
+      self.SwitchToDefault()

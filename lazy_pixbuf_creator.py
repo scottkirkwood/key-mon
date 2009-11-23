@@ -59,7 +59,6 @@ class LazyPixbufCreator():
           gtk.gdk.INTERP_HYPER, 255)  # interpolation type, alpha
       self.pixbufs[name] = img2
     elif len(ops) == 2:
-      print 'Convert by function'
       fun = ops[1]
       bytes = open(ops[0]).read()
       bytes = fun(bytes)

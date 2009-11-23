@@ -61,8 +61,13 @@ class KeyMon:
     hal_obj = bus.get_object ("org.freedesktop.Hal", "/org/freedesktop/Hal/Manager")
     hal = dbus.Interface(hal_obj, "org.freedesktop.Hal.Manager")
 
+    self.enabled = {
+        'MOUSE': True,
+        'META': True,
+    }
+
     self.GetKeyboardDevices(bus, hal)
-    self.GetMouseDevices(bus, hal) 
+    self.GetMouseDevices(bus, hal)
     self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(NAME_FNAMES)
     self.CreateWindow()
 
@@ -71,10 +76,10 @@ class KeyMon:
 
     self.window.set_title('Keyboard Status Monitor')
     self.window.set_default_size(328, 48)
-    self.window.set_decorated(False) 
-    self.window.set_keep_above(True) 
+    self.window.set_decorated(False)
+    self.window.set_keep_above(True)
     width, height = 328, 48
-    
+
     self.event_box = gtk.EventBox()
     self.window.add(self.event_box)
     self.event_box.show()
@@ -131,11 +136,10 @@ class KeyMon:
       elif event.code.startswith("BTN"):
         self.HandleMouseButton(event.code)
     elif event.type.startswith("EV_REL") and event.code == 'REL_WHEEL':
-      print event
       self.HandleMouseScroll(event.value)
 
   def HandleKey(self, code):
-    print 'Key %s pressed' % code
+    #print 'Key %s pressed' % code
     if code.endswith('SHIFT'):
       self.shift_image.SwitchTo('SHIFT')
       return
@@ -145,14 +149,14 @@ class KeyMon:
     if code.endswith('CTRL'):
       self.ctrl_image.SwitchTo('CTRL')
       return
-    if code.endswith('META'):
+    if code.endswith('META') and self.enabled['META']:
       self.meta_image.SwitchTo('META')
       return
     if len(code) == 5 and code.startswith('KEY_'):
       letter = code[-1]
       letter_name = 'KEY_%s' % letter
       if letter not in NAME_FNAMES:
-        NAME_FNAMES[letter_name] = ['svg/key-template.svg', 
+        NAME_FNAMES[letter_name] = ['svg/key-template.svg',
             FixSvgKeyClosure('&amp;', letter)]
       self.key_image.SwitchTo(letter_name)
       return
@@ -160,11 +164,11 @@ class KeyMon:
       self.key_image.SwitchTo(code)
 
   def HandleMouseButton(self, code):
-    self.mouse_image.SwitchTo(code)
+    if self.enabled['MOUSE']:
+      self.mouse_image.SwitchTo(code)
     return True
 
   def HandleMouseScroll(self, dir):
-    print 'Mouse scroll %d' % dir
     if dir > 0:
       self.mouse_image.SwitchTo('SCROLL_UP')
     elif dir < 0:
@@ -193,6 +197,14 @@ class KeyMon:
     toggle_chrome.show()
     menu.append(toggle_chrome)
 
+    toggle_mouse = gtk.CheckMenuItem('Mouse')
+    visible = self.mouse_image.flags() & gtk.VISIBLE
+    toggle_mouse.set_active(visible)
+    toggle_mouse.connect_object('activate', self.ToggleMouse,
+        visible)
+    toggle_mouse.show()
+    menu.append(toggle_mouse)
+
     toggle_metakey = gtk.CheckMenuItem('Meta Key')
     visible = self.meta_image.flags() & gtk.VISIBLE
     toggle_metakey.set_active(visible)
@@ -209,19 +221,21 @@ class KeyMon:
     return menu
 
   def ToggleChrome(self, current):
-    if current:
-      print 'toggle chrome off'
-    else:
-      print 'toggle chrome on'
-    self.window.set_decorated(not current) 
+    self.window.set_decorated(not current)
 
   def ToggleMetaKey(self, current):
+    self._ToggleAKey(self.meta_image, 'META', current)
+
+  def ToggleMouse(self, current):
+    self._ToggleAKey(self.mouse_image, 'MOUSE', current)
+
+  def _ToggleAKey(self, image, name, current):
     if current:
-      self.meta_image.hide()
-      self.set_show_no_all(True)
+      self.enabled[name] = False
+      image.hide()
     else:
-      self.set_show_no_all(False)
-      self.meta_image.show()
+      self.enabled[name] = True
+      image.SwitchToDefault()
 
   def GetKeyboardDevices(self, bus, hal):
     self.keyboard_devices = hal.FindDeviceByCapability("input.keyboard")
@@ -245,7 +259,7 @@ class KeyMon:
       dev_obj = bus.get_object ("org.freedesktop.Hal", mouse_device)
       dev = dbus.Interface (dev_obj, "org.freedesktop.Hal.Device")
       self.mouse_filenames.append(dev.GetProperty("input.device"))
-    
+
 
 if __name__ == "__main__":
   keymon = KeyMon()
