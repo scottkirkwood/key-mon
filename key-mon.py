@@ -110,6 +110,7 @@ class KeyMon:
 
   def AddEvents(self):
     self.window.connect('destroy', self.Destroy)
+    self.window.connect('button-press-event', self.ButtonPressed)
     self.event_box.connect('button_release_event', self.RightClickHandler)
 
     try:
@@ -119,6 +120,12 @@ class KeyMon:
       print 'You may need to run this as %r' % 'sudo %s' % sys.argv[0]
       sys.exit(-1)
     gobject.idle_add(self.OnIdle)
+
+  def ButtonPressed(self, widget, evt):
+    if evt.button != 1:
+      return True
+    widget.begin_move_drag(evt.button, int(evt.x_root), int(evt.y_root), evt.time)
+    return True
 
   def OnIdle(self):
     event = self.devices.next_event()
