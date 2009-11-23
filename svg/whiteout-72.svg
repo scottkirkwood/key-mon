@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -14,9 +13,10 @@
    height="48"
    id="svg1770"
    sodipodi:version="0.32"
-   inkscape:version="0.47pre4 r22446"
+   inkscape:version="0.46"
    sodipodi:docname="whiteout-72.svg"
-   version="1.1">
+   version="1.1"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs3">
     <inkscape:perspective
@@ -173,9 +173,9 @@
      inkscape:cy="17.10119"
      inkscape:current-layer="layer1"
      inkscape:window-width="1087"
-     inkscape:window-height="703"
-     inkscape:window-x="345"
-     inkscape:window-y="25"
+     inkscape:window-height="706"
+     inkscape:window-x="351"
+     inkscape:window-y="46"
      showgrid="false"
      inkscape:window-maximized="0" />
   <metadata
@@ -186,7 +186,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -195,12 +195,12 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
-       style="fill:#ffffff;fill-opacity:0.86274511;stroke:none"
+       style="fill:#ffffff;fill-opacity:0.8627451;stroke:none"
        id="rect2854"
-       width="72"
-       height="48"
-       x="0"
-       y="0"
+       width="67.392853"
+       height="40.39286"
+       x="2.036"
+       y="5.7861395"
        rx="0"
        ry="0" />
   </g>

@@ -44,17 +44,19 @@ NAME_FNAMES = {
   'BTN_MIDDLE': ['svg/mouse.svg', 'svg/middle-mouse.svg'],
   'SCROLL_UP': ['svg/mouse.svg', 'svg/scroll-up-mouse.svg'],
   'SCROLL_DN': ['svg/mouse.svg', 'svg/scroll-dn-mouse.svg'],
+
   'SHIFT': ['svg/shift.svg'],
   'SHIFT_EMPTY': ['svg/shift.svg', 'svg/whiteout-72.svg'],
   'CTRL': [FixSvgKeyClosure('svg/alt.svg', 'Alt', 'Ctrl')],
-  #'CTRL_EMPTY': [FixSvgClosure('svg/alt.svg', 'Alt', 'Ctrl'),
-  #               'svg/whiteout-58.svg'],
-  'CTRL_EMPTY': ['svg/ctrl.svg', 'svg/whiteout-58.svg'],
+  'CTRL_EMPTY': [FixSvgKeyClosure('svg/alt.svg', 'Alt', 'Ctrl'),
+                 'svg/whiteout-58.svg'],
   'META': [FixSvgKeyClosure('svg/alt.svg', 'Alt', 'Meta')],
-  'META_EMPTY': ['svg/meta.svg', 'svg/whiteout-58.svg'],
+  'META_EMPTY': [FixSvgKeyClosure('svg/alt.svg', 'Alt', 'Meta'),
+                 'svg/whiteout-58.svg'],
   'ALT': ['svg/alt.svg'],
   'ALT_EMPTY': ['svg/alt.svg', 'svg/whiteout-58.svg'],
-  'KEY_EMPTY': ['svg/key-empty.svg'],
+  'KEY_EMPTY': [FixSvgKeyClosure('svg/key-template-dark.svg', '&amp;', ''),
+                'svg/whiteout-48.svg'],
   'KEY_SPACE': ['svg/spacebar.svg'],
   'KEY_TAB': ['svg/tab.svg'],
 }
@@ -172,7 +174,7 @@ class KeyMon:
       letter_name = 'KEY_%s' % letter
       if letter not in NAME_FNAMES:
         NAME_FNAMES[letter_name] = [
-            FixSvgKeyClosure('svg/key-template.svg', '&amp;', letter)]
+            FixSvgKeyClosure('svg/key-template-dark.svg', '&amp;', letter)]
       self.key_image.SwitchTo(letter_name)
       return
     if code in NAME_FNAMES:
