@@ -25,12 +25,16 @@ except:
   print "Unable to import dbus interface, quitting"
   sys.exit(-1)
 
-def FixSvgKeyClosure(from_str, to_str):
+def FixSvgKeyClosure(fname, from_str, to_str):
   """Create a closure to modify the key."""
 
-  def FixSvgKey(bytes):
-    """Given an SVG file (as bytes) return the SVG fixed."""
+  def FixSvgKey():
+    """Given an SVG file return the SVG text fixed."""
+    f = open(fname)
+    bytes = f.read()
+    f.close()
     return bytes.replace(from_str, to_str)
+
   return FixSvgKey
 
 NAME_FNAMES = {
@@ -42,9 +46,11 @@ NAME_FNAMES = {
   'SCROLL_DN': ['svg/mouse.svg', 'svg/scroll-dn-mouse.svg'],
   'SHIFT': ['svg/shift.svg'],
   'SHIFT_EMPTY': ['svg/shift.svg', 'svg/whiteout-72.svg'],
-  'CTRL': ['svg/ctrl.svg'],
+  'CTRL': [FixSvgKeyClosure('svg/alt.svg', 'Alt', 'Ctrl')],
+  #'CTRL_EMPTY': [FixSvgClosure('svg/alt.svg', 'Alt', 'Ctrl'),
+  #               'svg/whiteout-58.svg'],
   'CTRL_EMPTY': ['svg/ctrl.svg', 'svg/whiteout-58.svg'],
-  'META': ['svg/meta.svg'],
+  'META': [FixSvgKeyClosure('svg/alt.svg', 'Alt', 'Meta')],
   'META_EMPTY': ['svg/meta.svg', 'svg/whiteout-58.svg'],
   'ALT': ['svg/alt.svg'],
   'ALT_EMPTY': ['svg/alt.svg', 'svg/whiteout-58.svg'],
@@ -117,6 +123,8 @@ class KeyMon:
       self.devices = evdev.DeviceGroup(self.keyboard_filenames +
                                        self.mouse_filenames)
     except OSError, e:
+      logging.exception(e)
+      print
       print 'You may need to run this as %r' % 'sudo %s' % sys.argv[0]
       sys.exit(-1)
     gobject.idle_add(self.OnIdle)
@@ -163,8 +171,8 @@ class KeyMon:
       letter = code[-1]
       letter_name = 'KEY_%s' % letter
       if letter not in NAME_FNAMES:
-        NAME_FNAMES[letter_name] = ['svg/key-template.svg',
-            FixSvgKeyClosure('&amp;', letter)]
+        NAME_FNAMES[letter_name] = [
+            FixSvgKeyClosure('svg/key-template.svg', '&amp;', letter)]
       self.key_image.SwitchTo(letter_name)
       return
     if code in NAME_FNAMES:

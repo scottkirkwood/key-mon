@@ -4,10 +4,15 @@
 
 """Create pixbuf on demand.
 
-This creates a gtk pixbuf in one of three manners:
+This creates a gtk pixbuf in one of 2 manners:
 1) Simple filename (probably supports most image formats)
-2) Multiple filenames composted together (last one on top).
-3) Image is given to a function passed as bytes for the program to returned modified.
+2) A function which returns bytes to a file which can be read by
+   pixbuf_new_from_file().
+
+The name_fnames contains a list for key.  Each element of the list will be
+composted with the previous element (overlayed on top of).
+
+Alpha transparencies from the new, overlayed, image are respected.
 """
 
 __author__ = 'scott@forusers.com (Scott Kirkwood))'
@@ -47,29 +52,37 @@ class LazyPixbufCreator():
       logging.error('Don\'t understand the name %r' % name)
       return 'KEY_UP_EMPTY'
     ops = self.name_fnames[name]
-    if len(ops) == 1:
-      self.pixbufs[name] = gtk.gdk.pixbuf_new_from_file(ops[0])
-    elif len(ops) == 2 and isinstance(ops[1], types.StringTypes):
-      img1 = gtk.gdk.pixbuf_new_from_file(ops[1])
-      img2 = gtk.gdk.pixbuf_new_from_file(ops[0])
-      img1.composite(img2,
-          0, 0, img1.props.width, img1.props.height,  # x, y, w, h
+    img = None
+    for op in ops:
+      if isinstance(op, types.StringTypes):
+        img = self.Composite(img, gtk.gdk.pixbuf_new_from_file(op))
+      else:
+        bytes = op()
+        f = tempfile.NamedTemporaryFile(mode='w', prefix='keymon-')
+        f.write(bytes)
+        f.flush()
+        img = self.Composite(img, gtk.gdk.pixbuf_new_from_file(f.name))
+        f.close()
+        try:
+          os.unlink(f.name)
+        except OSError:
+          pass
+    self.pixbufs[name] = img
+    return name
+
+  def Composite(self, img, img2):
+    """Combine/layer img2 on top of img.
+    Args:
+      img: original image (or None).
+      img2: new image to add on top.
+    Returns:
+      updated image.
+    """
+    if img:
+      img2.composite(img,
+          0, 0, img.props.width, img.props.height,  # x, y, w, h
           0, 0,  # offset x, y
           1.0, 1.0,  # scale x, y
           gtk.gdk.INTERP_HYPER, 255)  # interpolation type, alpha
-      self.pixbufs[name] = img2
-    elif len(ops) == 2:
-      fun = ops[1]
-      bytes = open(ops[0]).read()
-      bytes = fun(bytes)
-      f = tempfile.NamedTemporaryFile(mode='w', prefix='keymon-')
-      f.write(bytes)
-      f.flush()
-      self.pixbufs[name] = gtk.gdk.pixbuf_new_from_file(f.name)
-      f.close()
-      try:
-        os.unlink(f.name)
-      except OSError:
-        pass
-
-    return name
+      return img
+    return img2
