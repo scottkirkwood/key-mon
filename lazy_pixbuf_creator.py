@@ -15,16 +15,16 @@ __author__ = 'scott@forusers.com (Scott Kirkwood))'
 import pygtk
 pygtk.require('2.0')
 import gtk
-import types
-import tempfile
-
 import logging
+import os
+import tempfile
+import types
 
 class LazyPixbufCreator():
   """Class to create SVG images on the fly."""
   def __init__(self, name_fnames):
     """Initialize with empty.
-    
+
     Args:
       name_fnames: List of names to filename list.
     """
@@ -46,14 +46,13 @@ class LazyPixbufCreator():
     if name not in self.name_fnames:
       logging.error('Don\'t understand the name %r' % name)
       return 'KEY_UP_EMPTY'
-    print 'Creating %s' % name
     ops = self.name_fnames[name]
     if len(ops) == 1:
       self.pixbufs[name] = gtk.gdk.pixbuf_new_from_file(ops[0])
     elif len(ops) == 2 and isinstance(ops[1], types.StringTypes):
       img1 = gtk.gdk.pixbuf_new_from_file(ops[1])
       img2 = gtk.gdk.pixbuf_new_from_file(ops[0])
-      img1.composite(img2, 
+      img1.composite(img2,
           0, 0, img1.props.width, img1.props.height,  # x, y, w, h
           0, 0,  # offset x, y
           1.0, 1.0,  # scale x, y
@@ -64,11 +63,14 @@ class LazyPixbufCreator():
       fun = ops[1]
       bytes = open(ops[0]).read()
       bytes = fun(bytes)
-      f = tempfile.NamedTemporaryFile(mode='w', prefix='keymon-', delete=True)
+      f = tempfile.NamedTemporaryFile(mode='w', prefix='keymon-')
       f.write(bytes)
       f.flush()
       self.pixbufs[name] = gtk.gdk.pixbuf_new_from_file(f.name)
       f.close()
+      try:
+        os.unlink(f.name)
+      except OSError:
+        pass
 
     return name
-

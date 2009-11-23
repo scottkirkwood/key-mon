@@ -97,24 +97,29 @@ class KeyMon:
 
     self.buttons = [self.mouse_image, self.shift_image, self.ctrl_image,
         self.meta_image, self.alt_image, self.key_image]
-    
+
     self.hbox.show()
     self.AddEvents()
-    
+
     self.window.show()
-  
+
   def AddEvents(self):
     self.window.connect('destroy', self.Destroy)
     self.event_box.connect('button_release_event', self.RightClickHandler)
 
-    self.devices = evdev.DeviceGroup(self.keyboard_filenames + self.mouse_filenames)
+    try:
+      self.devices = evdev.DeviceGroup(self.keyboard_filenames +
+                                       self.mouse_filenames)
+    except OSError, e:
+      print 'You may need to run this as %r' % 'sudo %s' % sys.argv[0]
+      sys.exit(-1)
     gobject.idle_add(self.OnIdle)
 
   def OnIdle(self):
     event = self.devices.next_event()
     self.HandleEvent(event)
     return True  # continue calling
-    
+
   def HandleEvent(self, event):
     if not event:
       for button in self.buttons:
