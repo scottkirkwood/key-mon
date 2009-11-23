@@ -47,18 +47,28 @@ NAME_FNAMES = {
 
   'SHIFT': ['svg/shift.svg'],
   'SHIFT_EMPTY': ['svg/shift.svg', 'svg/whiteout-72.svg'],
-  'CTRL': [FixSvgKeyClosure('svg/alt.svg', 'Alt', 'Ctrl')],
-  'CTRL_EMPTY': [FixSvgKeyClosure('svg/alt.svg', 'Alt', 'Ctrl'),
-                 'svg/whiteout-58.svg'],
-  'META': [FixSvgKeyClosure('svg/alt.svg', 'Alt', 'Meta')],
-  'META_EMPTY': [FixSvgKeyClosure('svg/alt.svg', 'Alt', 'Meta'),
-                 'svg/whiteout-58.svg'],
+  'CTRL': [
+      FixSvgKeyClosure('svg/alt.svg', 'Alt', 'Ctrl')],
+  'CTRL_EMPTY': [
+      FixSvgKeyClosure('svg/alt.svg', 'Alt', 'Ctrl'), 'svg/whiteout-58.svg'],
+  'META': [
+      FixSvgKeyClosure('svg/alt.svg', 'Alt', 'Meta')],
+  'META_EMPTY': [
+      FixSvgKeyClosure('svg/alt.svg', 'Alt', 'Meta'), 'svg/whiteout-58.svg'],
   'ALT': ['svg/alt.svg'],
   'ALT_EMPTY': ['svg/alt.svg', 'svg/whiteout-58.svg'],
-  'KEY_EMPTY': [FixSvgKeyClosure('svg/key-template-dark.svg', '&amp;', ''),
-                'svg/whiteout-48.svg'],
+  'KEY_EMPTY': [
+      FixSvgKeyClosure('svg/key-template-dark.svg', '&amp;', ''), 'svg/whiteout-48.svg'],
   'KEY_SPACE': ['svg/spacebar.svg'],
   'KEY_TAB': ['svg/tab.svg'],
+  'KEY_LEFT': [
+      FixSvgKeyClosure('svg/key-template-dark.svg', '&amp;', u'\u2190')],
+  'KEY_UP': [
+      FixSvgKeyClosure('svg/key-template-dark.svg', '&amp;', u'\u2191')],
+  'KEY_RIGHT': [
+      FixSvgKeyClosure('svg/key-template-dark.svg', '&amp;', u'\u2192')],
+  'KEY_DOWN': [
+      FixSvgKeyClosure('svg/key-template-dark.svg', '&amp;', u'\u2193')],
 }
 
 
