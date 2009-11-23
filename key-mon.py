@@ -64,6 +64,9 @@ class KeyMon:
 
     self.window.set_title('Keyboard Status Monitor')
     self.window.set_default_size(328, 48)
+    self.window.set_decorated(False) 
+    self.window.set_keep_above(True) 
+    width, height = 328, 48
     
     self.event_box = gtk.EventBox()
     self.window.add(self.event_box)
