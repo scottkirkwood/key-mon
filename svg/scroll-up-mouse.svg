@@ -10,7 +10,7 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   sodipodi:docname="scroll-dn-mouse.svg"
+   sodipodi:docname="scroll-up-mouse.svg"
    inkscape:version="0.47pre4 r22446"
    sodipodi:version="0.32"
    id="svg1770"
@@ -20,14 +20,13 @@
   <defs
      id="defs3">
     <linearGradient
-       inkscape:collect="always"
        id="linearGradient4704">
       <stop
-         style="stop-color:#000000;stop-opacity:1;"
+         style="stop-color:#000000;stop-opacity:0.86274511;"
          offset="0"
          id="stop4706" />
       <stop
-         style="stop-color:#000000;stop-opacity:0;"
+         style="stop-color:#ffffff;stop-opacity:0.86274511;"
          offset="1"
          id="stop4708" />
     </linearGradient>
@@ -182,7 +181,7 @@
        x1="30.707169"
        y1="16.59692"
        x2="30.707169"
-       y2="19.450788"
+       y2="20.5553"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(2.1134833,0,0,2.3898888,-36.400629,-31.947589)" />
     <inkscape:perspective
@@ -200,7 +199,7 @@
      inkscape:window-width="1680"
      inkscape:current-layer="layer1"
      inkscape:cy="23.581756"
-     inkscape:cx="27.966983"
+     inkscape:cx="13.768134"
      inkscape:zoom="12.677084"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"

@@ -34,6 +34,8 @@ NAME_FNAMES = {
   'BTN_LEFT': ['svg/mouse.svg', 'svg/left-mouse.svg'],
   'BTN_RIGHT': ['svg/mouse.svg', 'svg/right-mouse.svg'],
   'BTN_MIDDLE': ['svg/mouse.svg', 'svg/middle-mouse.svg'],
+  'SCROLL_UP': ['svg/mouse.svg', 'svg/scroll-up-mouse.svg'],
+  'SCROLL_DN': ['svg/mouse.svg', 'svg/scroll-dn-mouse.svg'],
   'SHIFT': ['svg/shift.svg'],
   'SHIFT_EMPTY': ['svg/shift.svg', 'svg/whiteout-72.svg'],
   'CTRL': ['svg/ctrl.svg'],
@@ -123,12 +125,19 @@ class KeyMon:
       self.alt_image.SwitchTo('ALT')
     elif code.endswith('CTRL'):
       self.ctrl_image.SwitchTo('CTRL')
+    return True
 
   def HandleMouseButton(self, code):
     self.mouse_image.SwitchTo(code)
+    return True
 
   def HandleMouseScroll(self, dir):
     print 'Mouse scroll %d' % dir
+    if dir > 0:
+      self.mouse_image.SwitchTo('SCROLL_UP')
+    elif dir < 0:
+      self.mouse_image.SwitchTo('SCROLL_DN')
+    return True
 
   def Destroy(self, widget, data=None):
     gtk.main_quit()
@@ -152,8 +161,12 @@ class KeyMon:
     menu.show()
     menu.popup(None, None, None, event.button, event.time)
 
-  def ToggleChrome(self):
+  def ToggleChrome(self, dummy):
     current = self.window.get_decorated()
+    if current:
+      print 'toggle chrome off'
+    else:
+      print 'toggle chrome on'
     self.window.set_decorated(not current) 
 
   def GetKeyboardDevices(self, bus, hal):

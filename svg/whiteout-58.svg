@@ -15,7 +15,7 @@
    id="svg1770"
    sodipodi:version="0.32"
    inkscape:version="0.47pre4 r22446"
-   sodipodi:docname="whiteout.svg"
+   sodipodi:docname="whiteout-58.svg"
    version="1.1">
   <defs
      id="defs3">
@@ -169,7 +169,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="4"
-     inkscape:cx="27.042878"
+     inkscape:cx="-17.957122"
      inkscape:cy="15.229887"
      inkscape:current-layer="layer1"
      inkscape:window-width="1087"
@@ -186,7 +186,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -195,7 +195,7 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
-       style="fill:#ffffff;fill-opacity:0.75294119;stroke:none"
+       style="fill:#ffffff;fill-opacity:0.86274511;stroke:none"
        id="rect2854"
        width="56"
        height="48"
