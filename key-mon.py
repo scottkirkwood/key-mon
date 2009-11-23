@@ -75,10 +75,10 @@ class KeyMon:
     self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
 
     self.window.set_title('Keyboard Status Monitor')
-    self.window.set_default_size(328, 48)
+    width, height = 384, 48
+    self.window.set_default_size(width, height)
     self.window.set_decorated(False)
     self.window.set_keep_above(True)
-    width, height = 328, 48
 
     self.event_box = gtk.EventBox()
     self.window.add(self.event_box)
@@ -88,17 +88,17 @@ class KeyMon:
     self.event_box.add(self.hbox)
 
     self.mouse_image = two_state_image.TwoStateImage(self.pixbufs, 'MOUSE')
-    self.hbox.pack_start(self.mouse_image, False, True, 0)
+    self.hbox.pack_start(self.mouse_image, False, False, 0)
     self.shift_image = two_state_image.TwoStateImage(self.pixbufs, 'SHIFT_EMPTY')
-    self.hbox.pack_start(self.shift_image, False, True, 0)
+    self.hbox.pack_start(self.shift_image, False, False, 0)
     self.ctrl_image = two_state_image.TwoStateImage(self.pixbufs, 'CTRL_EMPTY')
-    self.hbox.pack_start(self.ctrl_image, False, True, 0)
+    self.hbox.pack_start(self.ctrl_image, False, False, 0)
     self.meta_image = two_state_image.TwoStateImage(self.pixbufs, 'META_EMPTY')
-    self.hbox.pack_start(self.meta_image, False, True, 0)
+    self.hbox.pack_start(self.meta_image, False, False, 0)
     self.alt_image = two_state_image.TwoStateImage(self.pixbufs, 'ALT_EMPTY')
-    self.hbox.pack_start(self.alt_image, False, True, 0)
+    self.hbox.pack_start(self.alt_image, False, False, 0)
     self.key_image = two_state_image.TwoStateImage(self.pixbufs, 'KEY_EMPTY')
-    self.hbox.pack_start(self.key_image, False, True, 0)
+    self.hbox.pack_start(self.key_image, True, True, 0)
 
     self.buttons = [self.mouse_image, self.shift_image, self.ctrl_image,
         self.meta_image, self.alt_image, self.key_image]
