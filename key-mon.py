@@ -71,6 +71,29 @@ NAME_FNAMES = {
       FixSvgKeyClosure('svg/key-template-dark.svg', '&amp;', u'\u2193')],
 }
 
+NAME_TO_CHAR = {
+    'SLASH': '/',
+    'DOT': '.',
+    'EQUAL': '=',
+    'MINUS': '-',
+    'GRAVE': '`',
+    'PLUS': '+',
+    'COMMA': ',',
+    'ASTERISK': '*',
+    'APOSTROPHE': '\'',
+    'SEMICOLON': ';',
+    'LEFTPAREN': '(',
+    'RIGHTPAREN': ')',
+    'LEFTBRACE': '[',
+    'RIGHTBRACE': ']',
+    'BACKSLASH': '\\',
+    'ENTER': u'\u23CE',
+}
+
+def NameToChar(name):
+  if name in NAME_TO_CHAR:
+    return NAME_TO_CHAR[name]
+  return name
 
 class KeyMon:
   def __init__(self):
@@ -166,7 +189,10 @@ class KeyMon:
       self.HandleMouseScroll(event.value)
 
   def HandleKey(self, code):
-    #print 'Key %s pressed' % code
+    print 'Key %s pressed' % code
+    if code in NAME_FNAMES:
+      self.key_image.SwitchTo(code)
+      return
     if code.endswith('SHIFT'):
       self.shift_image.SwitchTo('SHIFT')
       return
@@ -179,16 +205,20 @@ class KeyMon:
     if code.endswith('META') and self.enabled['META']:
       self.meta_image.SwitchTo('META')
       return
-    if len(code) == 5 and code.startswith('KEY_'):
-      letter = code[-1]
-      letter_name = 'KEY_%s' % letter
-      if letter not in NAME_FNAMES:
-        NAME_FNAMES[letter_name] = [
-            FixSvgKeyClosure('svg/key-template-dark.svg', '&amp;', letter)]
-      self.key_image.SwitchTo(letter_name)
-      return
-    if code in NAME_FNAMES:
+    if code.startswith('KEY_KP'):
+      letter = NameToChar(code[6:])
+      if code not in NAME_FNAMES:
+        NAME_FNAMES[code] = [
+            FixSvgKeyClosure('svg/numpad-template.svg', '&amp;', letter)]
       self.key_image.SwitchTo(code)
+      return
+    if code.startswith('KEY_'):
+      letter = NameToChar(code[4:])
+      if code not in NAME_FNAMES:
+        NAME_FNAMES[code] = [
+            FixSvgKeyClosure('svg/key-template-dark.svg', '&amp;', letter)]
+      self.key_image.SwitchTo(code)
+      return
 
   def HandleMouseButton(self, code):
     if self.enabled['MOUSE']:
