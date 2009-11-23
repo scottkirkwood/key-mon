@@ -25,9 +25,13 @@ except:
   print "Unable to import dbus interface, quitting"
   sys.exit(-1)
 
-def FixSvgKey(bytes, from_str, to_str):
-  """Given an SVG file (as bytes) return the SVG fixed."""
-  return bytes.replace(from_letter, to_str)
+def FixSvgKeyClosure(from_str, to_str):
+  """Create a closure to modify the key."""
+
+  def FixSvgKey(bytes):
+    """Given an SVG file (as bytes) return the SVG fixed."""
+    return bytes.replace(from_str, to_str)
+  return FixSvgKey
 
 NAME_FNAMES = {
   'MOUSE': ['svg/mouse.svg',],
@@ -40,10 +44,13 @@ NAME_FNAMES = {
   'SHIFT_EMPTY': ['svg/shift.svg', 'svg/whiteout-72.svg'],
   'CTRL': ['svg/ctrl.svg'],
   'CTRL_EMPTY': ['svg/ctrl.svg', 'svg/whiteout-58.svg'],
+  'META': ['svg/meta.svg'],
+  'META_EMPTY': ['svg/meta.svg', 'svg/whiteout-58.svg'],
   'ALT': ['svg/alt.svg'],
   'ALT_EMPTY': ['svg/alt.svg', 'svg/whiteout-58.svg'],
-  'KEY_UP_EMPTY': ['svg/key-template.svg'],
-  'KEY_X': ['svg/key-template_dark.svg', FixSvgKey]
+  'KEY_EMPTY': ['svg/key-empty.svg'],
+  'KEY_SPACE': ['svg/spacebar.svg'],
+  'KEY_TAB': ['svg/tab.svg'],
 }
 
 
@@ -81,13 +88,15 @@ class KeyMon:
     self.hbox.pack_start(self.shift_image, False, True, 0)
     self.ctrl_image = two_state_image.TwoStateImage(self.pixbufs, 'CTRL_EMPTY')
     self.hbox.pack_start(self.ctrl_image, False, True, 0)
+    self.meta_image = two_state_image.TwoStateImage(self.pixbufs, 'META_EMPTY')
+    self.hbox.pack_start(self.meta_image, False, True, 0)
     self.alt_image = two_state_image.TwoStateImage(self.pixbufs, 'ALT_EMPTY')
     self.hbox.pack_start(self.alt_image, False, True, 0)
-    self.key_image = two_state_image.TwoStateImage(self.pixbufs, 'KEY_UP_EMPTY')
+    self.key_image = two_state_image.TwoStateImage(self.pixbufs, 'KEY_EMPTY')
     self.hbox.pack_start(self.key_image, False, True, 0)
 
     self.buttons = [self.mouse_image, self.shift_image, self.ctrl_image,
-        self.alt_image, self.key_image]
+        self.meta_image, self.alt_image, self.key_image]
     
     self.hbox.show()
     self.AddEvents()
@@ -124,11 +133,26 @@ class KeyMon:
     print 'Key %s pressed' % code
     if code.endswith('SHIFT'):
       self.shift_image.SwitchTo('SHIFT')
-    elif code.endswith('ALT'):
+      return
+    if code.endswith('ALT'):
       self.alt_image.SwitchTo('ALT')
-    elif code.endswith('CTRL'):
+      return
+    if code.endswith('CTRL'):
       self.ctrl_image.SwitchTo('CTRL')
-    return True
+      return
+    if code.endswith('META'):
+      self.meta_image.SwitchTo('META')
+      return
+    if len(code) == 5 and code.startswith('KEY_'):
+      letter = code[-1]
+      letter_name = 'KEY_%s' % letter
+      if letter not in NAME_FNAMES:
+        NAME_FNAMES[letter_name] = ['svg/key-template.svg', 
+            FixSvgKeyClosure('&amp;', letter)]
+      self.key_image.SwitchTo(letter_name)
+      return
+    if code in NAME_FNAMES:
+      self.key_image.SwitchTo(code)
 
   def HandleMouseButton(self, code):
     self.mouse_image.SwitchTo(code)

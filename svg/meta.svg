@@ -15,7 +15,7 @@
    id="svg1770"
    sodipodi:version="0.32"
    inkscape:version="0.47pre4 r22446"
-   sodipodi:docname="alt.svg"
+   sodipodi:docname="meta.svg"
    version="1.1">
   <defs
      id="defs3">
@@ -163,7 +163,7 @@
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient2064"
-       id="linearGradient9457"
+       id="linearGradient9407"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(0.02919086,0,0,0.119682,11.90859,9.7235324)"
        x1="1390.4071"
@@ -173,7 +173,7 @@
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient2052"
-       id="linearGradient9461"
+       id="linearGradient9411"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(0.146,0,0,0.02392903,0.716466,9.7235324)"
        x1="205.67348"
@@ -183,7 +183,7 @@
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient2103"
-       id="linearGradient9464"
+       id="linearGradient9414"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(1.40967,0,0,1.098332,-8.853555,-3.9495896)"
        x1="34.792320"
@@ -204,8 +204,8 @@
      inkscape:current-layer="layer1"
      inkscape:window-width="1156"
      inkscape:window-height="535"
-     inkscape:window-x="75"
-     inkscape:window-y="320"
+     inkscape:window-x="79"
+     inkscape:window-y="321"
      showgrid="false"
      inkscape:window-maximized="0" />
   <metadata
@@ -216,6 +216,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -224,7 +225,7 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
-       style="fill:url(#linearGradient9464);fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
+       style="fill:url(#linearGradient9414);fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
        id="rect1788"
        width="50.441818"
        height="38.876003"
@@ -233,7 +234,7 @@
        rx="1.6716342"
        ry="1.6716342" />
     <path
-       style="fill:url(#linearGradient9461);fill-opacity:1;fill-rule:evenodd;stroke:none"
+       style="fill:url(#linearGradient9411);fill-opacity:1;fill-rule:evenodd;stroke:none"
        d="m 4.135801,44.697165 4.8682778,-4.986181 37.6085142,-0.08509 5.512941,4.906357 -47.989733,0.164912 z"
        id="path1790"
        sodipodi:nodetypes="ccccc" />
@@ -243,7 +244,7 @@
        id="path1795"
        sodipodi:nodetypes="ccccc" />
     <path
-       style="fill:url(#linearGradient9457);fill-opacity:1;fill-rule:evenodd;stroke:none"
+       style="fill:url(#linearGradient9407);fill-opacity:1;fill-rule:evenodd;stroke:none"
        d="M 52.240511,44.782253 47.769249,38.176949 47.533888,10.239817 52.245777,8.1601994 52.240477,44.782253 z"
        id="path1800"
        sodipodi:nodetypes="ccccc" />
@@ -255,12 +256,13 @@
     <text
        id="text14572"
        y="34.716209"
-       x="11.654898"
-       style="font-size:9.53193378px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       xml:space="preserve"><tspan
-         y="34.716209"
-         x="11.654898"
-         id="tspan14574"
-         sodipodi:role="line">Alt</tspan></text>
+       x="9.6579151"
+       style="font-size:8.91401863px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan9416"
+         x="9.6579151"
+         y="34.716209">Meta</tspan></text>
   </g>
 </svg>

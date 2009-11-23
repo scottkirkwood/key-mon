@@ -15,6 +15,8 @@ __author__ = 'scott@forusers.com (Scott Kirkwood))'
 import pygtk
 pygtk.require('2.0')
 import gtk
+import types
+import tempfile
 
 import logging
 
@@ -48,7 +50,7 @@ class LazyPixbufCreator():
     ops = self.name_fnames[name]
     if len(ops) == 1:
       self.pixbufs[name] = gtk.gdk.pixbuf_new_from_file(ops[0])
-    elif len(ops) == 2:
+    elif len(ops) == 2 and isinstance(ops[1], types.StringTypes):
       img1 = gtk.gdk.pixbuf_new_from_file(ops[1])
       img2 = gtk.gdk.pixbuf_new_from_file(ops[0])
       img1.composite(img2, 
@@ -57,8 +59,16 @@ class LazyPixbufCreator():
           1.0, 1.0,  # scale x, y
           gtk.gdk.INTERP_HYPER, 255)  # interpolation type, alpha
       self.pixbufs[name] = img2
-    else:
-      print ops
+    elif len(ops) == 2:
+      print 'Convert by function'
+      fun = ops[1]
+      bytes = open(ops[0]).read()
+      bytes = fun(bytes)
+      f = tempfile.NamedTemporaryFile(mode='w', prefix='keymon-', delete=True)
+      f.write(bytes)
+      f.flush()
+      self.pixbufs[name] = gtk.gdk.pixbuf_new_from_file(f.name)
+      f.close()
 
     return name
 
