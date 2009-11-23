@@ -35,14 +35,16 @@ NAME_FNAMES = {
   'BTN_RIGHT': ['svg/mouse.svg', 'svg/right-mouse.svg'],
   'BTN_MIDDLE': ['svg/mouse.svg', 'svg/middle-mouse.svg'],
   'SHIFT': ['svg/shift.svg'],
+  'SHIFT_EMPTY': ['svg/shift.svg', 'svg/whiteout-72.svg'],
   'CTRL': ['svg/ctrl.svg'],
+  'CTRL_EMPTY': ['svg/ctrl.svg', 'svg/whiteout-58.svg'],
   'ALT': ['svg/alt.svg'],
-  'KEY_UP_EMPTY': ['svg/key-template.svg',],
-  'KEY_DOWN_LETTER': ['svg/key-template_dark.svg', FixSvgKey]
+  'ALT_EMPTY': ['svg/alt.svg', 'svg/whiteout-58.svg'],
+  'KEY_UP_EMPTY': ['svg/key-template.svg'],
+  'KEY_X': ['svg/key-template_dark.svg', FixSvgKey]
 }
 
 
-    
 class KeyMon:
   def __init__(self):
     bus = dbus.SystemBus()
@@ -50,8 +52,8 @@ class KeyMon:
     hal_obj = bus.get_object ("org.freedesktop.Hal", "/org/freedesktop/Hal/Manager")
     hal = dbus.Interface(hal_obj, "org.freedesktop.Hal.Manager")
 
-    self.GetKeyboard(bus, hal)
-    self.GetMouse(bus, hal) 
+    self.GetKeyboardDevices(bus, hal)
+    self.GetMouseDevices(bus, hal) 
     self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(NAME_FNAMES)
     self.CreateWindow()
 
@@ -70,16 +72,17 @@ class KeyMon:
 
     self.mouse_image = two_state_image.TwoStateImage(self.pixbufs, 'MOUSE')
     self.hbox.pack_start(self.mouse_image, False, True, 0)
-    self.shift_image = two_state_image.TwoStateImage(self.pixbufs, 'SHIFT')
+    self.shift_image = two_state_image.TwoStateImage(self.pixbufs, 'SHIFT_EMPTY')
     self.hbox.pack_start(self.shift_image, False, True, 0)
-    self.ctrl_image = two_state_image.TwoStateImage(self.pixbufs, 'CTRL')
+    self.ctrl_image = two_state_image.TwoStateImage(self.pixbufs, 'CTRL_EMPTY')
     self.hbox.pack_start(self.ctrl_image, False, True, 0)
-    self.alt_image = two_state_image.TwoStateImage(self.pixbufs, 'ALT')
+    self.alt_image = two_state_image.TwoStateImage(self.pixbufs, 'ALT_EMPTY')
     self.hbox.pack_start(self.alt_image, False, True, 0)
     self.key_image = two_state_image.TwoStateImage(self.pixbufs, 'KEY_UP_EMPTY')
     self.hbox.pack_start(self.key_image, False, True, 0)
 
-    self.buttons = [self.mouse_image, self.shift_image, self.alt_image, self.key_image]
+    self.buttons = [self.mouse_image, self.shift_image, self.ctrl_image,
+        self.alt_image, self.key_image]
     
     self.hbox.show()
     self.AddEvents()
@@ -115,10 +118,13 @@ class KeyMon:
   def HandleKey(self, code):
     print 'Key %s pressed' % code
     if code.endswith('SHIFT'):
-      print 'shift'
+      self.shift_image.SwitchTo('SHIFT')
+    elif code.endswith('ALT'):
+      self.alt_image.SwitchTo('ALT')
+    elif code.endswith('CTRL'):
+      self.ctrl_image.SwitchTo('CTRL')
 
   def HandleMouseButton(self, code):
-    print 'Mouse %s pressed' % code
     self.mouse_image.SwitchTo(code)
 
   def HandleMouseScroll(self, dir):
@@ -150,7 +156,7 @@ class KeyMon:
     current = self.window.get_decorated()
     self.window.set_decorated(not current) 
 
-  def GetKeyboard(self, bus, hal):
+  def GetKeyboardDevices(self, bus, hal):
     self.keyboard_devices = hal.FindDeviceByCapability("input.keyboard")
     if not self.keyboard_devices:
       print "No keyboard devices found"
@@ -162,7 +168,7 @@ class KeyMon:
       dev = dbus.Interface (dev_obj, "org.freedesktop.Hal.Device")
       self.keyboard_filenames.append(dev.GetProperty("input.device"))
 
-  def GetMouse(self, bus, hal):
+  def GetMouseDevices(self, bus, hal):
     self.mouse_devices = hal.FindDeviceByCapability ("input.mouse")
     if not self.mouse_devices:
       print "No mouse devices found"
@@ -173,22 +179,6 @@ class KeyMon:
       dev = dbus.Interface (dev_obj, "org.freedesktop.Hal.Device")
       self.mouse_filenames.append(dev.GetProperty("input.device"))
     
-  def demo(self):
-    """Open the event device named on the command line, use incoming
-       events to update a device, and show the state of this device.
-       """
-    dev = evdev.DeviceGroup(self.keyboard_filenames + self.mouse_filenames)
-    while 1:
-      event = dev.next_event()
-      if event is not None and event.code:
-        if event.type == "EV_KEY" and event.value == 1:
-          if event.code.startswith("KEY"):
-            print event.scanCode, event.code
-          elif event.code.startswith("BTN"):
-            print event.code
-        elif event.type.startswith("EV_REL"):
-          print event.code, event.value
-
 
 if __name__ == "__main__":
   keymon = KeyMon()

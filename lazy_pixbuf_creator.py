@@ -16,6 +16,8 @@ import pygtk
 pygtk.require('2.0')
 import gtk
 
+import logging
+
 class LazyPixbufCreator():
   """Class to create SVG images on the fly."""
   def __init__(self, name_fnames):
@@ -49,8 +51,11 @@ class LazyPixbufCreator():
     elif len(ops) == 2:
       img1 = gtk.gdk.pixbuf_new_from_file(ops[1])
       img2 = gtk.gdk.pixbuf_new_from_file(ops[0])
-      img1.composite(img2, 0, 0, img1.props.width, img1.props.height,
-          0, 0, 1.0, 1.0, gtk.gdk.INTERP_HYPER, 127)
+      img1.composite(img2, 
+          0, 0, img1.props.width, img1.props.height,  # x, y, w, h
+          0, 0,  # offset x, y
+          1.0, 1.0,  # scale x, y
+          gtk.gdk.INTERP_HYPER, 255)  # interpolation type, alpha
       self.pixbufs[name] = img2
     else:
       print ops

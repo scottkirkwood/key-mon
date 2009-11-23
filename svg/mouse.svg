@@ -16,7 +16,10 @@
    id="svg1770"
    height="48.000000px"
    width="48.000000px"
-   version="1.1">
+   version="1.1"
+   inkscape:export-filename="/home/scott/scott/key-mon/svg/mouse.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs3">
     <linearGradient
@@ -261,7 +264,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
         <cc:license
            rdf:resource="http://creativecommons.org/licenses/by/3.0/" />
         <dc:creator>
