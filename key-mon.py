@@ -173,28 +173,50 @@ class KeyMon:
     if event.button != 3:
       return
 
-    menu = gtk.Menu()
-
-    toggle_chrome = gtk.MenuItem('Window _Chrome')
-    toggle_chrome.connect_object('activate', self.ToggleChrome, None)
-    toggle_chrome.show()
-    menu.append(toggle_chrome)
-
-    quit = gtk.MenuItem('_Quit')
-    quit.connect_object('activate', self.Destroy, None)
-    quit.show()
-    menu.append(quit)
+    menu = self.CreateContextMenu()
 
     menu.show()
     menu.popup(None, None, None, event.button, event.time)
 
-  def ToggleChrome(self, dummy):
-    current = self.window.get_decorated()
+  def CreateContextMenu(self):
+    menu = gtk.Menu()
+
+    toggle_chrome = gtk.CheckMenuItem('Window _Chrome')
+    toggle_chrome.set_active(self.window.get_decorated())
+    toggle_chrome.connect_object('activate', self.ToggleChrome,
+       self.window.get_decorated())
+    toggle_chrome.show()
+    menu.append(toggle_chrome)
+
+    toggle_metakey = gtk.CheckMenuItem('Meta Key')
+    visible = self.meta_image.flags() & gtk.VISIBLE
+    toggle_metakey.set_active(visible)
+    toggle_metakey.connect_object('activate', self.ToggleMetaKey,
+        visible)
+    toggle_metakey.show()
+    menu.append(toggle_metakey)
+
+    quit = gtk.MenuItem('_Quit')
+    quit.connect_object('activate', self.Destroy, None)
+    quit.show()
+
+    menu.append(quit)
+    return menu
+
+  def ToggleChrome(self, current):
     if current:
       print 'toggle chrome off'
     else:
       print 'toggle chrome on'
     self.window.set_decorated(not current) 
+
+  def ToggleMetaKey(self, current):
+    if current:
+      self.meta_image.hide()
+      self.set_show_no_all(True)
+    else:
+      self.set_show_no_all(False)
+      self.meta_image.show()
 
   def GetKeyboardDevices(self, bus, hal):
     self.keyboard_devices = hal.FindDeviceByCapability("input.keyboard")
