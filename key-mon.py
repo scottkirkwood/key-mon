@@ -356,13 +356,19 @@ class KeyMon:
 if __name__ == "__main__":
   import optparse
   parser = optparse.OptionParser()
-  parser.add_option('-s', '--smaller', dest='smaller', default=False, action='store_true')
-  parser.add_option('-l', '--larger', dest='larger', default=False, action='store_true')
+  parser.add_option('-s', '--smaller', dest='smaller', default=False, action='store_true',
+                    help='Make the dialog 25% smaller than normal.')
+  parser.add_option('-l', '--larger', dest='larger', default=False, action='store_true',
+                    help='Make the dialog 25% larger than normal.')
+  parser.add_option('--scale', dest='scale', default=1.0, type='float',
+                    help='Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is half the size.')
   scale = 1.0
   (options, args) = parser.parse_args()
   if options.smaller:
     scale = 0.75
   elif options.larger:
     scale = 1.25
+  elif options.scale:
+    scale = options.scale
   keymon = KeyMon(scale)
   gtk.main()
