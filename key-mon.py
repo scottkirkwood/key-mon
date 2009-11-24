@@ -67,7 +67,8 @@ NAME_FNAMES = {
   'KEY_EMPTY': [
       FixSvgKeyClosure('svg/key-template-dark.svg', [('&amp;', '')]), 
       'svg/whiteout-48.svg'],
-  'KEY_SPACE': ['svg/spacebar.svg'],
+  'KEY_SPACE': [
+      FixSvgKeyClosure('svg/two-line-wide.svg', [('TOP', 'Space'), ('BOTTOM', '')])],
   'KEY_TAB': [
       FixSvgKeyClosure('svg/two-line-wide.svg', [('TOP', 'Tab'), ('BOTTOM', u'\u21B9')])],
   'KEY_LEFT': [
@@ -142,7 +143,7 @@ class KeyMon:
     self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
 
     self.window.set_title('Keyboard Status Monitor')
-    width, height = 249, 48
+    width, height = 308, 48
     self.window.set_default_size(width, height)
     self.window.set_decorated(False)
     self.window.set_keep_above(True)
