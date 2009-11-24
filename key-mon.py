@@ -9,12 +9,13 @@ Shows their status graphically.
 
 __author__ = 'scott@forusers.com (scottkirkwood))'
 
-import sys
 import pygtk
 pygtk.require('2.0')
-import gtk
 import gobject
+import gtk
 import logging
+import os
+import sys
 
 import evdev
 import two_state_image
@@ -189,7 +190,11 @@ class KeyMon:
     self.window.show()
 
   def SvgFname(self, fname):
-    return 'svg/%s%s.svg' % (fname, self.svg_size)
+    fullname = 'svg/%s%s.svg' % (fname, self.svg_size)
+    if self.svg_size and not os.path.exists(fullname):
+      # Small not found, defaulting to large size
+      fullname = 'svg/%s.svg' % fname
+    return fullname
 
   def AddEvents(self):
     self.window.connect('destroy', self.Destroy)
