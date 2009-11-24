@@ -123,9 +123,9 @@ def NameToChar(name):
   return name
 
 class KeyMon:
-  def __init__(self):
+  def __init__(self, scale):
     bus = dbus.SystemBus()
-
+    self.scale = scale
     hal_obj = bus.get_object ("org.freedesktop.Hal", "/org/freedesktop/Hal/Manager")
     hal = dbus.Interface(hal_obj, "org.freedesktop.Hal.Manager")
 
@@ -136,15 +136,15 @@ class KeyMon:
 
     self.GetKeyboardDevices(bus, hal)
     self.GetMouseDevices(bus, hal)
-    self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(NAME_FNAMES)
+    self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(NAME_FNAMES, self.scale)
     self.CreateWindow()
 
   def CreateWindow(self):
     self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
 
     self.window.set_title('Keyboard Status Monitor')
-    width, height = 308, 48
-    self.window.set_default_size(width, height)
+    width, height = 308 * self.scale, 48 * self.scale
+    self.window.set_default_size(int(width), int(height))
     self.window.set_decorated(False)
     self.window.set_keep_above(True)
 
@@ -354,5 +354,15 @@ class KeyMon:
 
 
 if __name__ == "__main__":
-  keymon = KeyMon()
+  import optparse
+  parser = optparse.OptionParser()
+  parser.add_option('-s', '--smaller', dest='smaller', default=False, action='store_true')
+  parser.add_option('-l', '--larger', dest='larger', default=False, action='store_true')
+  scale = 1.0
+  (options, args) = parser.parse_args()
+  if options.smaller:
+    scale = 0.75
+  elif options.larger:
+    scale = 1.25
+  keymon = KeyMon(scale)
   gtk.main()

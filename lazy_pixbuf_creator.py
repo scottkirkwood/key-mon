@@ -28,14 +28,14 @@ import types
 
 class LazyPixbufCreator():
   """Class to create SVG images on the fly."""
-  def __init__(self, name_fnames):
+  def __init__(self, name_fnames, resize):
     """Initialize with empty.
 
     Args:
       name_fnames: List of names to filename list.
     """
     self.pixbufs = {}
-    self.resize = 0.7
+    self.resize = resize
     self.name_fnames = name_fnames
 
   def Get(self, name):
