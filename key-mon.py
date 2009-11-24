@@ -52,14 +52,8 @@ NAME_FNAMES = {
   'SCROLL_UP': ['svg/mouse.svg', 'svg/scroll-up-mouse.svg'],
   'SCROLL_DN': ['svg/mouse.svg', 'svg/scroll-dn-mouse.svg'],
 
-  #'SHIFT': ['svg/shift.svg'],
-  #'SHIFT_EMPTY': ['svg/shift.svg', 'svg/whiteout-72.svg'],
-  'SHIFT': [
-      FixSvgKeyClosure('svg/two-line-wide.svg', 
-        [('TOP', 'Shift'), ('BOTTOM', u'\u21E7')])],
-  'SHIFT_EMPTY': [
-      FixSvgKeyClosure('svg/two-line-wide.svg', 
-        [('TOP', 'Shift'), ('BOTTOM', u'\u21E7')]), 'svg/whiteout-72.svg'],
+  'SHIFT': ['svg/shift.svg'],
+  'SHIFT_EMPTY': ['svg/shift.svg', 'svg/whiteout-72.svg'],
   'CTRL': [
       FixSvgKeyClosure('svg/alt.svg', [('Alt', 'Ctrl')])],
   'CTRL_EMPTY': [
@@ -74,7 +68,8 @@ NAME_FNAMES = {
       FixSvgKeyClosure('svg/key-template-dark.svg', [('&amp;', '')]), 
       'svg/whiteout-48.svg'],
   'KEY_SPACE': ['svg/spacebar.svg'],
-  'KEY_TAB': ['svg/tab.svg'],
+  'KEY_TAB': [
+      FixSvgKeyClosure('svg/two-line-wide.svg', [('TOP', 'Tab'), ('BOTTOM', u'\u21B9')])],
   'KEY_LEFT': [
       FixSvgKeyClosure('svg/key-template-dark.svg', [('&amp;', u'\u2190')])],
   'KEY_UP': [
@@ -83,32 +78,42 @@ NAME_FNAMES = {
       FixSvgKeyClosure('svg/key-template-dark.svg', [('&amp;', u'\u2192')])],
   'KEY_DOWN': [
       FixSvgKeyClosure('svg/key-template-dark.svg', [('&amp;', u'\u2193')])],
+  'KEY_BACKSPACE': [
+      FixSvgKeyClosure('svg/two-line-wide.svg', [('TOP', 'Back'), ('BOTTOM', u'\u21fd')])],
+  'KEY_ENTER': [
+      FixSvgKeyClosure('svg/two-line-wide.svg', [('TOP', 'Enter'), ('BOTTOM', u'\u23CE')])],
+  'KEY_PAGEUP': [
+      FixSvgKeyClosure('svg/alt.svg', [('Alt', 'PgUp')])],
+  'KEY_PAGEDOWN': [
+      FixSvgKeyClosure('svg/alt.svg', [('Alt', 'PgDn')])],
 }
 
 NAME_TO_CHAR = {
-    'SLASH': '/',
-    'DOT': '.',
-    'EQUAL': '=',
-    'MINUS': '-',
-    'GRAVE': '`',
-    'PLUS': '+',
-    'COMMA': ',',
-    'ASTERISK': '*',
     'APOSTROPHE': '\'',
-    'SEMICOLON': ';',
-    'LEFTPAREN': '(',
-    'RIGHTPAREN': ')',
-    'LEFTBRACE': '[',
-    'RIGHTBRACE': ']',
+    'ASTERISK': '*',
     'BACKSLASH': '\\',
+    'BACKSPACE': u'\u21fd',
+    'CAPSLOCK': 'Caps',
+    'COMMA': ',',
+    'DELETE': 'Del',
+    'DOT': '.',
+    'END': 'End',
     'ENTER': u'\u23CE',
+    'EQUAL': '=',
+    'ESC': 'Esc',
+    'GRAVE': '`',
+    'HOME': 'Home',
+    'INSERT': 'Ins',
+    'LEFTBRACE': '[',
+    'LEFTPAREN': '(',
+    'MINUS': '-',
     'PAGEDOWN': 'PgDn',
     'PAGEUP': 'PgUp',
-    'END': 'End',
-    'HOME': 'Home',
-    'DELETE': 'Del',
-    'INSERT': 'Ins',
-    'BACKSPACE': u'\u21fd',
+    'PLUS': '+',
+    'RIGHTBRACE': ']',
+    'RIGHTPAREN': ')',
+    'SEMICOLON': ';',
+    'SLASH': '/',
 }
 
 def NameToChar(name):

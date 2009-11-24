@@ -199,7 +199,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="9.3333333"
-     inkscape:cx="40.282738"
+     inkscape:cx="96.205606"
      inkscape:cy="24.858609"
      inkscape:current-layer="layer1"
      inkscape:window-width="1399"
@@ -264,12 +264,14 @@
          sodipodi:role="line">TOP</tspan></text>
     <text
        id="text2431"
-       y="34.502476"
-       x="11.497559"
-       style="font-size:9px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       xml:space="preserve"><tspan
-         y="34.502476"
-         x="11.497559"
+       y="44.313908"
+       x="7.9674611"
+       style="font-size:17.96382332px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
+       xml:space="preserve"
+       transform="scale(1.2869879,0.7770081)"
+       sodipodi:linespacing="125%"><tspan
+         y="44.313908"
+         x="7.9674611"
          id="tspan2433"
          sodipodi:role="line">BOTTOM</tspan></text>
   </g>
