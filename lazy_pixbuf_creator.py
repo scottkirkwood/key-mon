@@ -22,6 +22,7 @@ pygtk.require('2.0')
 import gtk
 import logging
 import os
+import re
 import tempfile
 import types
 
@@ -34,7 +35,7 @@ class LazyPixbufCreator():
       name_fnames: List of names to filename list.
     """
     self.pixbufs = {}
-    self.resize = 1.0
+    self.resize = 0.7
     self.name_fnames = name_fnames
 
   def Get(self, name):
@@ -59,6 +60,7 @@ class LazyPixbufCreator():
         img = self._Composite(img, self._ReadFromFile(op))
       else:
         bytes = op()
+        bytes = self._Resize(bytes)
         img = self._Composite(img, self._ReadFromBytes(bytes))
     self.pixbufs[name] = img
     return name
@@ -83,16 +85,41 @@ class LazyPixbufCreator():
   def _ReadFromFile(self, fname):
     if self.resize == 1.0:
       return gtk.gdk.pixbuf_new_from_file(fname)
+    f = open(fname)
+    bytes = self._Resize(f.read())
+    f.close()
+    return self._ReadFromBytes(bytes)
+    
 
   def _ReadFromBytes(self, bytes):
     """Writes the bytes to a file and then reads the file."""
-    f = tempfile.NamedTemporaryFile(mode='w', prefix='keymon-')
-    f.write(bytes)
-    f.flush()
-    img = gtk.gdk.pixbuf_new_from_file(f.name)
-    f.close()
+    f, fname = tempfile.mkstemp(prefix='keymon-', suffix='.svg')
+    os.write(f, bytes)
+    os.close(f)
+    img = gtk.gdk.pixbuf_new_from_file(fname)
     try:
-      os.unlink(f.name)
+      os.unlink(fname)
     except OSError:
       pass
     return img
+
+  def _Resize(self, bytes):
+    if self.resize == 1.0:
+      return bytes
+    template = r'(<svg[^<]+)(%s=")(\d+\.?\d*)'
+    bytes = self._ResizeText(bytes, template % 'width')
+    bytes = self._ResizeText(bytes, template % 'height')
+    bytes = bytes.replace('<g',
+        '<g transform="scale(%f, %f)"' % (self.resize, self.resize))
+    return bytes
+
+  def _ResizeText(self, bytes, regular_exp):
+    re_x = re.compile(regular_exp)
+    grps = re_x.search(bytes)
+    if grps:
+      num = float(grps.group(3))
+      num = num * self.resize
+      replace = grps.group(1) + grps.group(2) + str(num)
+      bytes = re_x.sub(replace, bytes)
+    return bytes
+

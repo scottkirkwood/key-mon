@@ -221,7 +221,7 @@ class KeyMon:
       self.HandleMouseScroll(event.value)
 
   def HandleKey(self, code):
-    print 'Key %s pressed' % code
+    #print 'Key %s pressed' % code
     if code in NAME_FNAMES:
       self.key_image.SwitchTo(code)
       return
