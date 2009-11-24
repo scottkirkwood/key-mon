@@ -1,1 +1,4 @@
-.*.pyc
+.pyc$
+dist/
+.egg-info/
+.swp$

@@ -15,11 +15,12 @@ pygtk.require('2.0')
 import gtk
 
 class TwoStateImage(gtk.Image):
-  def __init__(self, pixbufs, normal):
+  def __init__(self, pixbufs, normal, show=True):
     gtk.Image.__init__(self)
     self.pixbufs = pixbufs
     self.normal = normal
     self.count_down = None
+    self.showit = show
     self.SwitchTo(self.normal)
 
   def SwitchTo(self, name):
@@ -28,7 +29,8 @@ class TwoStateImage(gtk.Image):
 
   def _SwitchTo(self, name):
     self.set_from_pixbuf(self.pixbufs.Get(name))
-    self.show()
+    if self.showit:
+      self.show()
 
   def SwitchToDefault(self):
     self._SwitchTo(self.normal)

@@ -130,7 +130,7 @@ class KeyMon:
 
     self.enabled = {
         'MOUSE': True,
-        'META': True,
+        'META': False,
     }
 
     self.GetKeyboardDevices(bus, hal)
@@ -142,7 +142,7 @@ class KeyMon:
     self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
 
     self.window.set_title('Keyboard Status Monitor')
-    width, height = 384, 48
+    width, height = 249, 48
     self.window.set_default_size(width, height)
     self.window.set_decorated(False)
     self.window.set_keep_above(True)
@@ -156,11 +156,16 @@ class KeyMon:
 
     self.mouse_image = two_state_image.TwoStateImage(self.pixbufs, 'MOUSE')
     self.hbox.pack_start(self.mouse_image, False, False, 0)
+    if not self.enabled['MOUSE']:
+      self.mouse_image.hide()
     self.shift_image = two_state_image.TwoStateImage(self.pixbufs, 'SHIFT_EMPTY')
     self.hbox.pack_start(self.shift_image, False, False, 0)
     self.ctrl_image = two_state_image.TwoStateImage(self.pixbufs, 'CTRL_EMPTY')
     self.hbox.pack_start(self.ctrl_image, False, False, 0)
-    self.meta_image = two_state_image.TwoStateImage(self.pixbufs, 'META_EMPTY')
+    self.meta_image = two_state_image.TwoStateImage(self.pixbufs, 'META_EMPTY',
+        self.enabled['META'])
+    if not self.enabled['META']:
+      self.meta_image.hide()
     self.hbox.pack_start(self.meta_image, False, False, 0)
     self.alt_image = two_state_image.TwoStateImage(self.pixbufs, 'ALT_EMPTY')
     self.hbox.pack_start(self.alt_image, False, False, 0)
@@ -228,8 +233,9 @@ class KeyMon:
     if code.endswith('CTRL'):
       self.ctrl_image.SwitchTo('CTRL')
       return
-    if code.endswith('META') and self.enabled['META']:
-      self.meta_image.SwitchTo('META')
+    if code.endswith('META'):
+      if self.enabled['META']:
+        self.meta_image.SwitchTo('META')
       return
     if code.startswith('KEY_KP'):
       letter = NameToChar(code[6:])
@@ -314,9 +320,11 @@ class KeyMon:
 
   def _ToggleAKey(self, image, name, current):
     if current:
+      image.showit = False
       self.enabled[name] = False
       image.hide()
     else:
+      image.showit = True
       self.enabled[name] = True
       image.SwitchToDefault()
 
