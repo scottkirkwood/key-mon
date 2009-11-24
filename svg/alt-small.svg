@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -13,8 +14,8 @@
    height="48.000000px"
    id="svg1770"
    sodipodi:version="0.32"
-   inkscape:version="0.46"
-   sodipodi:docname="alt.svg"
+   inkscape:version="0.47pre4 r22446"
+   sodipodi:docname="alt-small.svg"
    version="1.1"
    inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
@@ -199,13 +200,13 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="4"
-     inkscape:cx="20.142403"
+     inkscape:cx="-11.357597"
      inkscape:cy="19.150673"
      inkscape:current-layer="layer1"
      inkscape:window-width="1156"
      inkscape:window-height="722"
-     inkscape:window-x="75"
-     inkscape:window-y="274"
+     inkscape:window-x="437"
+     inkscape:window-y="112"
      showgrid="false"
      inkscape:window-maximized="0" />
   <metadata
@@ -254,14 +255,15 @@
        sodipodi:nodetypes="ccccc" />
     <text
        id="text14572"
-       y="29.466209"
-       x="9.4048977"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans Bold"
+       y="32.107422"
+       x="27.151367"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans Bold"
        xml:space="preserve"
        sodipodi:linespacing="125%"><tspan
-         y="29.466209"
-         x="9.4048977"
+         y="32.107422"
+         x="27.151367"
          id="tspan14574"
-         sodipodi:role="line">Alt</tspan></text>
+         sodipodi:role="line"
+         style="-inkscape-font-specification:Verdana;font-family:Verdana">Alt</tspan></text>
   </g>
 </svg>

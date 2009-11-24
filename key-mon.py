@@ -84,9 +84,9 @@ class KeyMon:
     bus = dbus.SystemBus()
     self.scale = scale
     if scale < 1.0:
-      self.svg_size = ''
-    else:
       self.svg_size = '-small'
+    else:
+      self.svg_size = ''
     hal_obj = bus.get_object ("org.freedesktop.Hal", "/org/freedesktop/Hal/Manager")
     hal = dbus.Interface(hal_obj, "org.freedesktop.Hal.Manager")
 
