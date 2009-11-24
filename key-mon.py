@@ -44,50 +44,6 @@ def FixSvgKeyClosure(fname, from_tos):
 
   return FixSvgKey
 
-NAME_FNAMES = {
-  'MOUSE': ['svg/mouse.svg',],
-  'BTN_LEFT': ['svg/mouse.svg', 'svg/left-mouse.svg'],
-  'BTN_RIGHT': ['svg/mouse.svg', 'svg/right-mouse.svg'],
-  'BTN_MIDDLE': ['svg/mouse.svg', 'svg/middle-mouse.svg'],
-  'SCROLL_UP': ['svg/mouse.svg', 'svg/scroll-up-mouse.svg'],
-  'SCROLL_DN': ['svg/mouse.svg', 'svg/scroll-dn-mouse.svg'],
-
-  'SHIFT': ['svg/shift.svg'],
-  'SHIFT_EMPTY': ['svg/shift.svg', 'svg/whiteout-72.svg'],
-  'CTRL': [
-      FixSvgKeyClosure('svg/alt.svg', [('Alt', 'Ctrl')])],
-  'CTRL_EMPTY': [
-      FixSvgKeyClosure('svg/alt.svg', [('Alt', 'Ctrl')]), 'svg/whiteout-58.svg'],
-  'META': [
-      FixSvgKeyClosure('svg/alt.svg', [('Alt', 'Meta')])],
-  'META_EMPTY': [
-      FixSvgKeyClosure('svg/alt.svg', [('Alt', 'Meta')]), 'svg/whiteout-58.svg'],
-  'ALT': ['svg/alt.svg'],
-  'ALT_EMPTY': ['svg/alt.svg', 'svg/whiteout-58.svg'],
-  'KEY_EMPTY': [
-      FixSvgKeyClosure('svg/key-template-dark.svg', [('&amp;', '')]), 
-      'svg/whiteout-48.svg'],
-  'KEY_SPACE': [
-      FixSvgKeyClosure('svg/two-line-wide.svg', [('TOP', 'Space'), ('BOTTOM', '')])],
-  'KEY_TAB': [
-      FixSvgKeyClosure('svg/two-line-wide.svg', [('TOP', 'Tab'), ('BOTTOM', u'\u21B9')])],
-  'KEY_LEFT': [
-      FixSvgKeyClosure('svg/key-template-dark.svg', [('&amp;', u'\u2190')])],
-  'KEY_UP': [
-      FixSvgKeyClosure('svg/key-template-dark.svg', [('&amp;', u'\u2191')])],
-  'KEY_RIGHT': [
-      FixSvgKeyClosure('svg/key-template-dark.svg', [('&amp;', u'\u2192')])],
-  'KEY_DOWN': [
-      FixSvgKeyClosure('svg/key-template-dark.svg', [('&amp;', u'\u2193')])],
-  'KEY_BACKSPACE': [
-      FixSvgKeyClosure('svg/two-line-wide.svg', [('TOP', 'Back'), ('BOTTOM', u'\u21fd')])],
-  'KEY_ENTER': [
-      FixSvgKeyClosure('svg/two-line-wide.svg', [('TOP', 'Enter'), ('BOTTOM', u'\u23CE')])],
-  'KEY_PAGEUP': [
-      FixSvgKeyClosure('svg/alt.svg', [('Alt', 'PgUp')])],
-  'KEY_PAGEDOWN': [
-      FixSvgKeyClosure('svg/alt.svg', [('Alt', 'PgDn')])],
-}
 
 NAME_TO_CHAR = {
     'APOSTROPHE': '\'',
@@ -126,6 +82,10 @@ class KeyMon:
   def __init__(self, scale):
     bus = dbus.SystemBus()
     self.scale = scale
+    if scale < 1.0:
+      self.svg_size = ''
+    else:
+      self.svg_size = '-small'
     hal_obj = bus.get_object ("org.freedesktop.Hal", "/org/freedesktop/Hal/Manager")
     hal = dbus.Interface(hal_obj, "org.freedesktop.Hal.Manager")
 
@@ -136,8 +96,55 @@ class KeyMon:
 
     self.GetKeyboardDevices(bus, hal)
     self.GetMouseDevices(bus, hal)
-    self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(NAME_FNAMES, self.scale)
+    self.name_fnames = self.CreateNamesToFnames()
+    self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames, self.scale)
     self.CreateWindow()
+
+  def CreateNamesToFnames(self):
+    return {
+      'MOUSE': [self.SvgFname('mouse'),],
+      'BTN_LEFT': [self.SvgFname('mouse'), self.SvgFname('left-mouse')],
+      'BTN_RIGHT': [self.SvgFname('mouse'), self.SvgFname('right-mouse')],
+      'BTN_MIDDLE': [self.SvgFname('mouse'), self.SvgFname('middle-mouse')],
+      'SCROLL_UP': [self.SvgFname('mouse'), self.SvgFname('scroll-up-mouse')],
+      'SCROLL_DN': [self.SvgFname('mouse'), self.SvgFname('scroll-dn-mouse')],
+
+      'SHIFT': [self.SvgFname('shift')],
+      'SHIFT_EMPTY': [self.SvgFname('shift'), self.SvgFname('whiteout-72')],
+      'CTRL': [
+          FixSvgKeyClosure(self.SvgFname('alt'), [('Alt', 'Ctrl')])],
+      'CTRL_EMPTY': [
+          FixSvgKeyClosure(self.SvgFname('alt'), [('Alt', 'Ctrl')]), self.SvgFname('whiteout-58')],
+      'META': [
+          FixSvgKeyClosure(self.SvgFname('alt'), [('Alt', 'Meta')])],
+      'META_EMPTY': [
+          FixSvgKeyClosure(self.SvgFname('alt'), [('Alt', 'Meta')]), self.SvgFname('whiteout-58')],
+      'ALT': [self.SvgFname('alt')],
+      'ALT_EMPTY': [self.SvgFname('alt'), self.SvgFname('whiteout-58')],
+      'KEY_EMPTY': [
+          FixSvgKeyClosure(self.SvgFname('key-template-dark'), [('&amp;', '')]), 
+          self.SvgFname('whiteout-48')],
+      'KEY_SPACE': [
+          FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Space'), ('BOTTOM', '')])],
+      'KEY_TAB': [
+          FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Tab'), ('BOTTOM', u'\u21B9')])],
+      'KEY_LEFT': [
+          FixSvgKeyClosure(self.SvgFname('key-template-dark'), [('&amp;', u'\u2190')])],
+      'KEY_UP': [
+          FixSvgKeyClosure(self.SvgFname('key-template-dark'), [('&amp;', u'\u2191')])],
+      'KEY_RIGHT': [
+          FixSvgKeyClosure(self.SvgFname('key-template-dark'), [('&amp;', u'\u2192')])],
+      'KEY_DOWN': [
+          FixSvgKeyClosure(self.SvgFname('key-template-dark'), [('&amp;', u'\u2193')])],
+      'KEY_BACKSPACE': [
+          FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Back'), ('BOTTOM', u'\u21fd')])],
+      'KEY_ENTER': [
+          FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Enter'), ('BOTTOM', u'\u23CE')])],
+      'KEY_PAGEUP': [
+          FixSvgKeyClosure(self.SvgFname('alt'), [('Alt', 'PgUp')])],
+      'KEY_PAGEDOWN': [
+          FixSvgKeyClosure(self.SvgFname('alt'), [('Alt', 'PgDn')])],
+    }
 
   def CreateWindow(self):
     self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
@@ -181,6 +188,9 @@ class KeyMon:
 
     self.window.show()
 
+  def SvgFname(self, fname):
+    return 'svg/%s%s.svg' % (fname, self.svg_size)
+
   def AddEvents(self):
     self.window.connect('destroy', self.Destroy)
     self.window.connect('button-press-event', self.ButtonPressed)
@@ -222,7 +232,7 @@ class KeyMon:
 
   def HandleKey(self, code):
     #print 'Key %s pressed' % code
-    if code in NAME_FNAMES:
+    if code in self.name_fnames:
       self.key_image.SwitchTo(code)
       return
     if code.endswith('SHIFT'):
@@ -240,16 +250,16 @@ class KeyMon:
       return
     if code.startswith('KEY_KP'):
       letter = NameToChar(code[6:])
-      if code not in NAME_FNAMES:
-        NAME_FNAMES[code] = [
-            FixSvgKeyClosure('svg/numpad-template.svg', [('&amp;', letter)])]
+      if code not in self.name_fnames:
+        self.name_fnames[code] = [
+            FixSvgKeyClosure(self.SvgFname('numpad-template'), [('&amp;', letter)])]
       self.key_image.SwitchTo(code)
       return
     if code.startswith('KEY_'):
       letter = NameToChar(code[4:])
-      if code not in NAME_FNAMES:
-        NAME_FNAMES[code] = [
-            FixSvgKeyClosure('svg/key-template-dark.svg', [('&amp;', letter)])]
+      if code not in self.name_fnames:
+        self.name_fnames[code] = [
+            FixSvgKeyClosure(self.SvgFname('key-template-dark'), [('&amp;', letter)])]
       self.key_image.SwitchTo(code)
       return
 
