@@ -34,6 +34,7 @@ class LazyPixbufCreator():
       name_fnames: List of names to filename list.
     """
     self.pixbufs = {}
+    self.resize = 1.0
     self.name_fnames = name_fnames
 
   def Get(self, name):
@@ -55,22 +56,14 @@ class LazyPixbufCreator():
     img = None
     for op in ops:
       if isinstance(op, types.StringTypes):
-        img = self.Composite(img, gtk.gdk.pixbuf_new_from_file(op))
+        img = self._Composite(img, self._ReadFromFile(op))
       else:
         bytes = op()
-        f = tempfile.NamedTemporaryFile(mode='w', prefix='keymon-')
-        f.write(bytes)
-        f.flush()
-        img = self.Composite(img, gtk.gdk.pixbuf_new_from_file(f.name))
-        f.close()
-        try:
-          os.unlink(f.name)
-        except OSError:
-          pass
+        img = self._Composite(img, self._ReadFromBytes(bytes))
     self.pixbufs[name] = img
     return name
 
-  def Composite(self, img, img2):
+  def _Composite(self, img, img2):
     """Combine/layer img2 on top of img.
     Args:
       img: original image (or None).
@@ -86,3 +79,20 @@ class LazyPixbufCreator():
           gtk.gdk.INTERP_HYPER, 255)  # interpolation type, alpha
       return img
     return img2
+
+  def _ReadFromFile(self, fname):
+    if self.resize == 1.0:
+      return gtk.gdk.pixbuf_new_from_file(fname)
+
+  def _ReadFromBytes(self, bytes):
+    """Writes the bytes to a file and then reads the file."""
+    f = tempfile.NamedTemporaryFile(mode='w', prefix='keymon-')
+    f.write(bytes)
+    f.flush()
+    img = gtk.gdk.pixbuf_new_from_file(f.name)
+    f.close()
+    try:
+      os.unlink(f.name)
+    except OSError:
+      pass
+    return img
