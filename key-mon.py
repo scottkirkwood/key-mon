@@ -2,9 +2,9 @@
 #
 # Copyright 2009 Scott Kirkwood. All Rights Reserved.
 
-"""
-
-
+"""Keyboard Status Monitor.
+Monitors one or more keyboards and mouses.
+Shows their status graphically.
 """
 
 __author__ = 'scott@forusers.com (scottkirkwood))'
@@ -25,15 +25,22 @@ except:
   print "Unable to import dbus interface, quitting"
   sys.exit(-1)
 
-def FixSvgKeyClosure(fname, from_str, to_str):
-  """Create a closure to modify the key."""
+def FixSvgKeyClosure(fname, from_tos):
+  """Create a closure to modify the key.
+  Args:
+    from_tos: list of from, to pairs for search replace.
+  Returns:
+    A bound function which returns the file fname with modifications.
+  """
 
   def FixSvgKey():
     """Given an SVG file return the SVG text fixed."""
     f = open(fname)
     bytes = f.read()
     f.close()
-    return bytes.replace(from_str, to_str)
+    for f, t in from_tos:
+      bytes = bytes.replace(f, t)
+    return bytes
 
   return FixSvgKey
 
@@ -45,30 +52,37 @@ NAME_FNAMES = {
   'SCROLL_UP': ['svg/mouse.svg', 'svg/scroll-up-mouse.svg'],
   'SCROLL_DN': ['svg/mouse.svg', 'svg/scroll-dn-mouse.svg'],
 
-  'SHIFT': ['svg/shift.svg'],
-  'SHIFT_EMPTY': ['svg/shift.svg', 'svg/whiteout-72.svg'],
+  #'SHIFT': ['svg/shift.svg'],
+  #'SHIFT_EMPTY': ['svg/shift.svg', 'svg/whiteout-72.svg'],
+  'SHIFT': [
+      FixSvgKeyClosure('svg/two-line-wide.svg', 
+        [('TOP', 'Shift'), ('BOTTOM', u'\u21E7')])],
+  'SHIFT_EMPTY': [
+      FixSvgKeyClosure('svg/two-line-wide.svg', 
+        [('TOP', 'Shift'), ('BOTTOM', u'\u21E7')]), 'svg/whiteout-72.svg'],
   'CTRL': [
-      FixSvgKeyClosure('svg/alt.svg', 'Alt', 'Ctrl')],
+      FixSvgKeyClosure('svg/alt.svg', [('Alt', 'Ctrl')])],
   'CTRL_EMPTY': [
-      FixSvgKeyClosure('svg/alt.svg', 'Alt', 'Ctrl'), 'svg/whiteout-58.svg'],
+      FixSvgKeyClosure('svg/alt.svg', [('Alt', 'Ctrl')]), 'svg/whiteout-58.svg'],
   'META': [
-      FixSvgKeyClosure('svg/alt.svg', 'Alt', 'Meta')],
+      FixSvgKeyClosure('svg/alt.svg', [('Alt', 'Meta')])],
   'META_EMPTY': [
-      FixSvgKeyClosure('svg/alt.svg', 'Alt', 'Meta'), 'svg/whiteout-58.svg'],
+      FixSvgKeyClosure('svg/alt.svg', [('Alt', 'Meta')]), 'svg/whiteout-58.svg'],
   'ALT': ['svg/alt.svg'],
   'ALT_EMPTY': ['svg/alt.svg', 'svg/whiteout-58.svg'],
   'KEY_EMPTY': [
-      FixSvgKeyClosure('svg/key-template-dark.svg', '&amp;', ''), 'svg/whiteout-48.svg'],
+      FixSvgKeyClosure('svg/key-template-dark.svg', [('&amp;', '')]), 
+      'svg/whiteout-48.svg'],
   'KEY_SPACE': ['svg/spacebar.svg'],
   'KEY_TAB': ['svg/tab.svg'],
   'KEY_LEFT': [
-      FixSvgKeyClosure('svg/key-template-dark.svg', '&amp;', u'\u2190')],
+      FixSvgKeyClosure('svg/key-template-dark.svg', [('&amp;', u'\u2190')])],
   'KEY_UP': [
-      FixSvgKeyClosure('svg/key-template-dark.svg', '&amp;', u'\u2191')],
+      FixSvgKeyClosure('svg/key-template-dark.svg', [('&amp;', u'\u2191')])],
   'KEY_RIGHT': [
-      FixSvgKeyClosure('svg/key-template-dark.svg', '&amp;', u'\u2192')],
+      FixSvgKeyClosure('svg/key-template-dark.svg', [('&amp;', u'\u2192')])],
   'KEY_DOWN': [
-      FixSvgKeyClosure('svg/key-template-dark.svg', '&amp;', u'\u2193')],
+      FixSvgKeyClosure('svg/key-template-dark.svg', [('&amp;', u'\u2193')])],
 }
 
 NAME_TO_CHAR = {
@@ -88,6 +102,13 @@ NAME_TO_CHAR = {
     'RIGHTBRACE': ']',
     'BACKSLASH': '\\',
     'ENTER': u'\u23CE',
+    'PAGEDOWN': 'PgDn',
+    'PAGEUP': 'PgUp',
+    'END': 'End',
+    'HOME': 'Home',
+    'DELETE': 'Del',
+    'INSERT': 'Ins',
+    'BACKSPACE': u'\u21fd',
 }
 
 def NameToChar(name):
@@ -209,14 +230,14 @@ class KeyMon:
       letter = NameToChar(code[6:])
       if code not in NAME_FNAMES:
         NAME_FNAMES[code] = [
-            FixSvgKeyClosure('svg/numpad-template.svg', '&amp;', letter)]
+            FixSvgKeyClosure('svg/numpad-template.svg', [('&amp;', letter)])]
       self.key_image.SwitchTo(code)
       return
     if code.startswith('KEY_'):
       letter = NameToChar(code[4:])
       if code not in NAME_FNAMES:
         NAME_FNAMES[code] = [
-            FixSvgKeyClosure('svg/key-template-dark.svg', '&amp;', letter)]
+            FixSvgKeyClosure('svg/key-template-dark.svg', [('&amp;', letter)])]
       self.key_image.SwitchTo(code)
       return
 
