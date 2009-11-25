@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -9,14 +10,14 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   sodipodi:docname="key-template-dark.svg"
-   sodipodi:docbase="/home/karel/software/key-status/key-status-1/new-img"
-   inkscape:version="0.46"
+   sodipodi:docname="one-char-template.svg"
+   inkscape:version="0.47pre4 r22446"
    sodipodi:version="0.32"
    id="svg1770"
    height="48.000000px"
    width="38.400000pt"
-   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   version="1.1">
   <defs
      id="defs3">
     <inkscape:perspective
@@ -224,7 +225,7 @@
   <sodipodi:namedview
      inkscape:window-y="25"
      inkscape:window-x="0"
-     inkscape:window-height="975"
+     inkscape:window-height="972"
      inkscape:window-width="1399"
      inkscape:current-layer="layer1"
      inkscape:cy="19.848244"
@@ -236,7 +237,8 @@
      bordercolor="#666666"
      pagecolor="#ffffff"
      id="base"
-     showgrid="false" />
+     showgrid="false"
+     inkscape:window-maximized="0" />
   <metadata
      id="metadata4">
     <rdf:RDF>
@@ -283,12 +285,12 @@
        style="opacity:0.4969325;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.25pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
     <text
        id="text14572"
-       y="31.460205"
+       y="31.813759"
        x="23.863281"
-       style="font-size:16px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans Bold"
+       style="font-size:18px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Verdana;-inkscape-font-specification:Verdana"
        xml:space="preserve"
        sodipodi:linespacing="125%"><tspan
-         y="31.460205"
+         y="31.813759"
          x="23.863281"
          id="tspan14574"
          sodipodi:role="line">&amp;</tspan></text>
