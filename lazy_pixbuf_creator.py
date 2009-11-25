@@ -22,6 +22,7 @@ pygtk.require('2.0')
 import gtk
 import logging
 import os
+import sys
 import re
 import tempfile
 import types
@@ -96,7 +97,11 @@ class LazyPixbufCreator():
     f, fname = tempfile.mkstemp(prefix='keymon-', suffix='.svg')
     os.write(f, bytes)
     os.close(f)
-    img = gtk.gdk.pixbuf_new_from_file(fname)
+    try:
+      img = gtk.gdk.pixbuf_new_from_file(fname)
+    except:
+      logging.error('Unable to read %r: %s' % (fname, bytes))
+      sys.exit(-1)
     try:
       os.unlink(fname)
     except OSError:
@@ -110,7 +115,7 @@ class LazyPixbufCreator():
     bytes = self._ResizeText(bytes, template % 'width')
     bytes = self._ResizeText(bytes, template % 'height')
     bytes = bytes.replace('<g',
-        '<g transform="scale(%f, %f)"' % (self.resize, self.resize))
+        '<g transform="scale(%f, %f)"' % (self.resize, self.resize), 1)
     return bytes
 
   def _ResizeText(self, bytes, regular_exp):

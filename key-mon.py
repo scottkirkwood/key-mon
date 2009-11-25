@@ -93,7 +93,7 @@ SHORT_NAME = {
 
 
 class KeyMon:
-  def __init__(self, scale):
+  def __init__(self, scale, meta):
     bus = dbus.SystemBus()
     self.scale = scale
     if scale < 1.0:
@@ -105,7 +105,7 @@ class KeyMon:
 
     self.enabled = {
         'MOUSE': True,
-        'META': False,
+        'META': meta,
     }
 
     self.GetKeyboardDevices(bus, hal)
@@ -115,7 +115,7 @@ class KeyMon:
     self.CreateWindow()
 
   def CreateNamesToFnames(self):
-    return {
+    ftn = {
       'MOUSE': [self.SvgFname('mouse'),],
       'BTN_LEFT': [self.SvgFname('mouse'), self.SvgFname('left-mouse')],
       'BTN_RIGHT': [self.SvgFname('mouse'), self.SvgFname('right-mouse')],
@@ -130,23 +130,39 @@ class KeyMon:
       'CTRL_EMPTY': [
           FixSvgKeyClosure(self.SvgFname('alt'), [('Alt', 'Ctrl')]), self.SvgFname('whiteout-58')],
       'META': [
-          FixSvgKeyClosure(self.SvgFname('alt'), [('Alt', 'Meta')])],
+          FixSvgKeyClosure(self.SvgFname('alt'), [('Alt', '')]), self.SvgFname('meta')],
       'META_EMPTY': [
-          FixSvgKeyClosure(self.SvgFname('alt'), [('Alt', 'Meta')]), self.SvgFname('whiteout-58')],
+          FixSvgKeyClosure(self.SvgFname('alt'), [('Alt', '')]), 
+              self.SvgFname('meta'), self.SvgFname('whiteout-58')],
       'ALT': [self.SvgFname('alt')],
       'ALT_EMPTY': [self.SvgFname('alt'), self.SvgFname('whiteout-58')],
       'KEY_EMPTY': [
           FixSvgKeyClosure(self.SvgFname('one-char-template'), [('&amp;', '')]), 
-          self.SvgFname('whiteout-48')],
-      'KEY_SPACE': [
-          FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Space'), ('BOTTOM', '')])],
-      'KEY_TAB': [
-          FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Tab'), ('BOTTOM', u'\u21B9')])],
-      'KEY_BACKSPACE': [
-          FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Back'), ('BOTTOM', u'\u21fd')])],
-      'KEY_ENTER': [
-          FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Enter'), ('BOTTOM', u'\u23CE')])],
+              self.SvgFname('whiteout-48')],
     }
+    if self.scale >= 1.0:
+      ftn.update({
+        'KEY_SPACE': [
+            FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Space'), ('BOTTOM', '')])],
+        'KEY_TAB': [
+            FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Tab'), ('BOTTOM', u'\u21B9')])],
+        'KEY_BACKSPACE': [
+            FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Back'), ('BOTTOM', u'\u21fd')])],
+        'KEY_ENTER': [
+            FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Enter'), ('BOTTOM', u'\u23CE')])],
+      })
+    else:
+      ftn.update({
+        'KEY_SPACE': [
+            FixSvgKeyClosure(self.SvgFname('one-line-wide'), [('&amp;', 'Space')])],
+        'KEY_TAB': [
+            FixSvgKeyClosure(self.SvgFname('one-line-wide'), [('&amp;', 'Tab')])],
+        'KEY_BACKSPACE': [
+            FixSvgKeyClosure(self.SvgFname('one-line-wide'), [('&amp;', 'Back')])],
+        'KEY_ENTER': [
+            FixSvgKeyClosure(self.SvgFname('one-line-wide'), [('&amp;', 'Enter')])],
+      })
+    return ftn
 
   def CreateWindow(self):
     self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
@@ -199,7 +215,7 @@ class KeyMon:
 
   def NameToChar(self, name):
     if name in NAME_TO_CHAR:
-      if self.svg_size and name in SHORT_NAME:
+      if self.scale < 1.0 and name in SHORT_NAME:
         return SHORT_NAME[name]
       return NAME_TO_CHAR[name]
     return name
@@ -391,6 +407,8 @@ if __name__ == "__main__":
                     help='Make the dialog 25% smaller than normal.')
   parser.add_option('-l', '--larger', dest='larger', default=False, action='store_true',
                     help='Make the dialog 25% larger than normal.')
+  parser.add_option('-m', '--meta', dest='meta', default=False, action='store_true',
+                    help='Show the meta (windows) key.')
   parser.add_option('--scale', dest='scale', default=1.0, type='float',
                     help='Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is half the size.')
   scale = 1.0
@@ -401,5 +419,5 @@ if __name__ == "__main__":
     scale = 1.25
   elif options.scale:
     scale = options.scale
-  keymon = KeyMon(scale)
+  keymon = KeyMon(scale, options.meta)
   gtk.main()
