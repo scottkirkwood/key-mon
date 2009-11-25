@@ -10,7 +10,7 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   sodipodi:docname="key-template-dark-small.svg"
+   sodipodi:docname="one-char-template-small.svg"
    inkscape:version="0.47pre4 r22446"
    sodipodi:version="0.32"
    id="svg1770"
@@ -287,13 +287,13 @@
        id="text14572"
        y="33.270508"
        x="23.863281"
-       style="font-size:16px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans Bold"
+       style="font-size:22;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans Bold"
        xml:space="preserve"
        sodipodi:linespacing="125%"><tspan
          y="33.270508"
          x="23.863281"
          id="tspan14574"
          sodipodi:role="line"
-         style="font-size:20px;font-family:Verdana;-inkscape-font-specification:Verdana">&amp;</tspan></text>
+         style="font-size:22;font-family:Verdana;-inkscape-font-specification:Verdana">&amp;</tspan></text>
   </g>
 </svg>

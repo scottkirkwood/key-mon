@@ -47,37 +47,50 @@ def FixSvgKeyClosure(fname, from_tos):
 
 
 NAME_TO_CHAR = {
-    'APOSTROPHE': '\'',
-    'ASTERISK': '*',
-    'BACKSLASH': '\\',
-    'BACKSPACE': u'\u21fd',
-    'CAPSLOCK': 'Caps',
-    'COMMA': ',',
-    'DELETE': 'Del',
-    'DOT': '.',
-    'END': 'End',
-    'ENTER': u'\u23CE',
-    'EQUAL': '=',
-    'ESC': 'Esc',
-    'GRAVE': '`',
-    'HOME': 'Home',
-    'INSERT': 'Ins',
-    'LEFTBRACE': '[',
-    'LEFTPAREN': '(',
-    'MINUS': '-',
-    'PAGEDOWN': 'PgDn',
-    'PAGEUP': 'PgUp',
-    'PLUS': '+',
-    'RIGHTBRACE': ']',
-    'RIGHTPAREN': ')',
-    'SEMICOLON': ';',
-    'SLASH': '/',
+  'APOSTROPHE': '\'',
+  'ASTERISK': '*',
+  'BACKSLASH': '\\',
+  'BACKSPACE': u'\u21fd',
+  'CAPSLOCK': 'Caps',
+  'COMMA': ',',
+  'DELETE': 'Del',
+  'DOT': '.',
+  'DOWN': u'\u2193',
+  'END': 'End',
+  'ENTER': u'\u23CE',
+  'EQUAL': '=',
+  'ESC': 'Esc',
+  'GRAVE': '`',
+  'HOME': 'Home',
+  'INSERT': 'Ins',
+  'LEFT': u'\u2190',
+  'LEFTBRACE': '[',
+  'LEFTPAREN': '(',
+  'MINUS': '-',
+  'PAGEDOWN': 'PgDn',
+  'PAGEUP': 'PgUp',
+  'PLUS': '+',
+  'RIGHT': u'\u2192',
+  'RIGHTBRACE': ']',
+  'RIGHTPAREN': ')',
+  'SEMICOLON': ';',
+  'SLASH': '/',
+  'UP': u'\u2191',
+  'NUMLOCK': 'NumLock',
 }
 
-def NameToChar(name):
-  if name in NAME_TO_CHAR:
-    return NAME_TO_CHAR[name]
-  return name
+SHORT_NAME = {
+  'CAPSLOCK': 'Cps',
+  'HOME': 'Hm',
+  'PAGEDOWN': 'PgD',
+  'PAGEUP': 'PgU',
+  'NUMLOCK': 'Num',
+  #'LEFT': u'\u21D0',
+  #'UP': u'\u21D1',
+  #'RIGHT': u'\u21D2',
+  #'DOWN': u'\u21D3',
+}
+
 
 class KeyMon:
   def __init__(self, scale):
@@ -123,28 +136,16 @@ class KeyMon:
       'ALT': [self.SvgFname('alt')],
       'ALT_EMPTY': [self.SvgFname('alt'), self.SvgFname('whiteout-58')],
       'KEY_EMPTY': [
-          FixSvgKeyClosure(self.SvgFname('key-template-dark'), [('&amp;', '')]), 
+          FixSvgKeyClosure(self.SvgFname('one-char-template'), [('&amp;', '')]), 
           self.SvgFname('whiteout-48')],
       'KEY_SPACE': [
           FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Space'), ('BOTTOM', '')])],
       'KEY_TAB': [
           FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Tab'), ('BOTTOM', u'\u21B9')])],
-      'KEY_LEFT': [
-          FixSvgKeyClosure(self.SvgFname('key-template-dark'), [('&amp;', u'\u2190')])],
-      'KEY_UP': [
-          FixSvgKeyClosure(self.SvgFname('key-template-dark'), [('&amp;', u'\u2191')])],
-      'KEY_RIGHT': [
-          FixSvgKeyClosure(self.SvgFname('key-template-dark'), [('&amp;', u'\u2192')])],
-      'KEY_DOWN': [
-          FixSvgKeyClosure(self.SvgFname('key-template-dark'), [('&amp;', u'\u2193')])],
       'KEY_BACKSPACE': [
           FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Back'), ('BOTTOM', u'\u21fd')])],
       'KEY_ENTER': [
           FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Enter'), ('BOTTOM', u'\u23CE')])],
-      'KEY_PAGEUP': [
-          FixSvgKeyClosure(self.SvgFname('alt'), [('Alt', 'PgUp')])],
-      'KEY_PAGEDOWN': [
-          FixSvgKeyClosure(self.SvgFname('alt'), [('Alt', 'PgDn')])],
     }
 
   def CreateWindow(self):
@@ -195,6 +196,13 @@ class KeyMon:
       # Small not found, defaulting to large size
       fullname = 'svg/%s.svg' % fname
     return fullname
+
+  def NameToChar(self, name):
+    if name in NAME_TO_CHAR:
+      if self.svg_size and name in SHORT_NAME:
+        return SHORT_NAME[name]
+      return NAME_TO_CHAR[name]
+    return name
 
   def AddEvents(self):
     self.window.connect('destroy', self.Destroy)
@@ -254,17 +262,25 @@ class KeyMon:
         self.meta_image.SwitchTo('META')
       return
     if code.startswith('KEY_KP'):
-      letter = NameToChar(code[6:])
+      letter = self.NameToChar(code[6:])
       if code not in self.name_fnames:
+        if len(letter) == 1:
+          template = 'one-char-numpad-template'
+        else:
+          template = 'multi-char-numpad-template'
         self.name_fnames[code] = [
-            FixSvgKeyClosure(self.SvgFname('numpad-template'), [('&amp;', letter)])]
+            FixSvgKeyClosure(self.SvgFname(template), [('&amp;', letter)])]
       self.key_image.SwitchTo(code)
       return
     if code.startswith('KEY_'):
-      letter = NameToChar(code[4:])
+      letter = self.NameToChar(code[4:])
       if code not in self.name_fnames:
+        if len(letter) == 1:
+          template = 'one-char-template'
+        else:
+          template = 'multi-char-template'
         self.name_fnames[code] = [
-            FixSvgKeyClosure(self.SvgFname('key-template-dark'), [('&amp;', letter)])]
+            FixSvgKeyClosure(self.SvgFname(template), [('&amp;', letter)])]
       self.key_image.SwitchTo(code)
       return
 
