@@ -233,6 +233,12 @@ class KeyMon:
       print
       print 'You may need to run this as %r' % 'sudo %s' % sys.argv[0]
       sys.exit(-1)
+
+    accelgroup = gtk.AccelGroup()
+    key, modifier = gtk.accelerator_parse('<Control>q')
+    accelgroup.connect_group(key, modifier, gtk.ACCEL_VISIBLE, self.Quit)
+    self.window.add_accel_group(accelgroup)
+    
     gobject.idle_add(self.OnIdle)
 
   def ButtonPressed(self, widget, evt):
@@ -312,6 +318,9 @@ class KeyMon:
       self.mouse_image.SwitchTo('SCROLL_DN')
     return True
 
+  def Quit(self, *args):
+    self.Destroy(None)
+
   def Destroy(self, widget, data=None):
     gtk.main_quit()
 
@@ -350,7 +359,7 @@ class KeyMon:
     toggle_metakey.show()
     menu.append(toggle_metakey)
 
-    quit = gtk.MenuItem('_Quit')
+    quit = gtk.MenuItem('_Quit\tCtrl-Q')
     quit.connect_object('activate', self.Destroy, None)
     quit.show()
 
