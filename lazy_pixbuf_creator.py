@@ -125,6 +125,6 @@ class LazyPixbufCreator():
       num = float(grps.group(3))
       num = num * self.resize
       replace = grps.group(1) + grps.group(2) + str(num)
-      bytes = re_x.sub(replace, bytes)
+      bytes = re_x.sub(replace, bytes, 1)
     return bytes
 

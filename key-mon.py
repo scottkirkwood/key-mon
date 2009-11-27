@@ -257,31 +257,37 @@ class KeyMon:
       for button in self.buttons:
         button.EmptyEvent()
       return
-    if event.type == "EV_KEY" and event.value == 1:
+    if event.type == "EV_KEY" and event.value in (0, 1):
       if event.code.startswith("KEY"):
-        self.HandleKey(event.code)
+        self.HandleKey(event.code, event.value)
       elif event.code.startswith("BTN"):
         self.HandleMouseButton(event.code)
     elif event.type.startswith("EV_REL") and event.code == 'REL_WHEEL':
       self.HandleMouseScroll(event.value)
 
-  def HandleKey(self, code):
+  def _HandleKey(self, image, name, code):
+    if code == 1:
+      image.SwitchTo(name)
+    else:
+      image.SwitchToDefault()
+
+  def HandleKey(self, code, value):
     #print 'Key %s pressed' % code
     if code in self.name_fnames:
-      self.key_image.SwitchTo(code)
+      self._HandleKey(self.key_image, code, value)
       return
     if code.endswith('SHIFT'):
-      self.shift_image.SwitchTo('SHIFT')
+      self._HandleKey(self.shift_image, 'SHIFT', value)
       return
     if code.endswith('ALT'):
-      self.alt_image.SwitchTo('ALT')
+      self._HandleKey(self.alt_image, 'ALT', value)
       return
     if code.endswith('CTRL'):
-      self.ctrl_image.SwitchTo('CTRL')
+      self._HandleKey(self.ctrl_image, 'CTRL', value)
       return
     if code.endswith('META'):
       if self.enabled['META']:
-        self.meta_image.SwitchTo('META')
+        self._HandleKey(self.meta_image, 'META', value)
       return
     if code.startswith('KEY_KP'):
       letter = self.NameToChar(code[6:])
@@ -292,7 +298,7 @@ class KeyMon:
           template = 'multi-char-numpad-template'
         self.name_fnames[code] = [
             FixSvgKeyClosure(self.SvgFname(template), [('&amp;', letter)])]
-      self.key_image.SwitchTo(code)
+      self._HandleKey(self.key_image, code, value)
       return
     if code.startswith('KEY_'):
       letter = self.NameToChar(code[4:])
@@ -303,7 +309,7 @@ class KeyMon:
           template = 'multi-char-template'
         self.name_fnames[code] = [
             FixSvgKeyClosure(self.SvgFname(template), [('&amp;', letter)])]
-      self.key_image.SwitchTo(code)
+      self._HandleKey(self.key_image, code, value)
       return
 
   def HandleMouseButton(self, code):
