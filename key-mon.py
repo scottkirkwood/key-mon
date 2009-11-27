@@ -261,11 +261,11 @@ class KeyMon:
       if event.code.startswith("KEY"):
         self.HandleKey(event.code, event.value)
       elif event.code.startswith("BTN"):
-        self.HandleMouseButton(event.code)
+        self.HandleMouseButton(event.code, event.value)
     elif event.type.startswith("EV_REL") and event.code == 'REL_WHEEL':
-      self.HandleMouseScroll(event.value)
+      self.HandleMouseScroll(event.value, event.value)
 
-  def _HandleKey(self, image, name, code):
+  def _HandleEvent(self, image, name, code):
     if code == 1:
       image.SwitchTo(name)
     else:
@@ -274,20 +274,20 @@ class KeyMon:
   def HandleKey(self, code, value):
     #print 'Key %s pressed' % code
     if code in self.name_fnames:
-      self._HandleKey(self.key_image, code, value)
+      self._HandleEvent(self.key_image, code, value)
       return
     if code.endswith('SHIFT'):
-      self._HandleKey(self.shift_image, 'SHIFT', value)
+      self._HandleEvent(self.shift_image, 'SHIFT', value)
       return
     if code.endswith('ALT'):
-      self._HandleKey(self.alt_image, 'ALT', value)
+      self._HandleEvent(self.alt_image, 'ALT', value)
       return
     if code.endswith('CTRL'):
-      self._HandleKey(self.ctrl_image, 'CTRL', value)
+      self._HandleEvent(self.ctrl_image, 'CTRL', value)
       return
     if code.endswith('META'):
       if self.enabled['META']:
-        self._HandleKey(self.meta_image, 'META', value)
+        self._HandleEvent(self.meta_image, 'META', value)
       return
     if code.startswith('KEY_KP'):
       letter = self.NameToChar(code[6:])
@@ -298,7 +298,7 @@ class KeyMon:
           template = 'multi-char-numpad-template'
         self.name_fnames[code] = [
             FixSvgKeyClosure(self.SvgFname(template), [('&amp;', letter)])]
-      self._HandleKey(self.key_image, code, value)
+      self._HandleEvent(self.key_image, code, value)
       return
     if code.startswith('KEY_'):
       letter = self.NameToChar(code[4:])
@@ -309,19 +309,19 @@ class KeyMon:
           template = 'multi-char-template'
         self.name_fnames[code] = [
             FixSvgKeyClosure(self.SvgFname(template), [('&amp;', letter)])]
-      self._HandleKey(self.key_image, code, value)
+      self._HandleEvent(self.key_image, code, value)
       return
 
-  def HandleMouseButton(self, code):
+  def HandleMouseButton(self, code, value):
     if self.enabled['MOUSE']:
-      self.mouse_image.SwitchTo(code)
+      self._HandleEvent(self.mouse_image, code, value)
     return True
 
-  def HandleMouseScroll(self, dir):
+  def HandleMouseScroll(self, dir, value):
     if dir > 0:
-      self.mouse_image.SwitchTo('SCROLL_UP')
+      self._HandleEvent(self.mouse_image, 'SCROLL_UP', value)
     elif dir < 0:
-      self.mouse_image.SwitchTo('SCROLL_DN')
+      self._HandleEvent(self.mouse_image, 'SCROLL_DN', value)
     return True
 
   def Quit(self, *args):
