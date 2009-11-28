@@ -1,5 +1,5 @@
 #!/bin/bash
-VER='0.7'
+VER='0.8'
 NAME='key-mon'
 rm $NAME-$VER.zip
 cd ..
