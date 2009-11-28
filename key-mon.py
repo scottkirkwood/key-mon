@@ -18,8 +18,9 @@ import os
 import sys
 
 import evdev
-import two_state_image
 import lazy_pixbuf_creator
+import mod_mapper
+import two_state_image
 try:
   import dbus
 except:
