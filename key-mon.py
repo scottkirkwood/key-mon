@@ -259,6 +259,7 @@ class KeyMon:
       return
     if event.type == "EV_KEY" and event.value in (0, 1):
       if event.code.startswith("KEY"):
+        code_num = event.codeMaps[event.type].toNumber(event.code)
         self.HandleKey(event.code, event.value)
       elif event.code.startswith("BTN"):
         self.HandleMouseButton(event.code, event.value)
