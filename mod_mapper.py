@@ -103,8 +103,8 @@ MEDIUM_NAME = {
   'XF86MAIL': 'Mail',
   'XF86FAVORITES': 'Fav',
   'XF86MYCOMPUTER': 'MyComputer',
-  'XF86BACK': u'\u21fd',
-  'XF86FORWARD': 'Forward',
+  'XF86BACK': u'\u21d0',
+  'XF86FORWARD': u'\u21d2',
   'XF86EJECT': 'Eject',
   'XF86AUDIONEXT': 'Next',
   'XF86AUDIOPLAY': 'Play',
@@ -271,17 +271,22 @@ def ReadModMap():
 
 
 def SafelyReadModMap(fname):
-  default = 'us.kdb'
+  default = 'us.kbd'
   if fname:
     return ReadKdb(fname)
   ret = None
   try:
     ret = ReadModMap()
-    if ret:
-      return ret
   except:
     print 'Error: unable execute xmodmap, reading default %r' % fname
-  return ReadKdb(default)
+  defaults = ReadKdb(default)
+  if not ret:
+    return defaults
+  # Merge the defaults with modmap
+  for keycode in defaults:
+    if keycode not in ret:
+      ret[keycode] = defaults[keycode]
+  return ret
 
 
 if __name__ == '__main__':
