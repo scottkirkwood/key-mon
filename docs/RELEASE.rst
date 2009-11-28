@@ -1,6 +1,21 @@
 Release Notes
 =============
 
+Nov. 28 Features Added Bugs Fixed
+---------------------------------
+* Different types of keyboards are supported
+* You can force key-mon to use your keymap names, more flexible and you can internationalize.
+
+Nov. 25 Features Added
+----------------------
+* Ctrl-Q to quit
+* Smaller buttons don't go on two lines
+* Use smaller svg files if they exist, more flexible.
+
+Nov. 24 Resizing Feature
+------------------------
+* Ability to resize the window at the command line.
+
 Nov. 23 Bug fixes, features added
 ---------------------------------
 
