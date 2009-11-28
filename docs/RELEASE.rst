@@ -4,7 +4,7 @@ Release Notes
 Nov. 28 Features Added Bugs Fixed
 ---------------------------------
 * Different types of keyboards are supported
-* 
+* You can force key-mon to use your keymap names, more flexible and you can internationalize.
 
 Nov. 25 Features Added
 ----------------------
