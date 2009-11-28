@@ -19,7 +19,7 @@ MEDIUM_NAME = {
   'BRACKETLEFT': '[',
   'BRACKETRIGHT': ']',
   'RETURN': 'Return',
-  'CONTROL_L': 'Control',
+  'CONTROL_L': 'Ctrl',
   'SEMICOLON': ';',
   'APOSTROPHE': '\'',
   'GRAVE': '`',
@@ -33,39 +33,38 @@ MEDIUM_NAME = {
   'ALT_L': 'Alt',
   'SPACE': 'Space',
   'MULTI_KEY': 'Multi',
-  'NUM_LOCK': 'NumLock',
-  'SCROLL_LOCK': 'ScrollLock',
-  'KP_HOME': 'Home',
-  'KP_UP': '\u2191',
-  'KP_PRIOR': u'\u2190',
+  'NUM_LOCK': 'Num',
+  'SCROLL_LOCK': 'Scrl',
+  'KP_HOME': '7',
+  'KP_UP': '8',
+  'KP_PRIOR': '9',
   'KP_SUBTRACT': '-',
-  'KP_LEFT': u'\u2190',
-  'KP_BEGIN': 'Begin',
-  'KP_RIGHT': u'\u2192',
-  'KP_ADD': 'Add',
-  'KP_END': 'End',
-  'KP_DOWN': u'\u2193',
-  'KP_NEXT': 'Next',
-  'KP_INSERT': 'Insert',
-  'KP_DELETE': 'Delete',
-  'ISO_LEVEL3_SHIFT': 'L3 Shift',
+  'KP_LEFT': '4',
+  'KP_BEGIN': '5',
+  'KP_RIGHT': '6',
+  'KP_ADD': '+',
+  'KP_END': '1',
+  'KP_DOWN': '2',
+  'KP_NEXT': '3',
+  'KP_INSERT': '0',
+  'KP_DELETE': '.',
+  'ISO_LEVEL3_SHIFT': 'Alt',  # Right Alt
   'LESS': '<',
-  'KP_ENTER': 'Enter',
-  'CONTROL_R': 'Control',
+  'KP_ENTER': u'\u23CE',
+  'CONTROL_R': 'Ctrl',
   'KP_DIVIDE': '/',
   'PRINT': 'Print',
-  'ISO_LEVEL3_SHIFT': 'L3 Shift',
   'LINEFEED': 'Lf',
   'HOME': 'Home',
-  'UP': '\u2191',
-  'PRIOR': 'Prior',
+  'UP': u'\u2191',
+  'PRIOR': 'PgUp',
   'LEFT': u'\u2190',
   'RIGHT': u'\u2192',
   'END': 'End',
   'DOWN': u'\u2193',
-  'NEXT': 'Next',
-  'INSERT': 'Insert',
-  'DELETE': 'Delete',
+  'NEXT': 'PgDn',
+  'INSERT': 'Ins',
+  'DELETE': 'Del',
   'XF86AUDIOMUTE': 'Mute',
   'XF86AUDIOLOWERVOLUME': 'Vol+',
   'XF86AUDIORAISEVOLUME': 'Vol-',
@@ -158,22 +157,12 @@ MEDIUM_NAME = {
 SHORT_NAME = {
   'BACKSPACE': u'\u21fd',
   'RETURN': u'\u23CE',
-  'CONTROL_L': 'Ctrl',
+  'CONTROL_L': 'Ctl',
   'SHIFT_L': 'Shft',
   'SHIFT_R': 'Shft',
   'SPACE': 'Spc',
   'MULTI_KEY': 'Mul',
-  'NUM_LOCK': 'Num',
-  'SCROLL_LOCK': 'SLck',
-  'KP_HOME': 'Hm',
-  'KP_DOWN': 'Dn',
-  'KP_INSERT': 'Ins',
-  'KP_DELETE': 'Del',
-  'ISO_LEVEL3_SHIFT': 'Shft',
-  'KP_ENTER': u'\u23CE',
-  'CONTROL_R': 'Ctrl',
   'PRINT': 'Prt',
-  'ISO_LEVEL3_SHIFT': 'Shft',
   'LINEFEED': 'Lf',
   'HOME': 'Hm',
   'INSERT': 'Ins',
@@ -193,12 +182,16 @@ SHORT_NAME = {
   'XF86CUT': 'Cut',
   'XF86MENUKB': 'MenuKb',
 }
+
+
 def mod_map_args():
   return ['xmodmap', '-display', ':0', '-pk']
+
 
 def run_cmd(args):
   """Run the command and collect the output."""
   return subprocess.Popen(args, stdout=subprocess.PIPE).communicate()[0]
+
 
 def parse_modmap(lines):
   re_range = re.compile(r'KeyCodes range from (\d+) to')
@@ -226,8 +219,10 @@ def parse_modmap(lines):
       ret[code] = (my_keyname, alias)
   return ret
 
+
 def ReadKdb(fname):
   return ParseKdb(codecs.open(fname, 'r', 'utf-8').read())
+
 
 def ParseKdb(text):
   re_line = re.compile(r'(\d+) (\S+) (\S+)\s?(\S*)')
@@ -271,6 +266,7 @@ def ReadModMap():
       short_name = None
     ret[code] = (key, medium_name, short_name)
   return ret
+
 
 def SafelyReadModMap(fname):
   default = 'us.kdb'
