@@ -167,13 +167,6 @@ class KeyMon:
       fullname = 'svg/%s.svg' % fname
     return fullname
 
-  def NameToChar(self, name):
-    if name in NAME_TO_CHAR:
-      if self.scale < 1.0 and name in SHORT_NAME:
-        return SHORT_NAME[name]
-      return NAME_TO_CHAR[name]
-    return name
-
   def AddEvents(self):
     self.window.connect('destroy', self.Destroy)
     self.window.connect('button-press-event', self.ButtonPressed)
@@ -227,9 +220,10 @@ class KeyMon:
       image.SwitchToDefault()
 
   def HandleKey(self, scan_code, value):
-    #print 'Key %s pressed' % code
     code, medium_name, short_name = self.modmap[scan_code]
-    print code
+    if self.scale < 1.0 and short_name:
+      medium_name = short_name
+    #print 'Key %s pressed' % code
     if code in self.name_fnames:
       self._HandleEvent(self.key_image, code, value)
       return

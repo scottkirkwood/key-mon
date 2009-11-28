@@ -171,6 +171,8 @@ SHORT_NAME = {
   'XF86AUDIOLOWERVOLUME': 'V-',
   'XF86AUDIORAISEVOLUME': 'V+',
   'XF86POWEROFF': 'Off',
+  'PRIOR': 'PgU',
+  'NEXT': 'PgD',
   'PAUSE': 'Ps',
   'SUPER_L': 'Spr',
   'MULTI_KEY': 'Mul',
