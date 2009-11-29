@@ -48,7 +48,7 @@ def FixSvgKeyClosure(fname, from_tos):
 
 class KeyMon:
   def __init__(self, scale, meta, kdb_file):
-    bus = dbus.SystemBus()
+    self.pathname = os.path.dirname(sys.argv[0])
     self.scale = scale
     if scale < 1.0:
       self.svg_size = '-small'
@@ -60,6 +60,7 @@ class KeyMon:
     }
     self.modmap = mod_mapper.SafelyReadModMap(kdb_file)
 
+    bus = dbus.SystemBus()
     hal_obj = bus.get_object ("org.freedesktop.Hal", "/org/freedesktop/Hal/Manager")
     hal = dbus.Interface(hal_obj, "org.freedesktop.Hal.Manager")
     self.GetKeyboardDevices(bus, hal)
@@ -161,7 +162,7 @@ class KeyMon:
     self.window.show()
 
   def SvgFname(self, fname):
-    fullname = 'svg/%s%s.svg' % (fname, self.svg_size)
+    fullname = os.path.join(self.pathname, 'svg/%s%s.svg' % (fname, self.svg_size))
     if self.svg_size and not os.path.exists(fullname):
       # Small not found, defaulting to large size
       fullname = 'svg/%s.svg' % fname
@@ -177,6 +178,8 @@ class KeyMon:
                                        self.mouse_filenames)
     except OSError, e:
       logging.exception(e)
+      if str(e) == 'Permission denied':
+        gksudo()
       print
       print 'You may need to run this as %r' % 'sudo %s' % sys.argv[0]
       sys.exit(-1)
