@@ -49,16 +49,17 @@ def FixSvgKeyClosure(fname, from_tos):
   return FixSvgKey
 
 class KeyMon:
-  def __init__(self, scale, meta, kdb_file):
+  def __init__(self, options):
+    self.options = options
     self.pathname = os.path.dirname(sys.argv[0])
-    self.scale = scale
+    self.scale = self.options.scale
     if scale < 1.0:
       self.svg_size = '-small'
     else:
       self.svg_size = ''
     self.enabled = {
         'MOUSE': True,
-        'META': meta,
+        'META': self.options.meta,
     }
     
     self.finder = InputFinder()
@@ -67,7 +68,7 @@ class KeyMon:
     self.finder.connect("mouse-found", self.DeviceFound)
     self.finder.connect("mouse-lost", self.DeviceLost)
     
-    self.modmap = mod_mapper.SafelyReadModMap(kdb_file)
+    self.modmap = mod_mapper.SafelyReadModMap(self.options.kdb_file)
     
     self.name_fnames = self.CreateNamesToFnames()
     self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames, self.scale)
@@ -100,15 +101,10 @@ class KeyMon:
 
       'SHIFT': [self.SvgFname('shift')],
       'SHIFT_EMPTY': [self.SvgFname('shift'), self.SvgFname('whiteout-72')],
-      'CTRL': [
-          FixSvgKeyClosure(self.SvgFname('alt'), [('Alt', 'Ctrl')])],
-      'CTRL_EMPTY': [
-          FixSvgKeyClosure(self.SvgFname('alt'), [('Alt', 'Ctrl')]), self.SvgFname('whiteout-58')],
-      'META': [
-          FixSvgKeyClosure(self.SvgFname('alt'), [('Alt', '')]), self.SvgFname('meta')],
-      'META_EMPTY': [
-          FixSvgKeyClosure(self.SvgFname('alt'), [('Alt', '')]), 
-              self.SvgFname('meta'), self.SvgFname('whiteout-58')],
+      'CTRL': [self.SvgFname('ctrl')],
+      'CTRL_EMPTY': [self.SvgFname('ctrl'), self.SvgFname('whiteout-58')],
+      'META': [self.SvgFname('meta'), self.SvgFname('meta')],
+      'META_EMPTY': [self.SvgFname('meta'), self.SvgFname('whiteout-58')],
       'ALT': [self.SvgFname('alt')],
       'ALT_EMPTY': [self.SvgFname('alt'), self.SvgFname('whiteout-58')],
       'KEY_EMPTY': [
@@ -182,10 +178,10 @@ class KeyMon:
     self.window.show()
 
   def SvgFname(self, fname):
-    fullname = os.path.join(self.pathname, 'svg/%s%s.svg' % (fname, self.svg_size))
+    fullname = os.path.join(self.pathname, 'themes/%s/%s%s.svg' % (self.options.theme, fname, self.svg_size))
     if self.svg_size and not os.path.exists(fullname):
       # Small not found, defaulting to large size
-      fullname = 'svg/%s.svg' % fname
+      fullname = 'themes/%s/%s.svg' % (self.options.theme, fname)
     return fullname
 
   def AddEvents(self):
@@ -401,13 +397,12 @@ if __name__ == "__main__":
                     help='Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is half the size.')
   parser.add_option('--kdbfile', dest='kdb_file', default=None,
                     help='Use this kbd filename instead running xmodmap.')
+  parser.add_option('-t', '--theme', dest='theme', default='classic', help='The theme to use when drawing status images')
   scale = 1.0
   (options, args) = parser.parse_args()
   if options.smaller:
-    scale = 0.75
+    options.scale = 0.75
   elif options.larger:
-    scale = 1.25
-  elif options.scale:
-    scale = options.scale
-  keymon = KeyMon(scale, options.meta, options.kdb_file)
+    options.scale = 1.25
+  keymon = KeyMon(options)
   gtk.main()
