@@ -6,8 +6,10 @@
 __author__ = 'scott@forusers.com (scottkirkwood)'
 
 import codecs
-import subprocess
+import os
 import re
+import subprocess
+import sys
 
 MEDIUM_NAME = {
   'REDO': 'Redo',
@@ -271,6 +273,7 @@ def ReadModMap():
 
 
 def SafelyReadModMap(fname):
+  pathname = os.path.dirname(sys.argv[0])
   default = 'us.kbd'
   if fname:
     return ReadKdb(fname)
@@ -279,7 +282,7 @@ def SafelyReadModMap(fname):
     ret = ReadModMap()
   except:
     print 'Error: unable execute xmodmap, reading default %r' % fname
-  defaults = ReadKdb(default)
+  defaults = ReadKdb(os.path.join(pathname, default))
   if not ret:
     return defaults
   # Merge the defaults with modmap
