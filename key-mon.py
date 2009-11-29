@@ -27,6 +27,8 @@ except:
   print "Unable to import dbus interface, quitting"
   sys.exit(-1)
 
+from devices import InputFinder
+
 def FixSvgKeyClosure(fname, from_tos):
   """Create a closure to modify the key.
   Args:
@@ -58,16 +60,34 @@ class KeyMon:
         'MOUSE': True,
         'META': meta,
     }
+    
+    self.finder = InputFinder()
+    self.finder.connect("keyboard-found", self.DeviceFound)
+    self.finder.connect("keyboard-lost", self.DeviceLost)
+    self.finder.connect("mouse-found", self.DeviceFound)
+    self.finder.connect("mouse-lost", self.DeviceLost)
+    
     self.modmap = mod_mapper.SafelyReadModMap(kdb_file)
-
-    bus = dbus.SystemBus()
-    hal_obj = bus.get_object ("org.freedesktop.Hal", "/org/freedesktop/Hal/Manager")
-    hal = dbus.Interface(hal_obj, "org.freedesktop.Hal.Manager")
-    self.GetKeyboardDevices(bus, hal)
-    self.GetMouseDevices(bus, hal)
+    
     self.name_fnames = self.CreateNamesToFnames()
     self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames, self.scale)
     self.CreateWindow()
+
+  def DeviceFound(self, finder, device):
+    dev = evdev.Device(device.block)
+    self.devices.devices.append(dev)
+    self.devices.fds.append(dev.fd)
+  
+  def DeviceLost(self, finder, device):
+    dev = None
+    for x in self.devices.devices:
+      if x.filename == device.block:
+        dev = x
+        break
+    
+    if dev:
+      self.devices.fds.remove(dev.fd)
+      self.devices.devices.remove(dev)
 
   def CreateNamesToFnames(self):
     ftn = {
@@ -174,8 +194,9 @@ class KeyMon:
     self.event_box.connect('button_release_event', self.RightClickHandler)
 
     try:
-      self.devices = evdev.DeviceGroup(self.keyboard_filenames +
-                                       self.mouse_filenames)
+      nodes = [x.block for x in self.finder.keyboards.values()] + \
+              [x.block for x in self.finder.mice.values()]
+      self.devices = evdev.DeviceGroup(nodes)
     except OSError, e:
       logging.exception(e)
       if str(e) == 'Permission denied':
