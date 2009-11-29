@@ -18,8 +18,9 @@ import os
 import sys
 
 import evdev
-import two_state_image
 import lazy_pixbuf_creator
+import mod_mapper
+import two_state_image
 try:
   import dbus
 except:
@@ -47,64 +48,14 @@ def FixSvgKeyClosure(fname, from_tos):
 
   return FixSvgKey
 
-
-NAME_TO_CHAR = {
-  'APOSTROPHE': '\'',
-  'ASTERISK': '*',
-  'BACKSLASH': '\\',
-  'BACKSPACE': u'\u21fd',
-  'CAPSLOCK': 'Caps',
-  'COMMA': ',',
-  'DELETE': 'Del',
-  'DOT': '.',
-  'DOWN': u'\u2193',
-  'END': 'End',
-  'ENTER': u'\u23CE',
-  'EQUAL': '=',
-  'ESC': 'Esc',
-  'GRAVE': '`',
-  'HOME': 'Home',
-  'INSERT': 'Ins',
-  'LEFT': u'\u2190',
-  'LEFTBRACE': '[',
-  'LEFTPAREN': '(',
-  'MINUS': '-',
-  'PAGEDOWN': 'PgDn',
-  'PAGEUP': 'PgUp',
-  'PLUS': '+',
-  'RIGHT': u'\u2192',
-  'RIGHTBRACE': ']',
-  'RIGHTPAREN': ')',
-  'SEMICOLON': ';',
-  'SLASH': '/',
-  'UP': u'\u2191',
-  'NUMLOCK': 'NumLock',
-}
-
-SHORT_NAME = {
-  'CAPSLOCK': 'Cps',
-  'HOME': 'Hm',
-  'PAGEDOWN': 'PgD',
-  'PAGEUP': 'PgU',
-  'NUMLOCK': 'Num',
-  #'LEFT': u'\u21D0',
-  #'UP': u'\u21D1',
-  #'RIGHT': u'\u21D2',
-  #'DOWN': u'\u21D3',
-}
-
-
 class KeyMon:
-  def __init__(self, scale, meta):
-    bus = dbus.SystemBus()
+  def __init__(self, scale, meta, kdb_file):
+    self.pathname = os.path.dirname(sys.argv[0])
     self.scale = scale
     if scale < 1.0:
       self.svg_size = '-small'
     else:
       self.svg_size = ''
-    hal_obj = bus.get_object ("org.freedesktop.Hal", "/org/freedesktop/Hal/Manager")
-    hal = dbus.Interface(hal_obj, "org.freedesktop.Hal.Manager")
-
     self.enabled = {
         'MOUSE': True,
         'META': meta,
@@ -115,6 +66,8 @@ class KeyMon:
     self.finder.connect("keyboard-lost", self.DeviceLost)
     self.finder.connect("mouse-found", self.DeviceFound)
     self.finder.connect("mouse-lost", self.DeviceLost)
+    
+    self.modmap = mod_mapper.SafelyReadModMap(kdb_file)
     
     self.name_fnames = self.CreateNamesToFnames()
     self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames, self.scale)
@@ -143,7 +96,7 @@ class KeyMon:
       'BTN_RIGHT': [self.SvgFname('mouse'), self.SvgFname('right-mouse')],
       'BTN_MIDDLE': [self.SvgFname('mouse'), self.SvgFname('middle-mouse')],
       'SCROLL_UP': [self.SvgFname('mouse'), self.SvgFname('scroll-up-mouse')],
-      'SCROLL_DN': [self.SvgFname('mouse'), self.SvgFname('scroll-dn-mouse')],
+      'SCROLL_DOWN': [self.SvgFname('mouse'), self.SvgFname('scroll-dn-mouse')],
 
       'SHIFT': [self.SvgFname('shift')],
       'SHIFT_EMPTY': [self.SvgFname('shift'), self.SvgFname('whiteout-72')],
@@ -170,7 +123,7 @@ class KeyMon:
             FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Tab'), ('BOTTOM', u'\u21B9')])],
         'KEY_BACKSPACE': [
             FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Back'), ('BOTTOM', u'\u21fd')])],
-        'KEY_ENTER': [
+        'KEY_RETURN': [
             FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Enter'), ('BOTTOM', u'\u23CE')])],
       })
     else:
@@ -181,7 +134,7 @@ class KeyMon:
             FixSvgKeyClosure(self.SvgFname('one-line-wide'), [('&amp;', 'Tab')])],
         'KEY_BACKSPACE': [
             FixSvgKeyClosure(self.SvgFname('one-line-wide'), [('&amp;', 'Back')])],
-        'KEY_ENTER': [
+        'KEY_RETURN': [
             FixSvgKeyClosure(self.SvgFname('one-line-wide'), [('&amp;', 'Enter')])],
       })
     return ftn
@@ -229,18 +182,11 @@ class KeyMon:
     self.window.show()
 
   def SvgFname(self, fname):
-    fullname = 'svg/%s%s.svg' % (fname, self.svg_size)
+    fullname = os.path.join(self.pathname, 'svg/%s%s.svg' % (fname, self.svg_size))
     if self.svg_size and not os.path.exists(fullname):
       # Small not found, defaulting to large size
       fullname = 'svg/%s.svg' % fname
     return fullname
-
-  def NameToChar(self, name):
-    if name in NAME_TO_CHAR:
-      if self.scale < 1.0 and name in SHORT_NAME:
-        return SHORT_NAME[name]
-      return NAME_TO_CHAR[name]
-    return name
 
   def AddEvents(self):
     self.window.connect('destroy', self.Destroy)
@@ -253,6 +199,8 @@ class KeyMon:
       self.devices = evdev.DeviceGroup(nodes)
     except OSError, e:
       logging.exception(e)
+      if str(e) == 'Permission denied':
+        gksudo()
       print
       print 'You may need to run this as %r' % 'sudo %s' % sys.argv[0]
       sys.exit(-1)
@@ -282,7 +230,8 @@ class KeyMon:
       return
     if event.type == "EV_KEY" and event.value in (0, 1):
       if event.code.startswith("KEY"):
-        self.HandleKey(event.code, event.value)
+        code_num = event.codeMaps[event.type].toNumber(event.code)
+        self.HandleKey(code_num, event.value)
       elif event.code.startswith("BTN"):
         self.HandleMouseButton(event.code, event.value)
     elif event.type.startswith("EV_REL") and event.code == 'REL_WHEEL':
@@ -294,37 +243,37 @@ class KeyMon:
     else:
       image.SwitchToDefault()
 
-  def HandleKey(self, code, value):
+  def HandleKey(self, scan_code, value):
+    code, medium_name, short_name = self.modmap[scan_code]
+    if self.scale < 1.0 and short_name:
+      medium_name = short_name
     #print 'Key %s pressed' % code
     if code in self.name_fnames:
       self._HandleEvent(self.key_image, code, value)
       return
-    if code.endswith('SHIFT'):
+    if code.startswith('KEY_SHIFT'):
       self._HandleEvent(self.shift_image, 'SHIFT', value)
       return
-    if code.endswith('ALT'):
+    if code.startswith('KEY_ALT') or code == 'KEY_ISO_LEVEL3_SHIFT':
       self._HandleEvent(self.alt_image, 'ALT', value)
       return
-    if code.endswith('CTRL'):
+    if code.startswith('KEY_CONTROL'):
       self._HandleEvent(self.ctrl_image, 'CTRL', value)
       return
-    if code.endswith('META'):
+    if code.startswith('KEY_SUPER') or code == 'KEY_MULTI_KEY':
       if self.enabled['META']:
         self._HandleEvent(self.meta_image, 'META', value)
       return
     if code.startswith('KEY_KP'):
-      letter = self.NameToChar(code[6:])
+      letter = medium_name
       if code not in self.name_fnames:
-        if len(letter) == 1:
-          template = 'one-char-numpad-template'
-        else:
-          template = 'multi-char-numpad-template'
+        template = 'one-char-numpad-template'
         self.name_fnames[code] = [
             FixSvgKeyClosure(self.SvgFname(template), [('&amp;', letter)])]
       self._HandleEvent(self.key_image, code, value)
       return
     if code.startswith('KEY_'):
-      letter = self.NameToChar(code[4:])
+      letter = medium_name
       if code not in self.name_fnames:
         if len(letter) == 1:
           template = 'one-char-template'
@@ -342,9 +291,10 @@ class KeyMon:
 
   def HandleMouseScroll(self, dir, value):
     if dir > 0:
-      self._HandleEvent(self.mouse_image, 'SCROLL_UP', value)
+      self._HandleEvent(self.mouse_image, 'SCROLL_UP', 1)
     elif dir < 0:
-      self._HandleEvent(self.mouse_image, 'SCROLL_DN', value)
+      self._HandleEvent(self.mouse_image, 'SCROLL_DOWN', 1)
+    self.mouse_image.SwitchToDefault()
     return True
 
   def Quit(self, *args):
@@ -449,6 +399,8 @@ if __name__ == "__main__":
                     help='Show the meta (windows) key.')
   parser.add_option('--scale', dest='scale', default=1.0, type='float',
                     help='Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is half the size.')
+  parser.add_option('--kdbfile', dest='kdb_file', default=None,
+                    help='Use this kbd filename instead running xmodmap.')
   scale = 1.0
   (options, args) = parser.parse_args()
   if options.smaller:
@@ -457,5 +409,5 @@ if __name__ == "__main__":
     scale = 1.25
   elif options.scale:
     scale = options.scale
-  keymon = KeyMon(scale, options.meta)
+  keymon = KeyMon(scale, options.meta, options.kdb_file)
   gtk.main()

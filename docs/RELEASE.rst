@@ -1,6 +1,26 @@
 Release Notes
 =============
 
+Nov. 28 v 0.9
+-------------
+* Created a key-mon script to run the program with gksudo if required.
+* Support for running from another directory.
+
+Nov. 28 v 0.9 Features Added Bugs Fixed
+---------------------------------
+* Different types of keyboards are supported
+* You can force key-mon to use your keymap names, more flexible and you can internationalize.
+
+Nov. 25 Features Added
+----------------------
+* Ctrl-Q to quit
+* Smaller buttons don't go on two lines
+* Use smaller svg files if they exist, more flexible.
+
+Nov. 24 Resizing Feature
+------------------------
+* Ability to resize the window at the command line.
+
 Nov. 23 Bug fixes, features added
 ---------------------------------
 
