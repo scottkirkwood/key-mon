@@ -129,6 +129,8 @@ class KeyMon:
             FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Back'), ('BOTTOM', u'\u21fd')])],
         'KEY_RETURN': [
             FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Enter'), ('BOTTOM', u'\u23CE')])],
+        'KEY_CAPS_LOCK': [
+            FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Capslock'), ('BOTTOM', '')])],
       })
     else:
       ftn.update({
@@ -140,6 +142,8 @@ class KeyMon:
             FixSvgKeyClosure(self.SvgFname('one-line-wide'), [('&amp;', 'Back')])],
         'KEY_RETURN': [
             FixSvgKeyClosure(self.SvgFname('one-line-wide'), [('&amp;', 'Enter')])],
+        'KEY_CAPS_LOCK': [
+            FixSvgKeyClosure(self.SvgFname('one-line-wide'), [('&amp;', 'Capslck')])],
       })
     return ftn
 
