@@ -47,7 +47,14 @@ def FixSvgKeyClosure(fname, from_tos):
   return FixSvgKey
 
 class KeyMon:
-  def __init__(self, scale, meta, kdb_file):
+  def __init__(self, scale, meta, kbd_file, emulate_middle):
+    """Create the Key Mon window.
+    Args:
+      scale: float 1.0 is default which means normal size.
+      meta: boolean show the meta (windows key)
+      kbd_file: string Use the kbd file given.
+      emulate_middle: Emulate the middle mouse button.
+    """
     self.pathname = os.path.dirname(sys.argv[0])
     self.scale = scale
     if scale < 1.0:
@@ -58,7 +65,8 @@ class KeyMon:
         'MOUSE': True,
         'META': meta,
     }
-    self.modmap = mod_mapper.SafelyReadModMap(kdb_file)
+    self.emulate_middle = emulate_middle
+    self.modmap = mod_mapper.SafelyReadModMap(kbd_file)
 
     bus = dbus.SystemBus()
     hal_obj = bus.get_object ("org.freedesktop.Hal", "/org/freedesktop/Hal/Manager")
@@ -269,6 +277,9 @@ class KeyMon:
 
   def HandleMouseButton(self, code, value):
     if self.enabled['MOUSE']:
+      if self.emulate_middle and ((self.mouse_image.current == 'BTN_LEFT' and code == 'BTN_RIGHT') or
+         (self.mouse_image.current == 'BTN_RIGHT' and code == 'BTN_LEFT')):
+        code = 'BTN_MIDDLE'
       self._HandleEvent(self.mouse_image, code, value)
     return True
 
@@ -382,8 +393,11 @@ if __name__ == "__main__":
                     help='Show the meta (windows) key.')
   parser.add_option('--scale', dest='scale', default=1.0, type='float',
                     help='Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is half the size.')
-  parser.add_option('--kdbfile', dest='kdb_file', default=None,
+  parser.add_option('--kbdfile', dest='kbd_file', default=None,
                     help='Use this kbd filename instead running xmodmap.')
+  parser.add_option('--emulate-middle', dest='emulate_middle', action="store_true",
+                    help=('If you presse the left, and right mouse buttons at the same time, '
+                          'show it as a middle mouse button. '))
   scale = 1.0
   (options, args) = parser.parse_args()
   if options.smaller:
@@ -392,5 +406,5 @@ if __name__ == "__main__":
     scale = 1.25
   elif options.scale:
     scale = options.scale
-  keymon = KeyMon(scale, options.meta, options.kdb_file)
+  keymon = KeyMon(scale, options.meta, options.kbd_file, options.emulate_middle)
   gtk.main()
