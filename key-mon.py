@@ -27,6 +27,8 @@ except:
   print "Unable to import dbus interface, quitting"
   sys.exit(-1)
 
+from devices import InputFinder
+
 def FixSvgKeyClosure(fname, from_tos):
   """Create a closure to modify the key.
   Args:
@@ -47,35 +49,54 @@ def FixSvgKeyClosure(fname, from_tos):
   return FixSvgKey
 
 class KeyMon:
-  def __init__(self, scale, meta, kbd_file, emulate_middle):
+  def __init__(self, options):
     """Create the Key Mon window.
-    Args:
+    Options dict:
       scale: float 1.0 is default which means normal size.
       meta: boolean show the meta (windows key)
       kbd_file: string Use the kbd file given.
       emulate_middle: Emulate the middle mouse button.
+      theme: Name of the theme to use to draw keys
     """
+    self.options = options
     self.pathname = os.path.dirname(sys.argv[0])
-    self.scale = scale
+    self.scale = self.options.scale
     if scale < 1.0:
       self.svg_size = '-small'
     else:
       self.svg_size = ''
     self.enabled = {
         'MOUSE': True,
-        'META': meta,
+        'META': self.options.meta,
     }
-    self.emulate_middle = emulate_middle
-    self.modmap = mod_mapper.SafelyReadModMap(kbd_file)
-
-    bus = dbus.SystemBus()
-    hal_obj = bus.get_object ("org.freedesktop.Hal", "/org/freedesktop/Hal/Manager")
-    hal = dbus.Interface(hal_obj, "org.freedesktop.Hal.Manager")
-    self.GetKeyboardDevices(bus, hal)
-    self.GetMouseDevices(bus, hal)
+    self.emulate_middle = options.emulate_middle
+    self.modmap = mod_mapper.SafelyReadModMap(options.kbd_file)
+    
+    self.finder = InputFinder()
+    self.finder.connect("keyboard-found", self.DeviceFound)
+    self.finder.connect("keyboard-lost", self.DeviceLost)
+    self.finder.connect("mouse-found", self.DeviceFound)
+    self.finder.connect("mouse-lost", self.DeviceLost)
+    
     self.name_fnames = self.CreateNamesToFnames()
     self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames, self.scale)
     self.CreateWindow()
+
+  def DeviceFound(self, finder, device):
+    dev = evdev.Device(device.block)
+    self.devices.devices.append(dev)
+    self.devices.fds.append(dev.fd)
+  
+  def DeviceLost(self, finder, device):
+    dev = None
+    for x in self.devices.devices:
+      if x.filename == device.block:
+        dev = x
+        break
+    
+    if dev:
+      self.devices.fds.remove(dev.fd)
+      self.devices.devices.remove(dev)
 
   def CreateNamesToFnames(self):
     ftn = {
@@ -88,15 +109,10 @@ class KeyMon:
 
       'SHIFT': [self.SvgFname('shift')],
       'SHIFT_EMPTY': [self.SvgFname('shift'), self.SvgFname('whiteout-72')],
-      'CTRL': [
-          FixSvgKeyClosure(self.SvgFname('alt'), [('Alt', 'Ctrl')])],
-      'CTRL_EMPTY': [
-          FixSvgKeyClosure(self.SvgFname('alt'), [('Alt', 'Ctrl')]), self.SvgFname('whiteout-58')],
-      'META': [
-          FixSvgKeyClosure(self.SvgFname('alt'), [('Alt', '')]), self.SvgFname('meta')],
-      'META_EMPTY': [
-          FixSvgKeyClosure(self.SvgFname('alt'), [('Alt', '')]), 
-              self.SvgFname('meta'), self.SvgFname('whiteout-58')],
+      'CTRL': [self.SvgFname('ctrl')],
+      'CTRL_EMPTY': [self.SvgFname('ctrl'), self.SvgFname('whiteout-58')],
+      'META': [self.SvgFname('meta'), self.SvgFname('meta')],
+      'META_EMPTY': [self.SvgFname('meta'), self.SvgFname('whiteout-58')],
       'ALT': [self.SvgFname('alt')],
       'ALT_EMPTY': [self.SvgFname('alt'), self.SvgFname('whiteout-58')],
       'KEY_EMPTY': [
@@ -170,10 +186,10 @@ class KeyMon:
     self.window.show()
 
   def SvgFname(self, fname):
-    fullname = os.path.join(self.pathname, 'svg/%s%s.svg' % (fname, self.svg_size))
+    fullname = os.path.join(self.pathname, 'themes/%s/%s%s.svg' % (self.options.theme, fname, self.svg_size))
     if self.svg_size and not os.path.exists(fullname):
       # Small not found, defaulting to large size
-      fullname = 'svg/%s.svg' % fname
+      fullname = 'themes/%s/%s.svg' % (self.options.theme, fname)
     return fullname
 
   def AddEvents(self):
@@ -182,8 +198,9 @@ class KeyMon:
     self.event_box.connect('button_release_event', self.RightClickHandler)
 
     try:
-      self.devices = evdev.DeviceGroup(self.keyboard_filenames +
-                                       self.mouse_filenames)
+      nodes = [x.block for x in self.finder.keyboards.values()] + \
+              [x.block for x in self.finder.mice.values()]
+      self.devices = evdev.DeviceGroup(nodes)
     except OSError, e:
       logging.exception(e)
       if str(e) == 'Permission denied':
@@ -398,13 +415,12 @@ if __name__ == "__main__":
   parser.add_option('--emulate-middle', dest='emulate_middle', action="store_true",
                     help=('If you presse the left, and right mouse buttons at the same time, '
                           'show it as a middle mouse button. '))
+  parser.add_option('-t', '--theme', dest='theme', default='classic', help='The theme to use when drawing status images')
   scale = 1.0
   (options, args) = parser.parse_args()
   if options.smaller:
-    scale = 0.75
+    options.scale = 0.75
   elif options.larger:
-    scale = 1.25
-  elif options.scale:
-    scale = options.scale
-  keymon = KeyMon(scale, options.meta, options.kbd_file, options.emulate_middle)
+    options.scale = 1.25
+  keymon = KeyMon(options)
   gtk.main()
