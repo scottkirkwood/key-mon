@@ -150,6 +150,7 @@ class KeyMon:
     width, height = 308 * self.scale, 48 * self.scale
     self.window.set_default_size(int(width), int(height))
     self.window.set_decorated(False)
+    self.window.set_opacity(0.1)
     self.window.set_keep_above(True)
 
     self.event_box = gtk.EventBox()
