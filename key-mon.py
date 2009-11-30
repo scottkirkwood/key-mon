@@ -214,7 +214,7 @@ class KeyMon:
     key, modifier = gtk.accelerator_parse('<Control>q')
     accelgroup.connect_group(key, modifier, gtk.ACCEL_VISIBLE, self.Quit)
     self.window.add_accel_group(accelgroup)
-    
+
     gobject.idle_add(self.OnIdle)
 
   def ButtonPressed(self, widget, evt):
@@ -256,7 +256,7 @@ class KeyMon:
       return
     if self.scale < 1.0 and short_name:
       medium_name = short_name
-    # print 'Key %s pressed = %r' % (code, medium_name)
+    #print 'Key %s pressed = %r' % (code, medium_name)
     if code in self.name_fnames:
       self._HandleEvent(self.key_image, code, value)
       return
