@@ -94,6 +94,7 @@ class Device(BaseDevice):
     """An abstract input device attached to a Linux evdev device node"""
     def __init__(self, filename):
         BaseDevice.__init__(self)
+        self.filename = filename
         self.fd = os.open(filename, os.O_RDONLY | os.O_NONBLOCK)
         self.packetSize = Event.get_format_size()
         self.readMetadata()        
@@ -153,9 +154,12 @@ class DeviceGroup:
         r, w, x = select.select(self.fds, [], [], 0.1)
         for fd in self.fds:
             if fd in r:
-                buffer = os.read(fd, self.packetSize)
-                event = Event(unpack=buffer)
-                return event
+                try:
+                    buffer = os.read(fd, self.packetSize)
+                    event = Event(unpack=buffer)
+                    return event
+                except OSError:
+                    pass
 
         return None
         
