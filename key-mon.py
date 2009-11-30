@@ -50,6 +50,14 @@ def FixSvgKeyClosure(fname, from_tos):
 
 class KeyMon:
   def __init__(self, options):
+    """Create the Key Mon window.
+    Options dict:
+      scale: float 1.0 is default which means normal size.
+      meta: boolean show the meta (windows key)
+      kbd_file: string Use the kbd file given.
+      emulate_middle: Emulate the middle mouse button.
+      theme: Name of the theme to use to draw keys
+    """
     self.options = options
     self.pathname = os.path.dirname(sys.argv[0])
     self.scale = self.options.scale
@@ -61,14 +69,14 @@ class KeyMon:
         'MOUSE': True,
         'META': self.options.meta,
     }
+    self.emulate_middle = options.emulate_middle
+    self.modmap = mod_mapper.SafelyReadModMap(options.kbd_file)
     
     self.finder = InputFinder()
     self.finder.connect("keyboard-found", self.DeviceFound)
     self.finder.connect("keyboard-lost", self.DeviceLost)
     self.finder.connect("mouse-found", self.DeviceFound)
     self.finder.connect("mouse-lost", self.DeviceLost)
-    
-    self.modmap = mod_mapper.SafelyReadModMap(self.options.kdb_file)
     
     self.name_fnames = self.CreateNamesToFnames()
     self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames, self.scale)
@@ -240,10 +248,14 @@ class KeyMon:
       image.SwitchToDefault()
 
   def HandleKey(self, scan_code, value):
-    code, medium_name, short_name = self.modmap[scan_code]
+    if scan_code in self.modmap:
+      code, medium_name, short_name = self.modmap[scan_code]
+    else:
+      print 'No mapping for scan_code %d' % scan_code
+      return
     if self.scale < 1.0 and short_name:
       medium_name = short_name
-    #print 'Key %s pressed' % code
+    # print 'Key %s pressed = %r' % (code, medium_name)
     if code in self.name_fnames:
       self._HandleEvent(self.key_image, code, value)
       return
@@ -282,6 +294,9 @@ class KeyMon:
 
   def HandleMouseButton(self, code, value):
     if self.enabled['MOUSE']:
+      if self.emulate_middle and ((self.mouse_image.current == 'BTN_LEFT' and code == 'BTN_RIGHT') or
+         (self.mouse_image.current == 'BTN_RIGHT' and code == 'BTN_LEFT')):
+        code = 'BTN_MIDDLE'
       self._HandleEvent(self.mouse_image, code, value)
     return True
 
@@ -391,12 +406,15 @@ if __name__ == "__main__":
                     help='Make the dialog 25% smaller than normal.')
   parser.add_option('-l', '--larger', dest='larger', default=False, action='store_true',
                     help='Make the dialog 25% larger than normal.')
-  parser.add_option('-m', '--meta', dest='meta', default=False, action='store_true',
+  parser.add_option('-m', '--meta', dest='meta', action='store_true',
                     help='Show the meta (windows) key.')
   parser.add_option('--scale', dest='scale', default=1.0, type='float',
                     help='Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is half the size.')
-  parser.add_option('--kdbfile', dest='kdb_file', default=None,
+  parser.add_option('--kbdfile', dest='kbd_file', default=None,
                     help='Use this kbd filename instead running xmodmap.')
+  parser.add_option('--emulate-middle', dest='emulate_middle', action="store_true",
+                    help=('If you presse the left, and right mouse buttons at the same time, '
+                          'show it as a middle mouse button. '))
   parser.add_option('-t', '--theme', dest='theme', default='classic', help='The theme to use when drawing status images')
   scale = 1.0
   (options, args) = parser.parse_args()
