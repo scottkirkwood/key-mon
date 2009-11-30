@@ -223,10 +223,14 @@ class KeyMon:
       image.SwitchToDefault()
 
   def HandleKey(self, scan_code, value):
-    code, medium_name, short_name = self.modmap[scan_code]
+    if scan_code in self.modmap:
+      code, medium_name, short_name = self.modmap[scan_code]
+    else:
+      print 'No mapping for scan_code %d' % scan_code
+      return
     if self.scale < 1.0 and short_name:
       medium_name = short_name
-    #print 'Key %s pressed' % code
+    # print 'Key %s pressed = %r' % (code, medium_name)
     if code in self.name_fnames:
       self._HandleEvent(self.key_image, code, value)
       return
@@ -374,7 +378,7 @@ if __name__ == "__main__":
                     help='Make the dialog 25% smaller than normal.')
   parser.add_option('-l', '--larger', dest='larger', default=False, action='store_true',
                     help='Make the dialog 25% larger than normal.')
-  parser.add_option('-m', '--meta', dest='meta', default=False, action='store_true',
+  parser.add_option('-m', '--meta', dest='meta', action='store_true',
                     help='Show the meta (windows) key.')
   parser.add_option('--scale', dest='scale', default=1.0, type='float',
                     help='Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is half the size.')
