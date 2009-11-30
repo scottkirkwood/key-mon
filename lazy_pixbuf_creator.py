@@ -53,7 +53,7 @@ class LazyPixbufCreator():
     """
     if name not in self.name_fnames:
       logging.error('Don\'t understand the name %r' % name)
-      return 'KEY_UP_EMPTY'
+      return 'KEY_EMPTY'
     ops = self.name_fnames[name]
     img = None
     for op in ops:
