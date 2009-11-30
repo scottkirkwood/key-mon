@@ -1,6 +1,16 @@
 Release Notes
 =============
 
+Nov. 30 v 0.9.2
+---------------
+* Make key-mon more robust when there's an unknown key.
+* Added a few more characters.
+* Bash shell script wasn't passing parameters to key-mon.
+
+Nov. 29 v 0.9.1
+---------------
+* The zip was missing files and thus didn't run.
+
 Nov. 28 v 0.9
 -------------
 * Created a key-mon script to run the program with gksudo if required.
