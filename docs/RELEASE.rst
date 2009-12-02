@@ -1,5 +1,14 @@
 Release Notes
 =============
+Dec. 2nd v 0.11
+---------------
+* Make the scroll up/down less ambiguous.  Issue #14.
+* Fixed a bug where it wasn't using the -small version .svg files.
+* Fixed issue #10. Capslock key is too large and overflows.
+
+Nov. 30 v 0.10
+---------------
+* Bug where unknown keys caused it to crash. Issue #9.
 
 Nov. 30 v 0.9.2
 ---------------
