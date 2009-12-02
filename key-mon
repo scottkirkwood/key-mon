@@ -2,7 +2,7 @@
 basedir=`dirname $0`
 if [ -r /dev/input/event0 ]
 then
-  python $basedir/key-mon.py $*
+  python $basedir/key-mon.py $* &
 else
-  gksu "python $basedir/key-mon.py $*"
+  gksu "python $basedir/key-mon.py $*" &
 fi

@@ -58,6 +58,7 @@ class LazyPixbufCreator():
     img = None
     for op in ops:
       if isinstance(op, types.StringTypes):
+        logging.debug('Read file %s' % op)
         img = self._Composite(img, self._ReadFromFile(op))
       else:
         bytes = op()
@@ -90,7 +91,7 @@ class LazyPixbufCreator():
     bytes = self._Resize(f.read())
     f.close()
     return self._ReadFromBytes(bytes)
-    
+
 
   def _ReadFromBytes(self, bytes):
     """Writes the bytes to a file and then reads the file."""
@@ -127,4 +128,3 @@ class LazyPixbufCreator():
       replace = grps.group(1) + grps.group(2) + str(num)
       bytes = re_x.sub(replace, bytes, 1)
     return bytes
-

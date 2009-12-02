@@ -61,7 +61,7 @@ class KeyMon:
     self.options = options
     self.pathname = os.path.dirname(sys.argv[0])
     self.scale = self.options.scale
-    if scale < 1.0:
+    if self.scale < 1.0:
       self.svg_size = '-small'
     else:
       self.svg_size = ''
@@ -190,7 +190,8 @@ class KeyMon:
     fullname = os.path.join(self.pathname, 'themes/%s/%s%s.svg' % (self.options.theme, fname, self.svg_size))
     if self.svg_size and not os.path.exists(fullname):
       # Small not found, defaulting to large size
-      fullname = 'themes/%s/%s.svg' % (self.options.theme, fname)
+      fullname = os.path.join(self.pathname, 'themes/%s/%s.svg' %
+                              (self.options.theme, fname))
     return fullname
 
   def AddEvents(self):
@@ -256,7 +257,7 @@ class KeyMon:
       return
     if self.scale < 1.0 and short_name:
       medium_name = short_name
-    #print 'Key %s pressed = %r' % (code, medium_name)
+    logging.debug('Key %s pressed = %r' % (code, medium_name))
     if code in self.name_fnames:
       self._HandleEvent(self.key_image, code, value)
       return
@@ -416,9 +417,18 @@ if __name__ == "__main__":
   parser.add_option('--emulate-middle', dest='emulate_middle', action="store_true",
                     help=('If you presse the left, and right mouse buttons at the same time, '
                           'show it as a middle mouse button. '))
+  parser.add_option('-d', '--debug', dest='debug', action='store_true',
+                    help='Output debugging information.')
   parser.add_option('-t', '--theme', dest='theme', default='classic', help='The theme to use when drawing status images')
   scale = 1.0
   (options, args) = parser.parse_args()
+  if options.debug:
+    console = logging.StreamHandler()
+    formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
+    console.setFormatter(formatter)
+    logging.getLogger('').addHandler(console)
+    logging.getLogger('').setLevel(logging.DEBUG)
+  logging.debug('Debug turned on')
   if options.smaller:
     options.scale = 0.75
   elif options.larger:
