@@ -435,7 +435,7 @@ if __name__ == "__main__":
   scale = 1.0
   (options, args) = parser.parse_args()
   if options.debug:
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.DEBUG, format = "%(filename)s [%(lineno)d]: %(levelname)s %(message)s")
   if options.smaller:
     options.scale = 0.75
   elif options.larger:
