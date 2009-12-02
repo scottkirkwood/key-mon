@@ -58,7 +58,6 @@ class LazyPixbufCreator():
     img = None
     for op in ops:
       if isinstance(op, types.StringTypes):
-        logging.debug('Read file %s' % op)
         img = self._Composite(img, self._ReadFromFile(op))
       else:
         bytes = op()
@@ -85,6 +84,7 @@ class LazyPixbufCreator():
     return img2
 
   def _ReadFromFile(self, fname):
+    logging.debug('Read file %s' % fname)
     if self.resize == 1.0:
       return gtk.gdk.pixbuf_new_from_file(fname)
     f = open(fname)
