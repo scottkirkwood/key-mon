@@ -9,11 +9,12 @@ Shows their status graphically.
 
 __author__ = 'scott@forusers.com (scottkirkwood))'
 
+
+import logging
 import pygtk
 pygtk.require('2.0')
 import gobject
 import gtk
-import logging
 import os
 import sys
 
@@ -39,6 +40,7 @@ def FixSvgKeyClosure(fname, from_tos):
 
   def FixSvgKey():
     """Given an SVG file return the SVG text fixed."""
+    logging.debug('Read file %r' % fname)
     f = open(fname)
     bytes = f.read()
     f.close()
@@ -71,15 +73,16 @@ class KeyMon:
     }
     self.emulate_middle = options.emulate_middle
     self.modmap = mod_mapper.SafelyReadModMap(options.kbd_file)
-    
+
     self.finder = InputFinder()
     self.finder.connect("keyboard-found", self.DeviceFound)
     self.finder.connect("keyboard-lost", self.DeviceLost)
     self.finder.connect("mouse-found", self.DeviceFound)
     self.finder.connect("mouse-lost", self.DeviceLost)
-    
+
     self.name_fnames = self.CreateNamesToFnames()
-    self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames, self.scale)
+    self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames,
+                                                         self.scale)
     self.CreateWindow()
 
   def DeviceFound(self, finder, device):
@@ -150,7 +153,7 @@ class KeyMon:
     width, height = 308 * self.scale, 48 * self.scale
     self.window.set_default_size(int(width), int(height))
     self.window.set_decorated(False)
-    self.window.set_opacity(0.9)
+    #self.window.set_opacity(1.0)
     self.window.set_keep_above(True)
 
     self.event_box = gtk.EventBox()
@@ -187,7 +190,8 @@ class KeyMon:
     self.window.show()
 
   def SvgFname(self, fname):
-    fullname = os.path.join(self.pathname, 'themes/%s/%s%s.svg' % (self.options.theme, fname, self.svg_size))
+    fullname = os.path.join(self.pathname, 'themes/%s/%s%s.svg' % (
+        self.options.theme, fname, self.svg_size))
     if self.svg_size and not os.path.exists(fullname):
       # Small not found, defaulting to large size
       fullname = os.path.join(self.pathname, 'themes/%s/%s.svg' %
@@ -245,6 +249,7 @@ class KeyMon:
 
   def _HandleEvent(self, image, name, code):
     if code == 1:
+      logging.debug('Switch to %s, code %s' % (name, code))
       image.SwitchTo(name)
     else:
       image.SwitchToDefault()
@@ -285,12 +290,15 @@ class KeyMon:
     if code.startswith('KEY_'):
       letter = medium_name
       if code not in self.name_fnames:
+        logging.debug('code not in %s' % code)
         if len(letter) == 1:
           template = 'one-char-template'
         else:
           template = 'multi-char-template'
         self.name_fnames[code] = [
             FixSvgKeyClosure(self.SvgFname(template), [('&amp;', letter)])]
+      else:
+        logging.debug('code in %s' % code)
       self._HandleEvent(self.key_image, code, value)
       return
 
@@ -423,12 +431,7 @@ if __name__ == "__main__":
   scale = 1.0
   (options, args) = parser.parse_args()
   if options.debug:
-    console = logging.StreamHandler()
-    formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
-    console.setFormatter(formatter)
-    logging.getLogger('').addHandler(console)
-    logging.getLogger('').setLevel(logging.DEBUG)
-  logging.debug('Debug turned on')
+    logging.basicConfig(level=logging.DEBUG)
   if options.smaller:
     options.scale = 0.75
   elif options.larger:
