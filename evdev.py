@@ -34,6 +34,8 @@ def demo():
        events to update a device, and show the state of this device.
        """
     dev = DeviceGroup(sys.argv[1:])
+    for device in dev.devices:
+      print 'Device name', device.name
     while 1:
         event = dev.next_event()
         if event is not None:

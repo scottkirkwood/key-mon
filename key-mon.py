@@ -161,6 +161,10 @@ class KeyMon:
     self.window.set_keep_above(True)
 
     self.event_box = gtk.EventBox()
+    screen = self.event_box.get_screen()
+    colormap = screen.get_rgba_colormap()
+    self.event_box.set_colormap(colormap)
+
     self.window.add(self.event_box)
     self.event_box.show()
 
