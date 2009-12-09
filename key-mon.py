@@ -76,6 +76,7 @@ class KeyMon:
     }
     self.emulate_middle = options.emulate_middle
     self.modmap = mod_mapper.SafelyReadModMap(options.kbd_file)
+    self.swap_buttons = self.options.swap_buttons
 
     self.finder = InputFinder()
     self.finder.connect("keyboard-found", self.DeviceFound)
@@ -107,8 +108,6 @@ class KeyMon:
   def CreateNamesToFnames(self):
     ftn = {
       'MOUSE': [self.SvgFname('mouse'),],
-      'BTN_LEFT': [self.SvgFname('mouse'), self.SvgFname('left-mouse')],
-      'BTN_RIGHT': [self.SvgFname('mouse'), self.SvgFname('right-mouse')],
       'BTN_MIDDLE': [self.SvgFname('mouse'), self.SvgFname('middle-mouse')],
       'SCROLL_UP': [self.SvgFname('mouse'), self.SvgFname('scroll-up-mouse')],
       'SCROLL_DOWN': [self.SvgFname('mouse'), self.SvgFname('scroll-dn-mouse')],
@@ -125,6 +124,17 @@ class KeyMon:
           FixSvgKeyClosure(self.SvgFname('one-char-template'), [('&amp;', '')]), 
               self.SvgFname('whiteout-48')],
     }
+    if self.swap_buttons:
+      ftn.update({
+        'BTN_RIGHT': [self.SvgFname('mouse'), self.SvgFname('left-mouse')],
+        'BTN_LEFT': [self.SvgFname('mouse'), self.SvgFname('right-mouse')],
+      })
+    else:
+      ftn.update({
+        'BTN_LEFT': [self.SvgFname('mouse'), self.SvgFname('left-mouse')],
+        'BTN_RIGHT': [self.SvgFname('mouse'), self.SvgFname('right-mouse')],
+      })
+
     if self.scale >= 1.0:
       ftn.update({
         'KEY_SPACE': [
@@ -456,6 +466,8 @@ if __name__ == "__main__":
                     help='Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is half the size.')
   parser.add_option('--kbdfile', dest='kbd_file', default=None,
                     help='Use this kbd filename instead running xmodmap.')
+  parser.add_option('--swap', dest='swap_buttons', action='store_true',
+                    help='Swap the mouse buttons.')
   parser.add_option('--emulate-middle', dest='emulate_middle', action="store_true",
                     help=('If you presse the left, and right mouse buttons at the same time, '
                           'show it as a middle mouse button. '))
