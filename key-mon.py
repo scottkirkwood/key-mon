@@ -68,8 +68,11 @@ class KeyMon:
     else:
       self.svg_size = ''
     self.enabled = {
-        'MOUSE': True,
+        'MOUSE': not self.options.nomouse,
+        'SHIFT': not self.options.noshift,
+        'CTRL': not self.options.noctrl,
         'META': self.options.meta,
+        'ALT': not self.options.noalt,
     }
     self.emulate_middle = options.emulate_middle
     self.modmap = mod_mapper.SafelyReadModMap(options.kbd_file)
@@ -89,14 +92,14 @@ class KeyMon:
     dev = evdev.Device(device.block)
     self.devices.devices.append(dev)
     self.devices.fds.append(dev.fd)
-  
+
   def DeviceLost(self, finder, device):
     dev = None
     for x in self.devices.devices:
       if x.filename == device.block:
         dev = x
         break
-    
+
     if dev:
       self.devices.fds.remove(dev.fd)
       self.devices.devices.remove(dev)
@@ -154,7 +157,7 @@ class KeyMon:
     self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
 
     self.window.set_title('Keyboard Status Monitor')
-    width, height = 308 * self.scale, 48 * self.scale
+    width, height = 30 * self.scale, 48 * self.scale
     self.window.set_default_size(int(width), int(height))
     self.window.set_decorated(False)
     #self.window.set_opacity(1.0)
@@ -168,20 +171,36 @@ class KeyMon:
     self.event_box.add(self.hbox)
 
     self.mouse_image = two_state_image.TwoStateImage(self.pixbufs, 'MOUSE')
+    if not self.enabled['MOUSE']:
+      self.mouse_image.hide()
     self.hbox.pack_start(self.mouse_image, False, False, 0)
     if not self.enabled['MOUSE']:
       self.mouse_image.hide()
-    self.shift_image = two_state_image.TwoStateImage(self.pixbufs, 'SHIFT_EMPTY')
+
+    self.shift_image = two_state_image.TwoStateImage(
+        self.pixbufs, 'SHIFT_EMPTY', self.enabled['SHIFT'])
+    if not self.enabled['SHIFT']:
+      self.shift_image.hide()
     self.hbox.pack_start(self.shift_image, False, False, 0)
-    self.ctrl_image = two_state_image.TwoStateImage(self.pixbufs, 'CTRL_EMPTY')
+
+    self.ctrl_image = two_state_image.TwoStateImage(
+        self.pixbufs, 'CTRL_EMPTY')
+    if not self.enabled['CTRL']:
+      self.ctrl_image.hide()
     self.hbox.pack_start(self.ctrl_image, False, False, 0)
-    self.meta_image = two_state_image.TwoStateImage(self.pixbufs, 'META_EMPTY',
-        self.enabled['META'])
+
+    self.meta_image = two_state_image.TwoStateImage(
+        self.pixbufs, 'META_EMPTY', self.enabled['META'])
     if not self.enabled['META']:
       self.meta_image.hide()
     self.hbox.pack_start(self.meta_image, False, False, 0)
-    self.alt_image = two_state_image.TwoStateImage(self.pixbufs, 'ALT_EMPTY')
+
+    self.alt_image = two_state_image.TwoStateImage(
+        self.pixbufs, 'ALT_EMPTY', self.enabled['ALT'])
+    if not self.enabled['ALT']:
+      self.alt_image.hide()
     self.hbox.pack_start(self.alt_image, False, False, 0)
+
     self.key_image = two_state_image.TwoStateImage(self.pixbufs, 'KEY_EMPTY')
     self.hbox.pack_start(self.key_image, True, True, 0)
 
@@ -271,13 +290,16 @@ class KeyMon:
       self._HandleEvent(self.key_image, code, value)
       return
     if code.startswith('KEY_SHIFT'):
-      self._HandleEvent(self.shift_image, 'SHIFT', value)
+      if self.enabled['SHIFT']:
+        self._HandleEvent(self.shift_image, 'SHIFT', value)
       return
     if code.startswith('KEY_ALT') or code == 'KEY_ISO_LEVEL3_SHIFT':
-      self._HandleEvent(self.alt_image, 'ALT', value)
+      if self.enabled['ALT']:
+        self._HandleEvent(self.alt_image, 'ALT', value)
       return
     if code.startswith('KEY_CONTROL'):
-      self._HandleEvent(self.ctrl_image, 'CTRL', value)
+      if self.enabled['CTRL']:
+        self._HandleEvent(self.ctrl_image, 'CTRL', value)
       return
     if code.startswith('KEY_SUPER') or code == 'KEY_MULTI_KEY':
       if self.enabled['META']:
@@ -422,6 +444,14 @@ if __name__ == "__main__":
                     help='Make the dialog 25% larger than normal.')
   parser.add_option('-m', '--meta', dest='meta', action='store_true',
                     help='Show the meta (windows) key.')
+  parser.add_option('--nomouse', dest='nomouse', action='store_true',
+                    help='Hide the mouse.')
+  parser.add_option('--noshift', dest='noshift', action='store_true',
+                    help='Hide the shift key.')
+  parser.add_option('--noctrl', dest='noctrl', action='store_true',
+                    help='Hide the ctrl key.')
+  parser.add_option('--noalt', dest='noalt', action='store_true',
+                    help='Hide the alt key.')
   parser.add_option('--scale', dest='scale', default=1.0, type='float',
                     help='Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is half the size.')
   parser.add_option('--kbdfile', dest='kbd_file', default=None,
