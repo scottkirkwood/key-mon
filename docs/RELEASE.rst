@@ -1,5 +1,14 @@
 Release Notes
 =============
+
+Dec. 10th v 0.13
+----------------
+* Created automated build process.
+* Screenshots are now created automatically.
+* Created debian package.
+* Created normal setup.py package.
+* Updated the site's documentation.
+
 Dec. 9th v 0.12
 ---------------
 * Add the option to switch the left and right mouse buttons. Issue #15
