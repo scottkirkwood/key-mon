@@ -61,7 +61,7 @@ class KeyMon:
       theme: Name of the theme to use to draw keys
     """
     self.options = options
-    self.pathname = os.path.dirname(sys.argv[0])
+    self.pathname = os.path.dirname(__file__)
     self.scale = self.options.scale
     if self.scale < 1.0:
       self.svg_size = '-small'
@@ -444,8 +444,7 @@ class KeyMon:
       dev = dbus.Interface (dev_obj, "org.freedesktop.Hal.Device")
       self.mouse_filenames.append(dev.GetProperty("input.device"))
 
-
-if __name__ == "__main__":
+def Main():
   import optparse
   parser = optparse.OptionParser()
   parser.add_option('-s', '--smaller', dest='smaller', default=False, action='store_true',
@@ -484,3 +483,6 @@ if __name__ == "__main__":
     options.scale = 1.25
   keymon = KeyMon(options)
   gtk.main()
+
+if __name__ == "__main__":
+  Main()
