@@ -94,8 +94,11 @@ class KeyMon:
 
   def DoScreenshot(self):
     for key in self.options.screenshot.split(','):
-      event = evdev.Event(type='EV_KEY', code=key, value=1)
-      self.HandleEvent(event)
+      try:
+        event = evdev.Event(type='EV_KEY', code=key, value=1)
+        self.HandleEvent(event)
+      except Exception, e:
+        print e
     while gtk.events_pending():
       gtk.main_iteration(False)
     win = self.window
@@ -503,9 +506,10 @@ def Main():
                     help='Output debugging information.')
   parser.add_option('-t', '--theme', dest='theme', default='classic', help='The theme to use when drawing status images')
   parser.add_option('-v', '--version', dest='version', action='store_true',
-                    help='Show version information and quit')
+                    help='Show version information and exit.')
   parser.add_option('--screenshot', dest='screenshot',
-                    help='Create a screenshot.png and quit, pass comma separated list of keys to press')
+                    help='Create a screenshot.png and quit'
+                    'You pass in a comma separated list of keys to simulate (ex. KEY_LEFTCTRL).')
   scale = 1.0
   (options, args) = parser.parse_args()
   if options.version:
