@@ -5,7 +5,10 @@ Build everything for keymon.
 * Build the man pages.
 * Create the screen shots.
 * Build the debian package.
-* 
+* Build the zip file via setup.py sdist
+
+You'll need:
+sudo aptitude install alien help2man fakeroot
 """
 import re
 import os
@@ -82,3 +85,5 @@ if __name__ == '__main__':
   BuildMan()
   BuildDeb(ver)
   BuildZip()
+  # todo upload to code.google.com
+  # upload to pypi
