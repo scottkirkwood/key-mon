@@ -267,7 +267,7 @@ class KeyMon:
     self.window.add_accel_group(accelgroup)
 
     if self.options.screenshot:
-      gobject.timeout_add(500, self.DoScreenshot)
+      gobject.timeout_add(300, self.DoScreenshot)
       return
     
     gobject.idle_add(self.OnIdle)
@@ -502,14 +502,19 @@ def Main():
   parser.add_option('--emulate-middle', dest='emulate_middle', action="store_true",
                     help=('If you presse the left, and right mouse buttons at the same time, '
                           'show it as a middle mouse button. '))
-  parser.add_option('-d', '--debug', dest='debug', action='store_true',
-                    help='Output debugging information.')
-  parser.add_option('-t', '--theme', dest='theme', default='classic', help='The theme to use when drawing status images')
   parser.add_option('-v', '--version', dest='version', action='store_true',
                     help='Show version information and exit.')
-  parser.add_option('--screenshot', dest='screenshot',
-                    help='Create a screenshot.png and quit'
-                    'You pass in a comma separated list of keys to simulate (ex. KEY_LEFTCTRL).')
+  parser.add_option('-t', '--theme', dest='theme', default='classic', 
+                    help='The theme to use when drawing status images (ex. "-t apple").')
+
+  group = optparse.OptionGroup(parser, 'Developer Options',
+                    'These options are for developers.')
+  group.add_option('-d', '--debug', dest='debug', action='store_true',
+                    help='Output debugging information.')
+  group.add_option('--screenshot', dest='screenshot',
+                    help='Create a "screenshot.png" and exit. '
+                    'Pass a comma separated list of keys to simulate (ex. "KEY_A,KEY_LEFTCTRL").')
+  parser.add_option_group(group)
   scale = 1.0
   (options, args) = parser.parse_args()
   if options.version:
