@@ -3,3 +3,6 @@ dist/
 .egg-info/
 .swp$
 build/
+MANIFEST
+man/key-mon.1
+

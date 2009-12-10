@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 NAME='key-mon'
-VER='0.2'
+VER='0.13'
 setup(
     name = NAME,
     version = VER,
@@ -15,13 +15,20 @@ setup(
     },
     scripts=['src/key-mon'],
     author='Scott Kirkwood',
-    author_email='scott@forusers.com',
+    author_email='scott+keymon@forusers.com',
     platforms=['POSIX'],
-    license='GPL',
-    keywords='keyboard status monitor',
+    license='LGPL',
+    keywords='keyboard status monitor education',
     url=['http://code.google.com/p/%s' % NAME],
     download_url='http://%s.googlecode.com/files/%ss-%s.zip' % (NAME, NAME, VER),
     classifiers=[
+      'Development Status :: 4 - Beta',
+      'Environment :: X11 Applications',
+      'Intended Audience :: Education',
+      'License :: OSI Approved :: GNU Library or Lesser General Public LIcense (LGPL)',
+      'Operating System :: POSIX :: Linux',
+      'Topic :: Education :: Computer Aided Instruction (CAI)',
     ], 
-    
+    description='',
+    long_description=""" """,
 )

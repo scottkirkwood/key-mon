@@ -7,8 +7,8 @@ Monitors one or more keyboards and mouses.
 Shows their status graphically.
 """
 
-__author__ = 'scott@forusers.com (scottkirkwood))'
-
+__author__ = 'Scott Kirkwood (scott+keymon@forusers.com)'
+__version__ = '0.14'
 
 import logging
 import pygtk
@@ -78,16 +78,38 @@ class KeyMon:
     self.modmap = mod_mapper.SafelyReadModMap(options.kbd_file)
     self.swap_buttons = self.options.swap_buttons
 
-    self.finder = InputFinder()
-    self.finder.connect("keyboard-found", self.DeviceFound)
-    self.finder.connect("keyboard-lost", self.DeviceLost)
-    self.finder.connect("mouse-found", self.DeviceFound)
-    self.finder.connect("mouse-lost", self.DeviceLost)
+    if options.screenshot:
+      self.finder = None
+    else:
+      self.finder = InputFinder()
+      self.finder.connect("keyboard-found", self.DeviceFound)
+      self.finder.connect("keyboard-lost", self.DeviceLost)
+      self.finder.connect("mouse-found", self.DeviceFound)
+      self.finder.connect("mouse-lost", self.DeviceLost)
 
     self.name_fnames = self.CreateNamesToFnames()
     self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames,
                                                          self.scale)
     self.CreateWindow()
+
+  def DoScreenshot(self):
+    for key in self.options.screenshot.split(','):
+      event = evdev.Event(type='EV_KEY', code=key, value=1)
+      self.HandleEvent(event)
+    while gtk.events_pending():
+      gtk.main_iteration(False)
+    win = self.window
+    x, y = win.get_position()
+    w, h = win.get_size()
+    screenshot = gtk.gdk.Pixbuf.get_from_drawable(
+        gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, w, h),
+        gtk.gdk.get_default_root_window(),
+        gtk.gdk.colormap_get_system(),
+        x, y, 0, 0, w, h)
+    fname = 'screenshot.png'
+    screenshot.save(fname, 'png')
+    print 'Saved screenshot %r' % fname
+    self.Destroy(None)
 
   def DeviceFound(self, finder, device):
     dev = evdev.Device(device.block)
@@ -236,6 +258,16 @@ class KeyMon:
     self.window.connect('button-press-event', self.ButtonPressed)
     self.event_box.connect('button_release_event', self.RightClickHandler)
 
+    accelgroup = gtk.AccelGroup()
+    key, modifier = gtk.accelerator_parse('<Control>q')
+    accelgroup.connect_group(key, modifier, gtk.ACCEL_VISIBLE, self.Quit)
+    self.window.add_accel_group(accelgroup)
+
+    if self.options.screenshot:
+      gobject.timeout_add(500, self.DoScreenshot)
+      return
+    
+    gobject.idle_add(self.OnIdle)
     try:
       nodes = [x.block for x in self.finder.keyboards.values()] + \
               [x.block for x in self.finder.mice.values()]
@@ -247,13 +279,6 @@ class KeyMon:
       print
       print 'You may need to run this as %r' % 'sudo %s' % sys.argv[0]
       sys.exit(-1)
-
-    accelgroup = gtk.AccelGroup()
-    key, modifier = gtk.accelerator_parse('<Control>q')
-    accelgroup.connect_group(key, modifier, gtk.ACCEL_VISIBLE, self.Quit)
-    self.window.add_accel_group(accelgroup)
-
-    gobject.idle_add(self.OnIdle)
 
   def ButtonPressed(self, widget, evt):
     if evt.button != 1:
@@ -444,6 +469,10 @@ class KeyMon:
       dev = dbus.Interface (dev_obj, "org.freedesktop.Hal.Device")
       self.mouse_filenames.append(dev.GetProperty("input.device"))
 
+def ShowVersion():
+  print 'Keymon version %s.' % __version__
+  print 'Written by %s' % __author__
+
 def Main():
   import optparse
   parser = optparse.OptionParser()
@@ -473,8 +502,15 @@ def Main():
   parser.add_option('-d', '--debug', dest='debug', action='store_true',
                     help='Output debugging information.')
   parser.add_option('-t', '--theme', dest='theme', default='classic', help='The theme to use when drawing status images')
+  parser.add_option('-v', '--version', dest='version', action='store_true',
+                    help='Show version information and quit')
+  parser.add_option('--screenshot', dest='screenshot',
+                    help='Create a screenshot.png and quit, pass comma separated list of keys to press')
   scale = 1.0
   (options, args) = parser.parse_args()
+  if options.version:
+    ShowVersion()
+    sys.exit(-1)
   if options.debug:
     logging.basicConfig(level=logging.DEBUG)
   if options.smaller:
