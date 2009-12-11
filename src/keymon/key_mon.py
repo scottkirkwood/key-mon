@@ -7,8 +7,8 @@ Monitors one or more keyboards and mouses.
 Shows their status graphically.
 """
 
-__author__ = 'scott@forusers.com (scottkirkwood))'
-
+__author__ = 'Scott Kirkwood (scott+keymon@forusers.com)'
+__version__ = '0.14'
 
 import logging
 import pygtk
@@ -61,42 +61,71 @@ class KeyMon:
       theme: Name of the theme to use to draw keys
     """
     self.options = options
-    self.pathname = os.path.dirname(sys.argv[0])
+    self.pathname = os.path.dirname(__file__)
     self.scale = self.options.scale
     if self.scale < 1.0:
       self.svg_size = '-small'
     else:
       self.svg_size = ''
     self.enabled = {
-        'MOUSE': True,
+        'MOUSE': not self.options.nomouse,
+        'SHIFT': not self.options.noshift,
+        'CTRL': not self.options.noctrl,
         'META': self.options.meta,
+        'ALT': not self.options.noalt,
     }
     self.emulate_middle = options.emulate_middle
     self.modmap = mod_mapper.SafelyReadModMap(options.kbd_file)
+    self.swap_buttons = self.options.swap_buttons
 
-    self.finder = InputFinder()
-    self.finder.connect("keyboard-found", self.DeviceFound)
-    self.finder.connect("keyboard-lost", self.DeviceLost)
-    self.finder.connect("mouse-found", self.DeviceFound)
-    self.finder.connect("mouse-lost", self.DeviceLost)
+    if options.screenshot:
+      self.finder = None
+    else:
+      self.finder = InputFinder()
+      self.finder.connect("keyboard-found", self.DeviceFound)
+      self.finder.connect("keyboard-lost", self.DeviceLost)
+      self.finder.connect("mouse-found", self.DeviceFound)
+      self.finder.connect("mouse-lost", self.DeviceLost)
 
     self.name_fnames = self.CreateNamesToFnames()
     self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames,
                                                          self.scale)
     self.CreateWindow()
 
+  def DoScreenshot(self):
+    for key in self.options.screenshot.split(','):
+      try:
+        event = evdev.Event(type='EV_KEY', code=key, value=1)
+        self.HandleEvent(event)
+      except Exception, e:
+        print e
+    while gtk.events_pending():
+      gtk.main_iteration(False)
+    win = self.window
+    x, y = win.get_position()
+    w, h = win.get_size()
+    screenshot = gtk.gdk.Pixbuf.get_from_drawable(
+        gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, w, h),
+        gtk.gdk.get_default_root_window(),
+        gtk.gdk.colormap_get_system(),
+        x, y, 0, 0, w, h)
+    fname = 'screenshot.png'
+    screenshot.save(fname, 'png')
+    print 'Saved screenshot %r' % fname
+    self.Destroy(None)
+
   def DeviceFound(self, finder, device):
     dev = evdev.Device(device.block)
     self.devices.devices.append(dev)
     self.devices.fds.append(dev.fd)
-  
+
   def DeviceLost(self, finder, device):
     dev = None
     for x in self.devices.devices:
       if x.filename == device.block:
         dev = x
         break
-    
+
     if dev:
       self.devices.fds.remove(dev.fd)
       self.devices.devices.remove(dev)
@@ -104,8 +133,6 @@ class KeyMon:
   def CreateNamesToFnames(self):
     ftn = {
       'MOUSE': [self.SvgFname('mouse'),],
-      'BTN_LEFT': [self.SvgFname('mouse'), self.SvgFname('left-mouse')],
-      'BTN_RIGHT': [self.SvgFname('mouse'), self.SvgFname('right-mouse')],
       'BTN_MIDDLE': [self.SvgFname('mouse'), self.SvgFname('middle-mouse')],
       'SCROLL_UP': [self.SvgFname('mouse'), self.SvgFname('scroll-up-mouse')],
       'SCROLL_DOWN': [self.SvgFname('mouse'), self.SvgFname('scroll-dn-mouse')],
@@ -122,6 +149,17 @@ class KeyMon:
           FixSvgKeyClosure(self.SvgFname('one-char-template'), [('&amp;', '')]), 
               self.SvgFname('whiteout-48')],
     }
+    if self.swap_buttons:
+      ftn.update({
+        'BTN_RIGHT': [self.SvgFname('mouse'), self.SvgFname('left-mouse')],
+        'BTN_LEFT': [self.SvgFname('mouse'), self.SvgFname('right-mouse')],
+      })
+    else:
+      ftn.update({
+        'BTN_LEFT': [self.SvgFname('mouse'), self.SvgFname('left-mouse')],
+        'BTN_RIGHT': [self.SvgFname('mouse'), self.SvgFname('right-mouse')],
+      })
+
     if self.scale >= 1.0:
       ftn.update({
         'KEY_SPACE': [
@@ -154,7 +192,7 @@ class KeyMon:
     self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
 
     self.window.set_title('Keyboard Status Monitor')
-    width, height = 308 * self.scale, 48 * self.scale
+    width, height = 30 * self.scale, 48 * self.scale
     self.window.set_default_size(int(width), int(height))
     self.window.set_decorated(False)
     #self.window.set_opacity(1.0)
@@ -172,20 +210,36 @@ class KeyMon:
     self.event_box.add(self.hbox)
 
     self.mouse_image = two_state_image.TwoStateImage(self.pixbufs, 'MOUSE')
+    if not self.enabled['MOUSE']:
+      self.mouse_image.hide()
     self.hbox.pack_start(self.mouse_image, False, False, 0)
     if not self.enabled['MOUSE']:
       self.mouse_image.hide()
-    self.shift_image = two_state_image.TwoStateImage(self.pixbufs, 'SHIFT_EMPTY')
+
+    self.shift_image = two_state_image.TwoStateImage(
+        self.pixbufs, 'SHIFT_EMPTY', self.enabled['SHIFT'])
+    if not self.enabled['SHIFT']:
+      self.shift_image.hide()
     self.hbox.pack_start(self.shift_image, False, False, 0)
-    self.ctrl_image = two_state_image.TwoStateImage(self.pixbufs, 'CTRL_EMPTY')
+
+    self.ctrl_image = two_state_image.TwoStateImage(
+        self.pixbufs, 'CTRL_EMPTY')
+    if not self.enabled['CTRL']:
+      self.ctrl_image.hide()
     self.hbox.pack_start(self.ctrl_image, False, False, 0)
-    self.meta_image = two_state_image.TwoStateImage(self.pixbufs, 'META_EMPTY',
-        self.enabled['META'])
+
+    self.meta_image = two_state_image.TwoStateImage(
+        self.pixbufs, 'META_EMPTY', self.enabled['META'])
     if not self.enabled['META']:
       self.meta_image.hide()
     self.hbox.pack_start(self.meta_image, False, False, 0)
-    self.alt_image = two_state_image.TwoStateImage(self.pixbufs, 'ALT_EMPTY')
+
+    self.alt_image = two_state_image.TwoStateImage(
+        self.pixbufs, 'ALT_EMPTY', self.enabled['ALT'])
+    if not self.enabled['ALT']:
+      self.alt_image.hide()
     self.hbox.pack_start(self.alt_image, False, False, 0)
+
     self.key_image = two_state_image.TwoStateImage(self.pixbufs, 'KEY_EMPTY')
     self.hbox.pack_start(self.key_image, True, True, 0)
 
@@ -211,6 +265,16 @@ class KeyMon:
     self.window.connect('button-press-event', self.ButtonPressed)
     self.event_box.connect('button_release_event', self.RightClickHandler)
 
+    accelgroup = gtk.AccelGroup()
+    key, modifier = gtk.accelerator_parse('<Control>q')
+    accelgroup.connect_group(key, modifier, gtk.ACCEL_VISIBLE, self.Quit)
+    self.window.add_accel_group(accelgroup)
+
+    if self.options.screenshot:
+      gobject.timeout_add(300, self.DoScreenshot)
+      return
+    
+    gobject.idle_add(self.OnIdle)
     try:
       nodes = [x.block for x in self.finder.keyboards.values()] + \
               [x.block for x in self.finder.mice.values()]
@@ -222,13 +286,6 @@ class KeyMon:
       print
       print 'You may need to run this as %r' % 'sudo %s' % sys.argv[0]
       sys.exit(-1)
-
-    accelgroup = gtk.AccelGroup()
-    key, modifier = gtk.accelerator_parse('<Control>q')
-    accelgroup.connect_group(key, modifier, gtk.ACCEL_VISIBLE, self.Quit)
-    self.window.add_accel_group(accelgroup)
-
-    gobject.idle_add(self.OnIdle)
 
   def ButtonPressed(self, widget, evt):
     if evt.button != 1:
@@ -275,13 +332,16 @@ class KeyMon:
       self._HandleEvent(self.key_image, code, value)
       return
     if code.startswith('KEY_SHIFT'):
-      self._HandleEvent(self.shift_image, 'SHIFT', value)
+      if self.enabled['SHIFT']:
+        self._HandleEvent(self.shift_image, 'SHIFT', value)
       return
     if code.startswith('KEY_ALT') or code == 'KEY_ISO_LEVEL3_SHIFT':
-      self._HandleEvent(self.alt_image, 'ALT', value)
+      if self.enabled['ALT']:
+        self._HandleEvent(self.alt_image, 'ALT', value)
       return
     if code.startswith('KEY_CONTROL'):
-      self._HandleEvent(self.ctrl_image, 'CTRL', value)
+      if self.enabled['CTRL']:
+        self._HandleEvent(self.ctrl_image, 'CTRL', value)
       return
     if code.startswith('KEY_SUPER') or code == 'KEY_MULTI_KEY':
       if self.enabled['META']:
@@ -416,8 +476,11 @@ class KeyMon:
       dev = dbus.Interface (dev_obj, "org.freedesktop.Hal.Device")
       self.mouse_filenames.append(dev.GetProperty("input.device"))
 
+def ShowVersion():
+  print 'Keymon version %s.' % __version__
+  print 'Written by %s' % __author__
 
-if __name__ == "__main__":
+def Main():
   import optparse
   parser = optparse.OptionParser()
   parser.add_option('-s', '--smaller', dest='smaller', default=False, action='store_true',
@@ -426,18 +489,41 @@ if __name__ == "__main__":
                     help='Make the dialog 25% larger than normal.')
   parser.add_option('-m', '--meta', dest='meta', action='store_true',
                     help='Show the meta (windows) key.')
+  parser.add_option('--nomouse', dest='nomouse', action='store_true',
+                    help='Hide the mouse.')
+  parser.add_option('--noshift', dest='noshift', action='store_true',
+                    help='Hide the shift key.')
+  parser.add_option('--noctrl', dest='noctrl', action='store_true',
+                    help='Hide the ctrl key.')
+  parser.add_option('--noalt', dest='noalt', action='store_true',
+                    help='Hide the alt key.')
   parser.add_option('--scale', dest='scale', default=1.0, type='float',
                     help='Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is half the size.')
   parser.add_option('--kbdfile', dest='kbd_file', default=None,
                     help='Use this kbd filename instead running xmodmap.')
+  parser.add_option('--swap', dest='swap_buttons', action='store_true',
+                    help='Swap the mouse buttons.')
   parser.add_option('--emulate-middle', dest='emulate_middle', action="store_true",
                     help=('If you presse the left, and right mouse buttons at the same time, '
                           'show it as a middle mouse button. '))
-  parser.add_option('-d', '--debug', dest='debug', action='store_true',
+  parser.add_option('-v', '--version', dest='version', action='store_true',
+                    help='Show version information and exit.')
+  parser.add_option('-t', '--theme', dest='theme', default='classic', 
+                    help='The theme to use when drawing status images (ex. "-t apple").')
+
+  group = optparse.OptionGroup(parser, 'Developer Options',
+                    'These options are for developers.')
+  group.add_option('-d', '--debug', dest='debug', action='store_true',
                     help='Output debugging information.')
-  parser.add_option('-t', '--theme', dest='theme', default='classic', help='The theme to use when drawing status images')
+  group.add_option('--screenshot', dest='screenshot',
+                    help='Create a "screenshot.png" and exit. '
+                    'Pass a comma separated list of keys to simulate (ex. "KEY_A,KEY_LEFTCTRL").')
+  parser.add_option_group(group)
   scale = 1.0
   (options, args) = parser.parse_args()
+  if options.version:
+    ShowVersion()
+    sys.exit(-1)
   if options.debug:
     logging.basicConfig(level=logging.DEBUG)
   if options.smaller:
@@ -446,3 +532,6 @@ if __name__ == "__main__":
     options.scale = 1.25
   keymon = KeyMon(options)
   gtk.main()
+
+if __name__ == "__main__":
+  Main()
