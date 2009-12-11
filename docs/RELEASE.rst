@@ -1,7 +1,12 @@
 Release Notes
 =============
 
-Dec. 10th v 0.13
+Dec. 11th v 0.14.1
+------------------
+* Fixed Issue 20, typo in help
+* Fixed Issue 19. Show normal key a little bit longer
+
+Dec. 10th v 0.14
 ----------------
 * Created automated build process.
 * Screenshots are now created automatically.

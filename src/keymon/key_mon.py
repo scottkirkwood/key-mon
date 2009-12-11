@@ -8,7 +8,7 @@ Shows their status graphically.
 """
 
 __author__ = 'Scott Kirkwood (scott+keymon@forusers.com)'
-__version__ = '0.14'
+__version__ = '0.14.1'
 
 import logging
 import pygtk
@@ -146,7 +146,7 @@ class KeyMon:
       'ALT': [self.SvgFname('alt')],
       'ALT_EMPTY': [self.SvgFname('alt'), self.SvgFname('whiteout-58')],
       'KEY_EMPTY': [
-          FixSvgKeyClosure(self.SvgFname('one-char-template'), [('&amp;', '')]), 
+          FixSvgKeyClosure(self.SvgFname('one-char-template'), [('&amp;', '')]),
               self.SvgFname('whiteout-48')],
     }
     if self.swap_buttons:
@@ -237,6 +237,7 @@ class KeyMon:
     self.hbox.pack_start(self.alt_image, False, False, 0)
 
     self.key_image = two_state_image.TwoStateImage(self.pixbufs, 'KEY_EMPTY')
+    self.key_image.timeout_secs = 0.5
     self.hbox.pack_start(self.key_image, True, True, 0)
 
     self.buttons = [self.mouse_image, self.shift_image, self.ctrl_image,
@@ -269,7 +270,7 @@ class KeyMon:
     if self.options.screenshot:
       gobject.timeout_add(300, self.DoScreenshot)
       return
-    
+
     gobject.idle_add(self.OnIdle)
     try:
       nodes = [x.block for x in self.finder.keyboards.values()] + \
@@ -500,11 +501,11 @@ def Main():
   parser.add_option('--swap', dest='swap_buttons', action='store_true',
                     help='Swap the mouse buttons.')
   parser.add_option('--emulate-middle', dest='emulate_middle', action="store_true",
-                    help=('If you presse the left, and right mouse buttons at the same time, '
-                          'show it as a middle mouse button. '))
+                    help=('When you press the left, and right mouse buttons at the same time, '
+                          'it displays as a middle mouse button click. '))
   parser.add_option('-v', '--version', dest='version', action='store_true',
                     help='Show version information and exit.')
-  parser.add_option('-t', '--theme', dest='theme', default='classic', 
+  parser.add_option('-t', '--theme', dest='theme', default='classic',
                     help='The theme to use when drawing status images (ex. "-t apple").')
 
   group = optparse.OptionGroup(parser, 'Developer Options',
