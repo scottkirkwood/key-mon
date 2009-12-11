@@ -521,7 +521,7 @@ def Main():
     ShowVersion()
     sys.exit(-1)
   if options.debug:
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.DEBUG, format = "%(filename)s [%(lineno)d]: %(levelname)s %(message)s")
   if options.smaller:
     options.scale = 0.75
   elif options.larger:
