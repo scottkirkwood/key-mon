@@ -18,6 +18,7 @@ import gtk
 import os
 import sys
 
+import config
 import evdev
 import lazy_pixbuf_creator
 import mod_mapper
@@ -62,21 +63,21 @@ class KeyMon:
     """
     self.options = options
     self.pathname = os.path.dirname(__file__)
-    self.scale = self.options.scale
+    self.scale = config.get("ui", "scale", float)
     if self.scale < 1.0:
       self.svg_size = '-small'
     else:
       self.svg_size = ''
     self.enabled = {
-        'MOUSE': not self.options.nomouse,
-        'SHIFT': not self.options.noshift,
-        'CTRL': not self.options.noctrl,
-        'META': self.options.meta,
-        'ALT': not self.options.noalt,
+        'MOUSE': config.get("buttons", "mouse", bool),
+        'SHIFT': config.get("buttons", "shift", bool),
+        'CTRL': config.get("buttons", "ctrl", bool),
+        'META': config.get("buttons", "meta", bool),
+        'ALT': config.get("buttons", "alt", bool),
     }
-    self.emulate_middle = options.emulate_middle
-    self.modmap = mod_mapper.SafelyReadModMap(options.kbd_file)
-    self.swap_buttons = self.options.swap_buttons
+    self.emulate_middle = config.get("devices", "emulate_middle", bool)
+    self.modmap = mod_mapper.SafelyReadModMap(config.get("devices", "map"))
+    self.swap_buttons = config.get("devices", "swap_buttons", bool)
 
     if options.screenshot:
       self.finder = None
@@ -246,15 +247,16 @@ class KeyMon:
     self.hbox.show()
     self.AddEvents()
 
+    self.window.set_decorated(config.get("ui", "decorated", bool))
     self.window.show()
 
   def SvgFname(self, fname):
     fullname = os.path.join(self.pathname, 'themes/%s/%s%s.svg' % (
-        self.options.theme, fname, self.svg_size))
+        config.get("ui", "theme"), fname, self.svg_size))
     if self.svg_size and not os.path.exists(fullname):
       # Small not found, defaulting to large size
       fullname = os.path.join(self.pathname, 'themes/%s/%s.svg' %
-                              (self.options.theme, fname))
+                              (config.get("ui", "theme"), fname))
     return fullname
 
   def AddEvents(self):
@@ -387,6 +389,7 @@ class KeyMon:
     self.Destroy(None)
 
   def Destroy(self, widget, data=None):
+    config.cleanup()
     gtk.main_quit()
 
   def RightClickHandler(self, widget, event):
@@ -433,12 +436,15 @@ class KeyMon:
 
   def ToggleChrome(self, current):
     self.window.set_decorated(not current)
+    config.set("ui", "decorated", not current)
 
   def ToggleMetaKey(self, current):
     self._ToggleAKey(self.meta_image, 'META', current)
+    config.set("buttons", "meta", not current)
 
   def ToggleMouse(self, current):
     self._ToggleAKey(self.mouse_image, 'MOUSE', current)
+    config.set("buttons", "mouse", not current)
 
   def _ToggleAKey(self, image, name, current):
     if current:
@@ -494,9 +500,11 @@ def Main():
                     help='Hide the ctrl key.')
   parser.add_option('--noalt', dest='noalt', action='store_true',
                     help='Hide the alt key.')
-  parser.add_option('--scale', dest='scale', default=1.0, type='float',
+  parser.add_option('--scale', dest='scale', default=config.get("ui", "scale"),
+                    type='float',
                     help='Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is half the size.')
-  parser.add_option('--kbdfile', dest='kbd_file', default=None,
+  parser.add_option('--kbdfile', dest='kbd_file',
+                    default=config.get("devices", "map"),
                     help='Use this kbd filename instead running xmodmap.')
   parser.add_option('--swap', dest='swap_buttons', action='store_true',
                     help='Swap the mouse buttons.')
@@ -505,7 +513,8 @@ def Main():
                           'it displays as a middle mouse button click. '))
   parser.add_option('-v', '--version', dest='version', action='store_true',
                     help='Show version information and exit.')
-  parser.add_option('-t', '--theme', dest='theme', default='classic',
+  parser.add_option('-t', '--theme', dest='theme',
+                    default=config.get("ui", "theme"),
                     help='The theme to use when drawing status images (ex. "-t apple").')
 
   group = optparse.OptionGroup(parser, 'Developer Options',
@@ -516,8 +525,9 @@ def Main():
                     help='Create a "screenshot.png" and exit. '
                     'Pass a comma separated list of keys to simulate (ex. "KEY_A,KEY_LEFTCTRL").')
   parser.add_option_group(group)
-  scale = 1.0
+  
   (options, args) = parser.parse_args()
+  
   if options.version:
     ShowVersion()
     sys.exit(-1)
@@ -527,6 +537,25 @@ def Main():
     options.scale = 0.75
   elif options.larger:
     options.scale = 1.25
+  
+  config.set("ui", "scale", options.scale)
+  config.set("ui", "theme", options.theme)
+  
+  if options.nomouse:
+    config.set("buttons", "mouse", not options.nomouse)
+  if options.noshift:
+    config.set("buttons", "shift", not options.noshift)
+  if options.noctrl:
+    config.set("buttons", "ctrl", not options.noctrl)
+  if options.noalt:
+    config.set("buttons", "alt", not options.noalt)
+  if options.meta:
+    config.set("buttons", "meta", options.meta)
+    
+  config.set("devices", "map", options.kbd_file)
+  config.set("devices", "emulate_middle", bool(options.emulate_middle))
+  config.set("devices", "swap_buttons", bool(options.swap_buttons))
+  
   keymon = KeyMon(options)
   gtk.main()
 
