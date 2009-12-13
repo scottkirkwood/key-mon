@@ -311,8 +311,8 @@ class KeyMon:
           self.HandleKey(code_num, event.value)
         elif event.code.startswith("BTN"):
           self.HandleMouseButton(event.code, event.value)
-        elif event.type.startswith("EV_REL") and event.code == 'REL_WHEEL':
-          self.HandleMouseScroll(event.value, event.value)
+    elif event.type.startswith("EV_REL") and event.code == 'REL_WHEEL':
+      self.HandleMouseScroll(event.value, event.value)
 
   def _HandleEvent(self, image, name, code):
     if code == 1:
