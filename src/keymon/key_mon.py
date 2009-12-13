@@ -305,13 +305,14 @@ class KeyMon:
         button.EmptyEvent()
       return
     if event.type == "EV_KEY" and event.value in (0, 1):
-      if event.code.startswith("KEY"):
-        code_num = event.codeMaps[event.type].toNumber(event.code)
-        self.HandleKey(code_num, event.value)
-      elif event.code.startswith("BTN"):
-        self.HandleMouseButton(event.code, event.value)
-    elif event.type.startswith("EV_REL") and event.code == 'REL_WHEEL':
-      self.HandleMouseScroll(event.value, event.value)
+      if type(event.code) == str:
+        if event.code.startswith("KEY"):
+          code_num = event.codeMaps[event.type].toNumber(event.code)
+          self.HandleKey(code_num, event.value)
+        elif event.code.startswith("BTN"):
+          self.HandleMouseButton(event.code, event.value)
+        elif event.type.startswith("EV_REL") and event.code == 'REL_WHEEL':
+          self.HandleMouseScroll(event.value, event.value)
 
   def _HandleEvent(self, image, name, code):
     if code == 1:
