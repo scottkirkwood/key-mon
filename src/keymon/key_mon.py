@@ -29,6 +29,8 @@ except:
   print "Unable to import dbus interface, quitting"
   sys.exit(-1)
 
+from ConfigParser import SafeConfigParser
+
 from devices import InputFinder
 
 def FixSvgKeyClosure(fname, from_tos):
@@ -516,6 +518,8 @@ def Main():
   parser.add_option('-t', '--theme', dest='theme',
                     default=config.get("ui", "theme"),
                     help='The theme to use when drawing status images (ex. "-t apple").')
+  parser.add_option('--list-themes', dest='list_themes', action='store_true',
+                    help='List available themes')
 
   group = optparse.OptionGroup(parser, 'Developer Options',
                     'These options are for developers.')
@@ -537,6 +541,17 @@ def Main():
     options.scale = 0.75
   elif options.larger:
     options.scale = 1.25
+  if options.list_themes:
+    print "Available themes:"
+    for entry in sorted(os.listdir("themes")):
+        try:
+            parser = SafeConfigParser()
+            parser.read(os.path.join("themes", entry, "config"))
+            desc = parser.get("theme", "description")
+            print "%s: %s" % (entry, desc)
+        except:
+            pass
+    raise SystemExit()
   
   config.set("ui", "scale", options.scale)
   config.set("ui", "theme", options.theme)
