@@ -41,14 +41,19 @@ def VerifyVersions():
 def BuildZip():
   subprocess.call([
     'python', 'setup.py', 'sdist', '--formats=zip'])
+  print 'Built zip'
 
 def BuildMan():
-  subprocess.call([
-    'help2man', 
-    'src/keymon/key_mon.py', 
-    '-i', 'man/key-mon.include', 
-    '-o', 'man/key-mon.1'])
-  print 'Built key-mon.1'
+  try:
+    subprocess.call([
+      'help2man',
+      'src/keymon/key_mon.py',
+      '-i', 'man/key-mon.include',
+      '-o', 'man/key-mon.1'])
+    print 'Built key-mon.1'
+  except Exception, e:
+    print 'You may need to install help2man', e
+    sys.exit(-1)
 
 def BuildDeb(ver):
   subprocess.call([
@@ -57,9 +62,15 @@ def BuildDeb(ver):
   print 'Converting %s to .deb' % rpm_file
   old_cwd = os.getcwd()
   os.chdir('dist')
-  subprocess.call([
-    'fakeroot', 'alien', rpm_file])
+  try:
+    subprocess.call([
+      'fakeroot', 'alien', rpm_file])
+  except Exception, e:
+    print 'You may need to install fakeroot and/or alien', e
+    os.chdir(old_cwd)
+    sys.exit(-1)
   os.chdir(old_cwd)
+  print 'Built debian package'
 
 def BuildScreenShots():
   prog = 'src/keymon/key_mon.py'
@@ -81,6 +92,7 @@ def BuildScreenShots():
 
 if __name__ == '__main__':
   ver = VerifyVersions()
+  print 'Version is %r' % ver
   BuildScreenShots()
   BuildMan()
   BuildDeb(ver)

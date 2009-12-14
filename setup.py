@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 NAME='key-mon'
-VER='0.14'
+VER='0.14.1'
 setup(
     name = NAME,
     version = VER,

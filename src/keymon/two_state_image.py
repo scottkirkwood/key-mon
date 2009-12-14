@@ -15,7 +15,7 @@ pygtk.require('2.0')
 import gtk
 import time
 
-TIMEOUT_SECS = 0.2
+DEFAULT_TIMEOUT_SECS = 0.2
 
 class TwoStateImage(gtk.Image):
   def __init__(self, pixbufs, normal, show=True):
@@ -25,6 +25,7 @@ class TwoStateImage(gtk.Image):
     self.count_down = None
     self.showit = show
     self.current = ''
+    self.timeout_secs = DEFAULT_TIMEOUT_SECS
     self.SwitchTo(self.normal)
 
   def SwitchTo(self, name):
@@ -45,6 +46,6 @@ class TwoStateImage(gtk.Image):
     if self.count_down is None:
       return
     delta = time.time() - self.count_down
-    if delta > TIMEOUT_SECS:
+    if delta > self.timeout_secs:
       self.count_down = None
       self._SwitchTo(self.normal)
