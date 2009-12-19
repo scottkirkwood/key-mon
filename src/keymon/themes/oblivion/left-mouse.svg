@@ -10,12 +10,12 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   sodipodi:docname="mouse.svg"
+   sodipodi:docname="left-mouse.svg"
    inkscape:version="0.47pre4 r22446"
    sodipodi:version="0.32"
    id="svg1770"
-   height="48.000000px"
-   width="48.000000px"
+   height="48"
+   width="40"
    version="1.1"
    inkscape:export-filename="/home/scott/scott/key-mon/svg/mouse.png"
    inkscape:export-xdpi="90"
@@ -137,7 +137,7 @@
        x2="511.68912"
        y1="259.81915"
        x1="250.05389"
-       gradientTransform="matrix(1.593044,0.000000,0.000000,1.241206,-129.6924,-73.34169)"
+       gradientTransform="matrix(1.593044,0,0,1.241206,-129.6924,-73.34169)"
        gradientUnits="userSpaceOnUse"
        id="linearGradient1789"
        xlink:href="#linearGradient1784"
@@ -148,7 +148,7 @@
        x2="69.096588"
        y1="1468.6681"
        x1="205.67348"
-       gradientTransform="matrix(2.470094,0.000000,0.000000,0.404843,-5.695438,24.53693)"
+       gradientTransform="matrix(2.470094,0,0,0.404843,-5.695438,24.53693)"
        id="linearGradient1794"
        xlink:href="#linearGradient2052"
        inkscape:collect="always" />
@@ -158,7 +158,7 @@
        x2="1180.5344"
        y1="284.34747"
        x1="1390.4071"
-       gradientTransform="matrix(0.493865,0.000000,0.000000,2.024845,-5.695438,24.53693)"
+       gradientTransform="matrix(0.493865,0,0,2.024845,-5.695438,24.53693)"
        id="linearGradient1804"
        xlink:href="#linearGradient2064"
        inkscape:collect="always" />
@@ -167,7 +167,7 @@
        x2="511.68912"
        y1="259.81915"
        x1="250.05389"
-       gradientTransform="matrix(1.593044,0.000000,0.000000,1.241206,-129.6924,-73.34169)"
+       gradientTransform="matrix(1.593044,0,0,1.241206,-129.6924,-73.34169)"
        gradientUnits="userSpaceOnUse"
        id="linearGradient2083"
        xlink:href="#linearGradient1784"
@@ -177,7 +177,7 @@
        x2="69.096588"
        y1="1468.6681"
        x1="205.67348"
-       gradientTransform="matrix(2.470094,0.000000,0.000000,0.404843,-5.695438,24.53693)"
+       gradientTransform="matrix(2.470094,0,0,0.404843,-5.695438,24.53693)"
        gradientUnits="userSpaceOnUse"
        id="linearGradient2085"
        xlink:href="#linearGradient2052"
@@ -187,7 +187,7 @@
        x2="1180.5344"
        y1="284.34747"
        x1="1390.4071"
-       gradientTransform="matrix(0.493865,0.000000,0.000000,2.024845,-5.695438,24.53693)"
+       gradientTransform="matrix(0.493865,0,0,2.024845,-5.695438,24.53693)"
        gradientUnits="userSpaceOnUse"
        id="linearGradient2087"
        xlink:href="#linearGradient2064"
@@ -275,7 +275,7 @@
      inkscape:window-height="931"
      inkscape:window-width="1328"
      inkscape:current-layer="layer1"
-     inkscape:cy="24.251039"
+     inkscape:cy="23.884627"
      inkscape:cx="28.030534"
      inkscape:zoom="10.916667"
      inkscape:pageshadow="2"
@@ -296,7 +296,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
         <cc:license
            rdf:resource="http://creativecommons.org/licenses/by/3.0/" />
         <dc:creator>
@@ -326,13 +326,13 @@
      inkscape:label="Layer 1">
     <path
        sodipodi:type="arc"
-       style="fill:none;stroke:#08b2ff;stroke-width:3.29464273;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       style="fill:none;stroke:#08b2ff;stroke-width:3.29464269;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="path3676"
        sodipodi:cx="13.832061"
        sodipodi:cy="9.0687037"
        sodipodi:rx="11.267176"
        sodipodi:ry="11.267176"
        d="m 25.099236,9.0687037 a 11.267176,11.267176 0 1 1 -22.5343509,0 11.267176,11.267176 0 1 1 22.5343509,0 z"
-       transform="matrix(0.45528457,0,0,0.45528457,11.107056,8.878794)" />
+       transform="matrix(0.45528457,0,0,0.45528457,7.107056,8.878794)" />
   </g>
 </svg>
