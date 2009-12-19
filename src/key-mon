@@ -1,0 +1,7 @@
+#!/bin/bash
+if [ -r /dev/input/event0 ]
+then
+  python -c 'import keymon.key_mon as km;km.Main()' $*
+else
+  gksu "python -c 'import keymon.key_mon as km;km.Main()' $*"
+fi
