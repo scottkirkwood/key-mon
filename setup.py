@@ -11,7 +11,9 @@ setup(
     package_dir = {
       'keymon': 'src/keymon'},
     package_data = {
-      'keymon': ['themes/apple/*', 'themes/classic/*', '*.kbd'],
+      'keymon': [
+          'themes/**/*',
+          '*.kbd'],
     },
     scripts=['src/key-mon'],
     author='Scott Kirkwood',
