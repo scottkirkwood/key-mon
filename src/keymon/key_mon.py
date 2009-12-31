@@ -48,6 +48,12 @@ def FixSvgKeyClosure(fname, from_tos):
     bytes = f.read()
     f.close()
     for f, t in from_tos:
+      if t == '<':
+        t = '&lt;'
+      elif t == '>':
+        t = '&gt;'
+      elif t == '&':
+        t = '&amp;'
       bytes = bytes.replace(f, t)
     return bytes
 
