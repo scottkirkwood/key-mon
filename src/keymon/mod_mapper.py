@@ -286,7 +286,10 @@ def SafelyReadModMap(fname):
   pathname = os.path.dirname(__file__)
   default = 'us.kbd'
   if fname:
-    return ReadKdb(fname)
+    if os.path.exists(fname):
+      return ReadKdb(fname)
+    else:
+      return ReadKdb(os.path.join(pathname, fname))
   ret = None
   try:
     ret = ReadModMap()
