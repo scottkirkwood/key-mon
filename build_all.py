@@ -92,6 +92,8 @@ def BuildScreenShots():
     ('screenshot-smaller', ['--smaller'], all_buttons),
     ('screenshot-larger', ['--larger'], all_buttons),
     ('screenshot-apple', ['--theme', 'apple'], all_buttons),
+    ('screenshot-oblivion', ['--theme', 'oblivion'], all_buttons),
+    ('screenshot-modern', ['--theme', 'modern'], all_buttons),
     ('2x-no-mouse-meta', ['--nomouse', '--scale', '2.0', '--meta'], all_buttons + ['KEY_LEFTMETA']),
   ]
   for fname, options, keys in todos:
@@ -105,8 +107,8 @@ if __name__ == '__main__':
   ver = VerifyVersions()
   print 'Version is %r' % ver
   BuildScreenShots()
-  BuildMan()
-  BuildDeb(ver)
-  BuildZip()
+  #BuildMan()
+  #BuildDeb(ver)
+  #BuildZip()
   # todo upload to code.google.com
   # upload to pypi
