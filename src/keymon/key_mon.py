@@ -17,6 +17,7 @@ import gobject
 import gtk
 import os
 import sys
+import time
 
 import config
 import evdev
@@ -110,6 +111,7 @@ class KeyMon:
         print e
     while gtk.events_pending():
       gtk.main_iteration(False)
+    time.sleep(0.25)
     win = self.window
     x, y = win.get_position()
     w, h = win.get_size()
