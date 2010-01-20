@@ -63,14 +63,24 @@ def BuildDeb(ver):
   old_cwd = os.getcwd()
   os.chdir('dist')
   try:
-    subprocess.call([
+    ret = subprocess.call([
       'fakeroot', 'alien', rpm_file])
+    if ret:
+      print 'You man need to install fakeroot and/or alien'
+      print 'Failed to build debian package'
+      sys.exit(-1)
+      return
   except Exception, e:
     print 'You may need to install fakeroot and/or alien', e
     os.chdir(old_cwd)
     sys.exit(-1)
   os.chdir(old_cwd)
   print 'Built debian package'
+
+def KillConfig():
+  config_file = os.path.expanduser('~/.key-mon/config')
+  if os.path.exists(config_file):
+    os.unlink(config_file)
 
 def BuildScreenShots():
   prog = 'src/keymon/key_mon.py'
@@ -85,10 +95,11 @@ def BuildScreenShots():
     ('2x-no-mouse-meta', ['--nomouse', '--scale', '2.0', '--meta'], all_buttons + ['KEY_LEFTMETA']),
   ]
   for fname, options, keys in todos:
+    KillConfig()
     subprocess.call([
       'python', prog] + options + ['--screenshot', ','.join(keys)])
     shutil.move('screenshot.png', os.path.join(destdir, fname + '.png'))
-
+  KillConfig()
 
 if __name__ == '__main__':
   ver = VerifyVersions()

@@ -76,7 +76,7 @@ _config = None
 _defaults = {
     # User interface options
     "ui": {
-        "decorated": "1",
+        "decorated": "0",
         "opacity": "0.9",
         "scale": "1.0",
         "theme": "classic",
