@@ -1,10 +1,15 @@
 Release Notes
 =============
 
+Dec. 18th v 0.15
+----------------
+* Added --old_keys arguments, which can show quick key combinations better.
+  Example: showing VIM keystrokes might be yyd for delete line.
+
 Dec. 11th v 0.14.1
 ------------------
-* Fixed Issue 20, typo in help
-* Fixed Issue 19. Show normal key a little bit longer
+* Fixed Issue 20, typo in help.
+* Fixed Issue 19. Show normal key a little bit longer.
 
 Dec. 10th v 0.14
 ----------------

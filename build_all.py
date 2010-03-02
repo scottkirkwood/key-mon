@@ -95,6 +95,7 @@ def BuildScreenShots():
     ('screenshot-oblivion', ['--theme', 'oblivion'], all_buttons),
     ('screenshot-modern', ['--theme', 'modern'], all_buttons),
     ('2x-no-mouse-meta', ['--nomouse', '--scale', '2.0', '--meta'], all_buttons + ['KEY_LEFTMETA']),
+    ('old-keys-2', ['--nomouse', '--old-keys', '2'], ['KEY_Y', 'KEY_Y', 'KEY_P']),
   ]
   for fname, options, keys in todos:
     KillConfig()
@@ -103,12 +104,26 @@ def BuildScreenShots():
     shutil.move('screenshot.png', os.path.join(destdir, fname + '.png'))
   KillConfig()
 
+def UploadFiles():
+  import googlecode_upload as gup
+  import getpass
+
+  username = 'scottakirkwood@gmail.com'
+ 
+  print 'Using user %r' % username
+  # Read password if not loaded from svn config, or on subsequent tries.
+  print 'Please enter your googlecode.com password.'
+  print '** Note that this is NOT your Gmail account password! **'
+  print 'It is the password you use to access repositories,'
+  print 'and can be found here: http://code.google.com/hosting/settings'
+  password = getpass.getpass()
+
 if __name__ == '__main__':
   ver = VerifyVersions()
   print 'Version is %r' % ver
   BuildScreenShots()
-  #BuildMan()
-  #BuildDeb(ver)
-  #BuildZip()
+  BuildMan()
+  BuildDeb(ver)
+  BuildZip()
   # todo upload to code.google.com
   # upload to pypi
