@@ -18,20 +18,23 @@ import time
 DEFAULT_TIMEOUT_SECS = 0.2
 
 class TwoStateImage(gtk.Image):
-  def __init__(self, pixbufs, normal, show=True):
+  """Image has a default image (say a blank image) which it goes back to.
+  It can also pass the information down to another image."""
+  def __init__(self, pixbufs, normal, show=True, defer_to=None):
     gtk.Image.__init__(self)
     self.pixbufs = pixbufs
     self.normal = normal
     self.count_down = None
     self.showit = show
     self.current = ''
+    self.defer_to = defer_to
     self.timeout_secs = DEFAULT_TIMEOUT_SECS
     self.SwitchTo(self.normal)
 
   def SwitchTo(self, name):
-    # reset the time
-    if self.current != name:
-      self._SwitchTo(name)
+    if self.current != self.normal:
+      self._DeferTo(self.current)
+    self._SwitchTo(name)
 
   def _SwitchTo(self, name):
     self.set_from_pixbuf(self.pixbufs.Get(name))
@@ -49,3 +52,10 @@ class TwoStateImage(gtk.Image):
     if delta > self.timeout_secs:
       self.count_down = None
       self._SwitchTo(self.normal)
+
+  def _DeferTo(self, old_name):
+    """If possible the button is passed on."""
+    if not self.defer_to:
+      return
+    self.defer_to.SwitchTo(old_name)
+    self.defer_to.SwitchToDefault()

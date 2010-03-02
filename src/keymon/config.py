@@ -63,7 +63,7 @@ import os
 
 from ConfigParser import SafeConfigParser
 
-PATH = os.path.expanduser(os.path.join("~", ".key-mon", "config"))
+PATH = os.path.expanduser(os.path.join("~", ".config", "key-mon", "config"))
 
 _log = logging.getLogger("config")
 
@@ -88,6 +88,7 @@ _defaults = {
         "ctrl": "1",
         "alt": "1",
         "meta": "0",
+        "old-keys": "0",
     },
     # Device behavior options
     "devices": {
@@ -97,13 +98,18 @@ _defaults = {
     },
 }
 
+
+def reset():
+    global _config
+    _config = SafeConfigParser()
+
 def _create_default(path):
     """
         Create the default configuration file and load it for use.
     """
     global _config
     
-    _log.info("Creating default configuration file")
+    _log.info("Creating default configuration file %r" % PATH)
     
     _config = SafeConfigParser()
     
@@ -190,7 +196,7 @@ def _write():
     """
         Actually write the config. Used internally.
     """
-    _log.debug("Writing config!")
+    _log.debug("Writing config %r" % PATH)
     _config.write(open(PATH, "wb"))
     _config.dirty = False
 
@@ -205,4 +211,3 @@ def cleanup():
 
 # Automatically initialize the config when this module is loaded
 init()
-

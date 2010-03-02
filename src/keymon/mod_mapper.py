@@ -225,7 +225,7 @@ def parse_modmap(lines):
       str = []
       for grp in re_remainder.finditer(grps.group(2)):
         str.append(grp.group(1))
-      
+
       # We'll pick the first one
       alias = str[0].upper()
       my_keyname = 'KEY_' + alias
@@ -235,7 +235,8 @@ def parse_modmap(lines):
 
 
 def ReadKdb(fname):
-  return ParseKdb(codecs.open(fname, 'r', 'utf-8').read())
+  return ParseKdb(codecs.open(os.path.join(os.path.dirname(__file__), fname),
+                              'r', 'utf-8').read())
 
 
 def ParseKdb(text):
