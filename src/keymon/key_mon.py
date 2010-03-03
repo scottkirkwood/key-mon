@@ -197,7 +197,8 @@ class KeyMon:
     self.window.set_title('Keyboard Status Monitor')
     width, height = 30 * self.scale, 48 * self.scale
     self.window.set_default_size(int(width), int(height))
-    self.window.set_decorated(False)
+    self.window.set_decorated(config.get("ui", "decorated", bool))
+
     #self.window.set_opacity(1.0)
     self.window.set_keep_above(True)
 
@@ -263,7 +264,6 @@ class KeyMon:
     self.hbox.show()
     self.AddEvents()
 
-    self.window.set_decorated(config.get("ui", "decorated", bool))
     self.window.show()
 
   def SvgFname(self, fname):
