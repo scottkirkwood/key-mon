@@ -78,7 +78,7 @@ def BuildDeb(ver):
   print 'Built debian package'
 
 def KillConfig():
-  config_file = os.path.expanduser('~/.key-mon/config')
+  config_file = os.path.expanduser('~/.config/key-mon/config')
   if os.path.exists(config_file):
     os.unlink(config_file)
 
@@ -104,11 +104,17 @@ def BuildScreenShots():
     shutil.move('screenshot.png', os.path.join(destdir, fname + '.png'))
   KillConfig()
 
-def UploadFiles():
+def UploadFile(fname, username, password):
   import googlecode_upload as gup
+  project = 'key-mon'
+  print 'Uploading %s' % fname
+  gup.upload('dist/%s' % fname, project, username, password, fname)
+  print 'Done.'
+
+def UploadFiles(ver):
   import getpass
 
-  username = 'scottakirkwood@gmail.com'
+  username = 'scott@forusers.com'
  
   print 'Using user %r' % username
   # Read password if not loaded from svn config, or on subsequent tries.
@@ -117,6 +123,9 @@ def UploadFiles():
   print 'It is the password you use to access repositories,'
   print 'and can be found here: http://code.google.com/hosting/settings'
   password = getpass.getpass()
+  UploadFile('key-mon-%s.zip' % ver, username, password)
+  UploadFile('key-mon-%s.tar.gz' % ver, username, password)
+  UploadFile('key-mon_%s-2_all.deb' % ver, username, password)
 
 if __name__ == '__main__':
   ver = VerifyVersions()
@@ -127,3 +136,4 @@ if __name__ == '__main__':
   BuildZip()
   # todo upload to code.google.com
   # upload to pypi
+  UploadFiles(ver)
