@@ -96,14 +96,19 @@ class KeyMon:
     self.CreateWindow()
 
   def DoScreenshot(self):
+    import time
     for key in self.options.screenshot.split(','):
       try:
         event = evdev.Event(type='EV_KEY', code=key, value=1)
         self.HandleEvent(event)
+        while gtk.events_pending():
+          gtk.main_iteration(False)
+        time.sleep(0.1)
       except Exception, e:
         print e
     while gtk.events_pending():
       gtk.main_iteration(False)
+    time.sleep(0.1)
     win = self.window
     x, y = win.get_position()
     w, h = win.get_size()
@@ -286,7 +291,7 @@ class KeyMon:
     self.window.add_accel_group(accelgroup)
 
     if self.options.screenshot:
-      gobject.timeout_add(550, self.DoScreenshot)
+      gobject.timeout_add(700, self.DoScreenshot)
       return
 
     gobject.idle_add(self.OnIdle)
