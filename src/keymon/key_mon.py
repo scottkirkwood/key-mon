@@ -286,7 +286,7 @@ class KeyMon:
     self.window.add_accel_group(accelgroup)
 
     if self.options.screenshot:
-      gobject.timeout_add(300, self.DoScreenshot)
+      gobject.timeout_add(550, self.DoScreenshot)
       return
 
     gobject.idle_add(self.OnIdle)
