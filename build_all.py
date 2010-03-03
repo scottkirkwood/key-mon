@@ -66,7 +66,7 @@ def BuildDeb(ver):
     ret = subprocess.call([
       'fakeroot', 'alien', rpm_file])
     if ret:
-      print 'You man need to install fakeroot and/or alien'
+      print 'You may need to install fakeroot and/or alien'
       print 'Failed to build debian package'
       sys.exit(-1)
       return
