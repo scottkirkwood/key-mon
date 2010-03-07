@@ -2,6 +2,8 @@
 
 from distutils.core import setup
 
+# setup.py sdist --formats=gztar,zip upload
+# setup.py bdist 
 NAME='key-mon'
 VER='0.15'
 setup(
@@ -25,7 +27,7 @@ setup(
       'Development Status :: 4 - Beta',
       'Environment :: X11 Applications',
       'Intended Audience :: Education',
-      'License :: OSI Approved :: GNU Library or Lesser General Public LIcense (LGPL)',
+      'License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)',
       'Operating System :: POSIX :: Linux',
       'Topic :: Education :: Computer Aided Instruction (CAI)',
     ], 
