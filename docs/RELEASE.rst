@@ -1,5 +1,10 @@
 Release Notes
 =============
+Apr. 18th v 0.16
+----------------
+* Fixed mouse images a bit.
+* Fixed bug 24, Vol+/Vol- swapped.
+* Fixed a typo in setup.py.
 
 Dec. 18th v 0.15
 ----------------
