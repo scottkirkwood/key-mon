@@ -5,7 +5,7 @@ from distutils.core import setup
 # setup.py sdist --formats=gztar,zip upload
 # setup.py bdist 
 NAME='key-mon'
-VER='0.15'
+VER='0.16'
 setup(
     name = NAME,
     version = VER,

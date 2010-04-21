@@ -10,14 +10,14 @@ Build everything for keymon.
 You'll need:
 sudo aptitude install alien help2man fakeroot
 """
-import re
+import getpass
 import os
-import sys
-import subprocess
+import re
 import shutil
+import subprocess
+import sys
 
-def VerifyVersions():
-  fname = 'src/keymon/key_mon.py'
+def GetVersion(fname):
   re_py_ver = re.compile(r'__version__\s*=\s*[\'"](.*)[\'"]')
   grps = re_py_ver.search(open(fname).read())
   source_ver = grps.group(1)
@@ -43,6 +43,7 @@ def BuildZip():
     'python', 'setup.py', 'sdist', '--formats=zip'])
   print 'Built zip'
 
+
 def BuildMan():
   try:
     subprocess.call([
@@ -54,6 +55,7 @@ def BuildMan():
   except Exception, e:
     print 'You may need to install help2man', e
     sys.exit(-1)
+
 
 def BuildDeb(ver):
   subprocess.call([
@@ -77,10 +79,12 @@ def BuildDeb(ver):
   os.chdir(old_cwd)
   print 'Built debian package'
 
+
 def KillConfig():
   config_file = os.path.expanduser('~/.config/key-mon/config')
   if os.path.exists(config_file):
     os.unlink(config_file)
+
 
 def BuildScreenShots():
   prog = 'src/keymon/key_mon.py'
@@ -104,6 +108,7 @@ def BuildScreenShots():
     shutil.move('screenshot.png', os.path.join(destdir, fname + '.png'))
   KillConfig()
 
+
 def UploadFile(fname, username, password):
   import googlecode_upload as gup
   project = 'key-mon'
@@ -111,9 +116,8 @@ def UploadFile(fname, username, password):
   gup.upload('dist/%s' % fname, project, username, password, fname)
   print 'Done.'
 
-def UploadFiles(ver):
-  import getpass
 
+def UploadFiles(ver):
   username = 'scott@forusers.com'
  
   print 'Using user %r' % username
@@ -127,13 +131,13 @@ def UploadFiles(ver):
   UploadFile('key-mon-%s.tar.gz' % ver, username, password)
   UploadFile('key-mon_%s-2_all.deb' % ver, username, password)
 
+
 if __name__ == '__main__':
-  ver = VerifyVersions()
+  ver = GetVersion('src/keymon/key_mon.py')
   print 'Version is %r' % ver
   BuildScreenShots()
   BuildMan()
   BuildDeb(ver)
   BuildZip()
-  # todo upload to code.google.com
-  # upload to pypi
   UploadFiles(ver)
+  # TODO upload to PyPi

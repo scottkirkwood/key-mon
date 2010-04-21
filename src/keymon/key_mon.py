@@ -8,7 +8,7 @@ Shows their status graphically.
 """
 
 __author__ = 'Scott Kirkwood (scott+keymon@forusers.com)'
-__version__ = '0.15'
+__version__ = '0.16'
 
 import logging
 import pygtk
