@@ -11,10 +11,12 @@ __author__ = 'Scott Kirkwood (scott+keymon@forusers.com)'
 __version__ = '0.16'
 
 import logging
+import math
 import pygtk
 pygtk.require('2.0')
 import gobject
 import gtk
+import cairo
 import os
 import sys
 
@@ -52,6 +54,31 @@ def FixSvgKeyClosure(fname, from_tos):
     return bytes
 
   return FixSvgKey
+
+class ShapedWindow(gtk.Window):
+  def __init__(self):
+    gtk.Window.__init__(self)
+    self.connect('size-allocate', self._on_size_allocate)
+    self.set_decorated(False)
+
+  def _on_size_allocate(self, win, allocation):
+    w,h = allocation.width, allocation.height
+    bitmap = gtk.gdk.Pixmap(None, w, h, 1)
+    cr = bitmap.cairo_create()
+
+    # Clear the bitmap
+    cr.set_source_rgb(0.0, 0.0, 0.0)
+    cr.set_operator(cairo.OPERATOR_CLEAR)
+    cr.paint()
+
+    # Draw our shape into the bitmap using cairo
+    cr.set_source_rgb(1.0, 1.0, 1.0)
+    cr.set_operator(cairo.OPERATOR_SOURCE)
+    cr.arc(w / 2, h / 2, min(h, w) / 2, 0, 2 * math.pi)
+    cr.fill()
+
+    # Set the window shape
+    win.shape_combine_mask(bitmap, 0, 0)
 
 class KeyMon:
   def __init__(self, options):
@@ -206,6 +233,10 @@ class KeyMon:
     self.window.set_default_size(int(width), int(height))
     self.window.set_decorated(config.get("ui", "decorated", bool))
 
+    self.mouse_indicator_win = ShapedWindow()
+    self.mouse_indicator_win.set_keep_above(True)
+    self.mouse_indicator_win.resize(20, 20)
+
     #self.window.set_opacity(1.0)
     self.window.set_keep_above(True)
 
@@ -342,6 +373,7 @@ class KeyMon:
     else:
       image.SwitchToDefault()
 
+
   def HandleKey(self, scan_code, value):
     if scan_code in self.modmap:
       code, medium_name, short_name = self.modmap[scan_code]
@@ -408,6 +440,15 @@ class KeyMon:
         elif code == 'BTN_RIGHT':
           code = 'BTN_LEFT'
       self._HandleEvent(self.mouse_image, code, value)
+
+    root = gtk.gdk.screen_get_default().get_root_window()
+    x, y, mods = root.get_pointer()
+    w, h = self.mouse_indicator_win.get_size()
+    self.mouse_indicator_win.move(x - w/2, y - h/2)
+    if value == 1 and config.get('ui', 'visible-click', bool):
+      self.mouse_indicator_win.present()
+    else:
+      self.mouse_indicator_win.hide()
     return True
 
   def HandleMouseScroll(self, dir, value):
@@ -444,6 +485,14 @@ class KeyMon:
     toggle_chrome.show()
     menu.append(toggle_chrome)
 
+    toggle_visible_click = gtk.CheckMenuItem('_Visible Click')
+    visible_click = config.get('ui', 'visible-click', bool)
+    toggle_visible_click.set_active(visible_click)
+    toggle_visible_click.connect_object('activate', self.ToggleVisibleClick,
+       visible_click)
+    toggle_visible_click.show()
+    menu.append(toggle_visible_click)
+
     toggle_mouse = gtk.CheckMenuItem('Mouse')
     visible = self.mouse_image.flags() & gtk.VISIBLE
     toggle_mouse.set_active(visible)
@@ -470,6 +519,9 @@ class KeyMon:
   def ToggleChrome(self, current):
     self.window.set_decorated(not current)
     config.set('ui', 'decorated', not current)
+
+  def ToggleVisibleClick(self, current):
+    config.set('ui', 'visible-click', not current)
 
   def ToggleMetaKey(self, current):
     self._ToggleAKey(self.meta_image, 'META', current)
@@ -556,6 +608,11 @@ def Main():
                     help='Show decoration')
   parser.add_option('--notdecorated', dest='decorated', action='store_false',
                     help='No decoration')
+  parser.add_option('--visible_click', dest='visible_click', action='store_true',
+                    default=config.get('ui', 'visible-click', bool),
+                    help='Show where you clicked')
+  parser.add_option('--novisible_click', dest='visible_click', action='store_false',
+                    help='Turn off the visible button clicks.')
   parser.add_option('--kbdfile', dest='kbd_file',
                     default=config.get('devices', 'map'),
                     help='Use this kbd filename instead running xmodmap.')

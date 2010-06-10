@@ -7,38 +7,38 @@
     between runs. The goal of this configuration system is to not require any
     other dependencies like gconf, be simple and quick to use, and to give
     users an easy way to save setting between runs of the program.
-    
+
     The defaults dict below defines the layout of the configuration file, which
     will be stored in your user directory under ~/.key-mon/config. Getting
     and setting options is simple, and whenever the file needs to be saved
     it will be automatically.
-    
+
         >>> import config
         >>> config.get("ui", "scale", float)
         1.0
         >>> config.get("ui", "theme")
         "apple"
         >>> config.set("ui", "decorated", True)
-    
+
     Remember to properly cast values you read by passing in the casting method.
     If a value does not exist in the configuration file but does exist in the
     defaults dict then the default value will be used. If it exists in neither,
     then an exception is thrown.
-    
+
     You can force a write to happen on the next flush:
-    
+
         >>> config.write()
-    
+
     You can also explicitly cause the write to happen before the next flush if
     you also invoke the following, which should be called before you exit:
-    
+
         >>> config.cleanup()
-    
+
     License
     -------
     Copyright 2009 Daniel G. Taylor <dan@programmer-art.org>
 
-    Permission is hereby granted, free of charge, to any person obtaining a 
+    Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
     to deal in the Software without restriction, including without limitation
     the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -80,6 +80,7 @@ _defaults = {
         "opacity": "0.9",
         "scale": "1.0",
         "theme": "classic",
+        "visible-click": "0",
     },
     # Button display options
     "buttons": {
@@ -108,16 +109,16 @@ def _create_default(path):
         Create the default configuration file and load it for use.
     """
     global _config
-    
+
     _log.info("Creating default configuration file %r" % PATH)
-    
+
     _config = SafeConfigParser()
-    
+
     for section in _defaults:
         _config.add_section(section)
         for name in _defaults[section]:
             _config.set(section, name, _defaults[section][name])
-    
+
     _config.write(open(PATH, "wb"))
 
 def init():
@@ -128,9 +129,9 @@ def init():
         you update parts of the configuration to disk.
     """
     global _config
-    
+
     _log.debug("Initializing configuration system")
-    
+
     if not os.path.exists(PATH):
         if not os.path.exists(os.path.dirname(PATH)):
             os.makedirs(os.path.dirname(PATH))
@@ -138,7 +139,7 @@ def init():
     else:
         _config = SafeConfigParser()
         _config.read(PATH)
-        
+
     _config.dirty = False
     gobject.timeout_add(5000, cleanup)
 
@@ -148,20 +149,20 @@ def get(section, name, cast=lambda x: x):
         see the defaults dict above for valid values. If cast is given it must
         be a method which takes a single argument and casts it to some other
         type.
-        
+
             >>> config.get("ui", "decorated", bool)
-        
+
     """
     if cast == bool:
         cast = lambda x: bool(int(x))
-    
+
     try:
         value = cast(_config.get(section, name))
     except:
         value = cast(_defaults[section][name])
-    
+
     _log.debug("Getting %s.%s = %s" % (section, name, str(value)))
-    
+
     return value
 
 def set(section, name, value):
@@ -170,15 +171,15 @@ def set(section, name, value):
         to set; see the defaults dict above for valid values. The value will be
         coerced to a string for storage in the file. Remember that when getting
         the value you must cast it back to what you need.
-        
+
             >>> config.set("ui", "decorated", True)
-        
+
     """
     if type(value) == bool:
         value = int(value)
-    
+
     _log.debug("Setting %s.%s = %s" % (section, name, str(value)))
-    
+
     _config.set(section, name, str(value))
     _config.dirty = True
 
@@ -189,7 +190,7 @@ def write():
         written out only every e.g. minute to prevent hard drive thrashing.
     """
     global _config
-    
+
     _config.dirty = True
 
 def _write():
