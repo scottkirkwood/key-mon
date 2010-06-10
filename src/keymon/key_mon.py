@@ -588,6 +588,8 @@ def Main():
   parser.add_option('--shift', dest='noshift', action='store_false',
                     default=not config.get('buttons', 'shift', bool),
                     help='Show shift key.')
+  parser.add_option('--noshift', dest='noshift', action='store_true',
+                    help='Don\'t show the shift key.')
   parser.add_option('--ctrl', dest='noctrl', action='store_false',
                     default=not config.get('buttons', 'ctrl', bool),
                     help='Hide the ctrl key.')
