@@ -156,6 +156,8 @@ class KeyMon:
       'KEY_EMPTY': [
           FixSvgKeyClosure(self.SvgFname('one-char-template'), [('&amp;', '')]),
               self.SvgFname('whiteout-48')],
+      'BTN_LEFTRIGHT': [
+          self.SvgFname('mouse'), self.SvgFname('left-mouse'), self.SvgFname('right-mouse')],
     }
     if self.swap_buttons:
       ftn.update({
@@ -394,8 +396,17 @@ class KeyMon:
   def HandleMouseButton(self, code, value):
     if self.enabled['MOUSE']:
       if self.emulate_middle and ((self.mouse_image.current == 'BTN_LEFT' and code == 'BTN_RIGHT') or
-         (self.mouse_image.current == 'BTN_RIGHT' and code == 'BTN_LEFT')):
+          (self.mouse_image.current == 'BTN_RIGHT' and code == 'BTN_LEFT')):
         code = 'BTN_MIDDLE'
+      elif value == 1 and ((self.mouse_image.current == 'BTN_LEFT' and code == 'BTN_RIGHT') or
+          (self.mouse_image.current == 'BTN_RIGHT' and code == 'BTN_LEFT')):
+        code = 'BTN_LEFTRIGHT'
+      elif value == 0 and self.mouse_image.current == 'BTN_LEFTRIGHT':
+        value = 1  # Pretend it was clicked.
+        if code == 'BTN_LEFT':
+          code = 'BTN_RIGHT'
+        elif code == 'BTN_RIGHT':
+          code = 'BTN_LEFT'
       self._HandleEvent(self.mouse_image, code, value)
     return True
 
