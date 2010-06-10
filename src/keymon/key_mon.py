@@ -11,12 +11,10 @@ __author__ = 'Scott Kirkwood (scott+keymon@forusers.com)'
 __version__ = '0.16'
 
 import logging
-import math
 import pygtk
 pygtk.require('2.0')
 import gobject
 import gtk
-import cairo
 import os
 import sys
 
@@ -24,6 +22,7 @@ import config
 import evdev
 import lazy_pixbuf_creator
 import mod_mapper
+import shaped_window
 import two_state_image
 try:
   import dbus
@@ -47,40 +46,18 @@ def FixSvgKeyClosure(fname, from_tos):
     """Given an SVG file return the SVG text fixed."""
     logging.debug('Read file %r' % fname)
     f = open(fname)
-    bytes = f.read()
+    fbytes = f.read()
     f.close()
     for f, t in from_tos:
-      bytes = bytes.replace(f, t)
-    return bytes
+      fbytes = fbytes.replace(f, t)
+    return fbytes
 
   return FixSvgKey
 
-class ShapedWindow(gtk.Window):
-  def __init__(self):
-    gtk.Window.__init__(self)
-    self.connect('size-allocate', self._on_size_allocate)
-    self.set_decorated(False)
-
-  def _on_size_allocate(self, win, allocation):
-    w,h = allocation.width, allocation.height
-    bitmap = gtk.gdk.Pixmap(None, w, h, 1)
-    cr = bitmap.cairo_create()
-
-    # Clear the bitmap
-    cr.set_source_rgb(0.0, 0.0, 0.0)
-    cr.set_operator(cairo.OPERATOR_CLEAR)
-    cr.paint()
-
-    # Draw our shape into the bitmap using cairo
-    cr.set_source_rgb(1.0, 1.0, 1.0)
-    cr.set_operator(cairo.OPERATOR_SOURCE)
-    cr.arc(w / 2, h / 2, min(h, w) / 2, 0, 2 * math.pi)
-    cr.fill()
-
-    # Set the window shape
-    win.shape_combine_mask(bitmap, 0, 0)
 
 class KeyMon:
+  """Main KeyMon window class."""
+
   def __init__(self, options):
     """Create the Key Mon window.
     Options dict:
@@ -200,15 +177,20 @@ class KeyMon:
     if self.scale >= 1.0:
       ftn.update({
         'KEY_SPACE': [
-            FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Space'), ('BOTTOM', '')])],
+            FixSvgKeyClosure(self.SvgFname('two-line-wide'),
+            [('TOP', 'Space'), ('BOTTOM', '')])],
         'KEY_TAB': [
-            FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Tab'), ('BOTTOM', u'\u21B9')])],
+            FixSvgKeyClosure(self.SvgFname('two-line-wide'),
+            [('TOP', 'Tab'), ('BOTTOM', u'\u21B9')])],
         'KEY_BACKSPACE': [
-            FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Back'), ('BOTTOM', u'\u21fd')])],
+            FixSvgKeyClosure(self.SvgFname('two-line-wide'),
+            [('TOP', 'Back'), ('BOTTOM', u'\u21fd')])],
         'KEY_RETURN': [
-            FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Enter'), ('BOTTOM', u'\u23CE')])],
+            FixSvgKeyClosure(self.SvgFname('two-line-wide'),
+            [('TOP', 'Enter'), ('BOTTOM', u'\u23CE')])],
         'KEY_CAPS_LOCK': [
-            FixSvgKeyClosure(self.SvgFname('two-line-wide'), [('TOP', 'Capslock'), ('BOTTOM', '')])],
+            FixSvgKeyClosure(self.SvgFname('two-line-wide'),
+            [('TOP', 'Capslock'), ('BOTTOM', '')])],
       })
     else:
       ftn.update({
@@ -233,7 +215,7 @@ class KeyMon:
     self.window.set_default_size(int(width), int(height))
     self.window.set_decorated(config.get("ui", "decorated", bool))
 
-    self.mouse_indicator_win = ShapedWindow()
+    self.mouse_indicator_win = shaped_window.ShapedWindow()
     self.mouse_indicator_win.set_keep_above(True)
     self.mouse_indicator_win.resize(20, 20)
 
@@ -659,27 +641,28 @@ def Main():
   if options.list_themes:
     print 'Available themes:'
     for entry in sorted(os.listdir('themes')):
-        try:
-            parser = SafeConfigParser()
-            parser.read(os.path.join('themes', entry, 'config'))
-            desc = parser.get('theme', 'description')
-            print '%s: %s' % (entry, desc)
-        except:
-            pass
+      try:
+        parser = SafeConfigParser()
+        parser.read(os.path.join('themes', entry, 'config'))
+        desc = parser.get('theme', 'description')
+        print '%s: %s' % (entry, desc)
+      except:
+        pass
     raise SystemExit()
 
   config.set('ui', 'scale', options.scale)
   config.set('ui', 'theme', options.theme)
 
-  if options.nomouse:
+  if options.nomouse is not None:
     config.set('buttons', 'mouse', not options.nomouse)
-  if options.noshift:
+  if options.noshift is not None:
+    print 'noshift', options.noshift
     config.set('buttons', 'shift', not options.noshift)
-  if options.noctrl:
+  if options.noctrl is not None:
     config.set('buttons', 'ctrl', not options.noctrl)
-  if options.noalt:
+  if options.noalt is not None:
     config.set('buttons', 'alt', not options.noalt)
-  if options.meta:
+  if options.meta is not None:
     config.set('buttons', 'meta', options.meta)
   config.set('buttons', 'old-keys', options.old_keys)
 
