@@ -582,7 +582,7 @@ def Main():
                     help='Don\'t show the meta (windows) key.')
   parser.add_option('--mouse', dest='nomouse', action='store_false',
                     default=not config.get('buttons', 'mouse', bool),
-                    help='Hide the mouse.')
+                    help='Show the mouse.')
   parser.add_option('--nomouse', dest='nomouse', action='store_true',
                     help='Hide the mouse.')
   parser.add_option('--shift', dest='noshift', action='store_false',
@@ -592,12 +592,12 @@ def Main():
                     help='Don\'t show the shift key.')
   parser.add_option('--ctrl', dest='noctrl', action='store_false',
                     default=not config.get('buttons', 'ctrl', bool),
-                    help='Hide the ctrl key.')
+                    help='Show the ctrl key.')
   parser.add_option('--noctrl', dest='noctrl', action='store_true',
                     help='Hide the ctrl key.')
   parser.add_option('--alt', dest='noalt', action='store_false',
                     default=not config.get('buttons', 'alt', bool),
-                    help='Hide the alt key.')
+                    help='Show the alt key.')
   parser.add_option('--noalt', dest='noalt', action='store_true',
                     help='Hide the alt key.')
   parser.add_option('--scale', dest='scale',
