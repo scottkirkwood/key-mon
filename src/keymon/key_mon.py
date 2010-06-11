@@ -215,9 +215,7 @@ class KeyMon:
     self.window.set_default_size(int(width), int(height))
     self.window.set_decorated(config.get("ui", "decorated", bool))
 
-    self.mouse_indicator_win = shaped_window.ShapedWindow()
-    self.mouse_indicator_win.set_keep_above(True)
-    self.mouse_indicator_win.resize(20, 20)
+    self.mouse_indicator_win = shaped_window.ShapedWindow(self.SvgFname('mouse-indicator'))
 
     #self.window.set_opacity(1.0)
     self.window.set_keep_above(True)
@@ -427,10 +425,8 @@ class KeyMon:
     x, y, mods = root.get_pointer()
     w, h = self.mouse_indicator_win.get_size()
     self.mouse_indicator_win.move(x - w/2, y - h/2)
-    if value == 1 and config.get('ui', 'visible-click', bool):
-      self.mouse_indicator_win.present()
-    else:
-      self.mouse_indicator_win.hide()
+    if value == 0 and config.get('ui', 'visible-click', bool):
+      self.mouse_indicator_win.FadeAway()
     return True
 
   def HandleMouseScroll(self, dir, value):
@@ -656,7 +652,6 @@ def Main():
   if options.nomouse is not None:
     config.set('buttons', 'mouse', not options.nomouse)
   if options.noshift is not None:
-    print 'noshift', options.noshift
     config.set('buttons', 'shift', not options.noshift)
   if options.noctrl is not None:
     config.set('buttons', 'ctrl', not options.noctrl)

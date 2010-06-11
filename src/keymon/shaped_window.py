@@ -7,31 +7,39 @@
 Thanks to mathias.gumz for the original code.
 
 """
-import cairo
+import gobject
 import gtk
 import math
 
+import lazy_pixbuf_creator
+
 class ShapedWindow(gtk.Window):
-  def __init__(self):
+  def __init__(self, fname, scale=1.0):
     gtk.Window.__init__(self)
     self.connect('size-allocate', self._OnSizeAllocate)
     self.set_decorated(False)
+    self.set_keep_above(True)
+    self.scale = scale
+    self.name_fnames = {
+      'mouse' : [fname],
+    }
+    self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames,
+                                                         self.scale)
+    self.pixbuf = self.pixbufs.Get('mouse')
+    self.resize(self.pixbuf.get_width(), self.pixbuf.get_height())
+
+    # a pixmap widget to contain the pixmap
+    self.image = gtk.Image()
+    bitmap, self.mask = self.pixbuf.render_pixmap_and_mask()
+    self.image.set_from_pixmap(bitmap, self.mask)
+    self.image.show()
+    self.add(self.image)
 
   def _OnSizeAllocate(self, win, allocation):
     w, h = allocation.width, allocation.height
-    bitmap = gtk.gdk.Pixmap(None, w, h, 1)
-    cr = bitmap.cairo_create()
-
-    # Clear the bitmap
-    cr.set_source_rgb(0.0, 0.0, 0.0)
-    cr.set_operator(cairo.OPERATOR_CLEAR)
-    cr.paint()
-
-    # Draw our shape into the bitmap using cairo
-    cr.set_source_rgb(1.0, 1.0, 1.0)
-    cr.set_operator(cairo.OPERATOR_SOURCE)
-    cr.arc(w / 2, h / 2, min(h, w) / 2, 0, 2 * math.pi)
-    cr.fill()
-
     # Set the window shape
-    win.shape_combine_mask(bitmap, 0, 0)
+    win.shape_combine_mask(self.mask, 0, 0)
+
+  def FadeAway(self):
+    self.present()
+    gobject.timeout_add(200, self.hide)
