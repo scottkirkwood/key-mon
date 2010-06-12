@@ -39,6 +39,7 @@ class ShapedWindow(gtk.Window):
     w, h = allocation.width, allocation.height
     # Set the window shape
     win.shape_combine_mask(self.mask, 0, 0)
+    win.set_property('skip-taskbar-hint', True)
 
   def FadeAway(self):
     self.present()
