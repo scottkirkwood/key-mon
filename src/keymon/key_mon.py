@@ -88,9 +88,11 @@ class KeyMon:
 
   def DoScreenshot(self):
     import time
+    import evdev
     for key in self.options.screenshot.split(','):
       try:
-        event = evdev.Event(type='EV_KEY', code=key, value=1)
+        scancode = evdev.Event.codeMaps['EV_KEY'].toNumber(key)
+        event = xlib.XEvent('EV_KEY', scancode=scancode, code=key, value=1)
         self.HandleEvent(event)
         while gtk.events_pending():
           gtk.main_iteration(False)
