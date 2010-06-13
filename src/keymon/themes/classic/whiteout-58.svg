@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -13,7 +14,7 @@
    height="48.000000px"
    id="svg1770"
    sodipodi:version="0.32"
-   inkscape:version="0.46"
+   inkscape:version="0.47 r22583"
    sodipodi:docname="whiteout-58.svg"
    version="1.1"
    inkscape:output_extension="org.inkscape.output.svg.inkscape">
@@ -169,13 +170,13 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="4"
-     inkscape:cx="-17.957122"
+     inkscape:cx="8.0719136"
      inkscape:cy="15.229887"
      inkscape:current-layer="layer1"
      inkscape:window-width="1087"
      inkscape:window-height="706"
-     inkscape:window-x="2213"
-     inkscape:window-y="102"
+     inkscape:window-x="113"
+     inkscape:window-y="93"
      showgrid="false"
      inkscape:window-maximized="0" />
   <metadata
@@ -200,7 +201,7 @@
        inkscape:original="M 5.25 5.25 L 5.25 42.75 L 50.75 42.75 L 50.75 5.25 L 5.25 5.25 z "
        style="fill:#ffffff;fill-opacity:0.8627451;stroke:none"
        id="path2403"
-       d="M 5.125,3.90625 C 4.432104,3.9710435 3.9032967,4.5540875 3.90625,5.25 L 3.90625,42.75 C 3.9063242,43.492102 4.5078981,44.093676 5.25,44.09375 L 50.75,44.09375 C 51.492102,44.093676 52.093676,43.492102 52.09375,42.75 L 52.09375,5.25 C 52.093676,4.5078981 51.492102,3.9063242 50.75,3.90625 L 5.25,3.90625 C 5.2083559,3.9043112 5.1666441,3.9043112 5.125,3.90625 L 5.125,3.90625 z"
-       transform="matrix(1.0778211,0,0,1.0124412,-2.0542254,1.4516708)" />
+       d="M 5.125,3.90625 A 1.3438844,1.3438844 0 0 0 3.90625,5.25 l 0,37.5 A 1.3438844,1.3438844 0 0 0 5.25,44.09375 l 45.5,0 A 1.3438844,1.3438844 0 0 0 52.09375,42.75 l 0,-37.5 A 1.3438844,1.3438844 0 0 0 50.75,3.90625 l -45.5,0 a 1.3438844,1.3438844 0 0 0 -0.125,0 z"
+       transform="matrix(1.0778211,0,0,1.0124412,-2.0542254,-0.5483292)" />
   </g>
 </svg>

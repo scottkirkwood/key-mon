@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -10,13 +11,13 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    sodipodi:docname="whiteout-48.svg"
-   sodipodi:docbase="/home/karel/software/key-status/key-status-1/new-img"
-   inkscape:version="0.46"
+   inkscape:version="0.47 r22583"
    sodipodi:version="0.32"
    id="svg1770"
    height="48.000000px"
    width="38.400000pt"
-   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   version="1.1">
   <defs
      id="defs3">
     <inkscape:perspective
@@ -162,8 +163,8 @@
        inkscape:collect="always" />
   </defs>
   <sodipodi:namedview
-     inkscape:window-y="290"
-     inkscape:window-x="2410"
+     inkscape:window-y="85"
+     inkscape:window-x="123"
      inkscape:window-height="706"
      inkscape:window-width="784"
      inkscape:current-layer="layer1"
@@ -176,7 +177,8 @@
      bordercolor="#666666"
      pagecolor="#ffffff"
      id="base"
-     showgrid="false" />
+     showgrid="false"
+     inkscape:window-maximized="0" />
   <metadata
      id="metadata4">
     <rdf:RDF>
@@ -198,7 +200,7 @@
        width="41.583454"
        height="40.39286"
        x="3.603456"
-       y="5.8035698"
+       y="3.8035698"
        rx="0"
        ry="0" />
   </g>

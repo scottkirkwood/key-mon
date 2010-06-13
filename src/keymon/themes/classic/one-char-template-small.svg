@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -10,7 +11,7 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    sodipodi:docname="one-char-template-small.svg"
-   inkscape:version="0.46"
+   inkscape:version="0.47 r22583"
    sodipodi:version="0.32"
    id="svg1770"
    height="48.000000px"
@@ -195,7 +196,7 @@
        xlink:href="#linearGradient2064"
        id="linearGradient2721"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(2.351632e-2,0,0,0.119682,11.31112,9.7235324)"
+       gradientTransform="matrix(0.02351632,0,0,0.119682,11.31112,7.7235324)"
        x1="1390.4071"
        y1="284.34747"
        x2="1180.5344"
@@ -205,7 +206,7 @@
        xlink:href="#linearGradient2052"
        id="linearGradient2725"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.117618,0,0,2.392903e-2,2.29468,9.7235324)"
+       gradientTransform="matrix(0.117618,0,0,0.02392903,2.29468,7.7235324)"
        x1="205.67348"
        y1="1468.6681"
        x2="69.096588"
@@ -215,16 +216,16 @@
        xlink:href="#linearGradient2103"
        id="linearGradient2728"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.135639,0,0,1.098332,-5.414986,-3.9495896)"
+       gradientTransform="matrix(1.135639,0,0,1.098332,-5.414986,-5.9495896)"
        x1="34.792320"
        y1="42.567181"
        x2="13.165886"
        y2="15.033080" />
   </defs>
   <sodipodi:namedview
-     inkscape:window-y="46"
-     inkscape:window-x="2435"
-     inkscape:window-height="972"
+     inkscape:window-y="24"
+     inkscape:window-x="279"
+     inkscape:window-height="970"
      inkscape:window-width="1399"
      inkscape:current-layer="layer1"
      inkscape:cy="19.848244"
@@ -256,43 +257,43 @@
     <rect
        ry="1.6716342"
        rx="1.6716342"
-       y="6.5619984"
+       y="4.5619984"
        x="4.0576634"
        height="38.876003"
        width="40.636211"
        id="rect1788"
-       style="fill:url(#linearGradient2728);fill-opacity:1;stroke:#000000;stroke-width:0.89755535;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1" />
+       style="fill:url(#linearGradient2728);fill-opacity:1;stroke:#000000;stroke-width:0.89755535;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0" />
     <path
        sodipodi:nodetypes="ccccc"
        id="path1790"
-       d="M 5.049316,44.697165 L 8.9712279,39.710984 L 39.268859,39.625896 L 43.710115,44.532253 L 5.049316,44.697165 z"
-       style="fill:url(#linearGradient2725);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.25pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+       d="m 5.049316,42.697165 3.9219119,-4.986181 30.2976311,-0.08509 4.441256,4.906357 -38.660799,0.164912 z"
+       style="fill:url(#linearGradient2725);fill-opacity:1;fill-rule:evenodd;stroke:none" />
     <path
        sodipodi:nodetypes="ccccc"
        id="path1795"
-       d="M 4.7793673,44.697165 L 7.9325613,39.336595 L 8.010689,9.8159806 L 4.7295543,7.6038367 L 4.7793673,44.697165 z"
-       style="opacity:0.4969325;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.25pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+       d="M 4.7793673,42.697165 7.9325613,37.336595 8.010689,7.8159806 4.7295543,5.6038367 4.7793673,42.697165 z"
+       style="opacity:0.4969325;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none" />
     <path
        sodipodi:nodetypes="ccccc"
        id="path1800"
-       d="M 43.802741,44.782253 L 40.200667,38.176949 L 40.011059,10.239817 L 43.806983,8.1601994 L 43.802741,44.782253 z"
-       style="fill:url(#linearGradient2721);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.25pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+       d="M 43.802741,42.782253 40.200667,36.176949 40.011059,8.239817 43.806983,6.1601994 43.802741,42.782253 z"
+       style="fill:url(#linearGradient2721);fill-opacity:1;fill-rule:evenodd;stroke:none" />
     <path
        sodipodi:nodetypes="ccccc"
        id="path1805"
-       d="M 4.8029542,7.7323794 L 7.4409341,9.8861206 L 39.439777,9.7379032 L 43.268866,8.099264 L 4.8029542,7.7323794 z"
-       style="opacity:0.4969325;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.25pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+       d="M 4.8029542,5.7323794 7.4409341,7.8861206 39.439777,7.7379032 43.268866,6.099264 4.8029542,5.7323794 z"
+       style="opacity:0.4969325;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none" />
     <text
        id="text14572"
-       y="35.270508"
+       y="33.270508"
        x="23.863281"
        style="font-size:28px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans Bold"
        xml:space="preserve"
        sodipodi:linespacing="125%"><tspan
-         y="35.270508"
+         y="33.270508"
          x="23.863281"
          id="tspan14574"
          sodipodi:role="line"
-         style="font-size:28px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans Bold;fill:#000000">&amp;</tspan></text>
+         style="font-size:28px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans Bold">&amp;</tspan></text>
   </g>
 </svg>
