@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -10,7 +11,7 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    sodipodi:docname="scroll-up-mouse.svg"
-   inkscape:version="0.46"
+   inkscape:version="0.47 r22583"
    sodipodi:version="0.32"
    id="svg1770"
    height="48"
@@ -218,8 +219,8 @@
        sodipodi:type="inkscape:persp3d" />
   </defs>
   <sodipodi:namedview
-     inkscape:window-y="195"
-     inkscape:window-x="12"
+     inkscape:window-y="24"
+     inkscape:window-x="0"
      inkscape:window-height="975"
      inkscape:window-width="1680"
      inkscape:current-layer="layer3"
@@ -274,8 +275,8 @@
      style="display:inline">
     <path
        id="path2654"
-       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:#000000;stroke-width:1.44672298px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0.8711111"
-       d="M 31.762146,12.280693 L 28.420788,8.8147371 L 25.182853,12.280693 M 28.420788,8.8073135 C 28.489856,8.8647135 28.420788,15.005025 28.420788,15.005025"
+       style="fill:none;stroke:#000000;stroke-width:1.44672298px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0.8711111"
+       d="M 29.762146,10.280693 26.420788,6.8147371 23.182853,10.280693 m 3.237935,-3.4733795 c 0.06907,0.0574 0,6.1977115 0,6.1977115"
        sodipodi:nodetypes="ccccc" />
   </g>
 </svg>

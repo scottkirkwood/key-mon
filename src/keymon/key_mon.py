@@ -19,20 +19,13 @@ import os
 import sys
 
 import config
-import evdev
+import xlib
 import lazy_pixbuf_creator
 import mod_mapper
 import shaped_window
 import two_state_image
-try:
-  import dbus
-except:
-  print 'Unable to import dbus interface, quitting'
-  sys.exit(-1)
 
 from ConfigParser import SafeConfigParser
-
-from devices import InputFinder
 
 def FixSvgKeyClosure(fname, from_tos):
   """Create a closure to modify the key.
@@ -85,18 +78,12 @@ class KeyMon:
     self.modmap = mod_mapper.SafelyReadModMap(config.get("devices", "map"))
     self.swap_buttons = config.get("devices", "swap_buttons", bool)
 
-    if options.screenshot:
-      self.finder = None
-    else:
-      self.finder = InputFinder()
-      self.finder.connect('keyboard-found', self.DeviceFound)
-      self.finder.connect('keyboard-lost', self.DeviceLost)
-      self.finder.connect('mouse-found', self.DeviceFound)
-      self.finder.connect('mouse-lost', self.DeviceLost)
-
     self.name_fnames = self.CreateNamesToFnames()
     self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames,
                                                          self.scale)
+    self.devices = xlib.XEvents()
+    self.devices.start()
+
     self.CreateWindow()
 
   def DoScreenshot(self):
@@ -125,22 +112,6 @@ class KeyMon:
     screenshot.save(fname, 'png')
     print 'Saved screenshot %r' % fname
     self.Destroy(None)
-
-  def DeviceFound(self, finder, device):
-    dev = evdev.Device(device.block)
-    self.devices.devices.append(dev)
-    self.devices.fds.append(dev.fd)
-
-  def DeviceLost(self, finder, device):
-    dev = None
-    for x in self.devices.devices:
-      if x.filename == device.block:
-        dev = x
-        break
-
-    if dev:
-      self.devices.fds.remove(dev.fd)
-      self.devices.devices.remove(dev)
 
   def CreateNamesToFnames(self):
     ftn = {
@@ -308,17 +279,6 @@ class KeyMon:
       return
 
     gobject.idle_add(self.OnIdle)
-    try:
-      nodes = [x.block for x in self.finder.keyboards.values()] + \
-              [x.block for x in self.finder.mice.values()]
-      self.devices = evdev.DeviceGroup(nodes)
-    except OSError, e:
-      logging.exception(e)
-      if str(e) == 'Permission denied':
-        gksudo()
-      print
-      print 'You may need to run this as %r' % 'sudo %s' % sys.argv[0]
-      sys.exit(-1)
 
   def ButtonPressed(self, widget, evt):
     if evt.button != 1:
@@ -328,7 +288,12 @@ class KeyMon:
 
   def OnIdle(self):
     event = self.devices.next_event()
-    self.HandleEvent(event)
+    try:
+      self.HandleEvent(event)
+    except KeyboardInterrupt:
+      print 'Quit from OnIdle()'
+      self.Quit()
+      return False
     return True  # continue calling
 
   def HandleEvent(self, event):
@@ -339,7 +304,7 @@ class KeyMon:
     if event.type == 'EV_KEY' and event.value in (0, 1):
       if type(event.code) == str:
         if event.code.startswith('KEY'):
-          code_num = event.codeMaps[event.type].toNumber(event.code)
+          code_num = event.scancode
           self.HandleKey(code_num, event.value)
         elif event.code.startswith('BTN'):
           self.HandleMouseButton(event.code, event.value)
@@ -438,9 +403,11 @@ class KeyMon:
     return True
 
   def Quit(self, *args):
+    self.devices.Stop()
     self.Destroy(None)
 
   def Destroy(self, widget, data=None):
+    self.devices.Stop()
     config.cleanup()
     gtk.main_quit()
 
@@ -518,29 +485,6 @@ class KeyMon:
       image.showit = True
       self.enabled[name] = True
       image.SwitchToDefault()
-
-  def GetKeyboardDevices(self, bus, hal):
-    self.keyboard_devices = hal.FindDeviceByCapability('input.keyboard')
-    if not self.keyboard_devices:
-      print 'No keyboard devices found'
-      sys.exit(-1)
-
-    self.keyboard_filenames = []
-    for keyboard_device in self.keyboard_devices:
-      dev_obj = bus.get_object ('org.freedesktop.Hal', keyboard_device)
-      dev = dbus.Interface (dev_obj, 'org.freedesktop.Hal.Device')
-      self.keyboard_filenames.append(dev.GetProperty('input.device'))
-
-  def GetMouseDevices(self, bus, hal):
-    self.mouse_devices = hal.FindDeviceByCapability ('input.mouse')
-    if not self.mouse_devices:
-      print 'No mouse devices found'
-      sys.exit(-1)
-    self.mouse_filenames = []
-    for mouse_device in self.mouse_devices:
-      dev_obj = bus.get_object ('org.freedesktop.Hal', mouse_device)
-      dev = dbus.Interface (dev_obj, 'org.freedesktop.Hal.Device')
-      self.mouse_filenames.append(dev.GetProperty('input.device'))
 
 def ShowVersion():
   print 'Keymon version %s.' % __version__
@@ -666,7 +610,11 @@ def Main():
   config.set('devices', 'swap_buttons', bool(options.swap_buttons))
 
   keymon = KeyMon(options)
-  gtk.main()
+  try:
+    gtk.main()
+  except KeyboardInterrupt:
+    print 'Quit from gtk.main()'
+    keymon.Quit()
 
 if __name__ == '__main__':
   Main()

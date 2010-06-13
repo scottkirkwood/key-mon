@@ -11,7 +11,7 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    sodipodi:docname="middle-mouse.svg"
-   inkscape:version="0.47pre4 r22446"
+   inkscape:version="0.47 r22583"
    sodipodi:version="0.32"
    id="svg1770"
    height="48.000000px"
@@ -194,7 +194,7 @@
        sodipodi:type="inkscape:persp3d" />
   </defs>
   <sodipodi:namedview
-     inkscape:window-y="25"
+     inkscape:window-y="24"
      inkscape:window-x="0"
      inkscape:window-height="975"
      inkscape:window-width="1680"
@@ -247,12 +247,12 @@
      inkscape:groupmode="layer"
      inkscape:label="Layer 1">
     <rect
-       style="fill:#000000;fill-opacity:0.54625553;stroke:none"
+       style="fill:#000000;fill-opacity:0.54625555;stroke:none"
        id="rect4669"
        width="9.7000647"
        height="14.945751"
-       x="23.488508"
-       y="6.2132387"
+       x="21.488508"
+       y="4.2132387"
        rx="5.0033212"
        ry="0" />
   </g>
