@@ -97,6 +97,10 @@ _defaults = {
         "emulate_middle": "0",
         "swap_buttons": "0",
     },
+    "position": {
+        "x": -1,
+        "y": -1,
+    },
 }
 
 
@@ -180,6 +184,8 @@ def set(section, name, value):
 
     _log.debug("Setting %s.%s = %s" % (section, name, str(value)))
 
+    if not _config.has_section(section):
+      _config.add_section(section)
     _config.set(section, name, str(value))
     _config.dirty = True
 
