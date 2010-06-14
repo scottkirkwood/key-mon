@@ -18,7 +18,11 @@ import gobject
 import gtk
 import os
 import sys
-import xlib
+try:
+  import xlib
+except ImportError:
+  print 'Error: Missing xlib, run sudo apt-get install python-xlib'
+  sys.exit(-1)
 
 import config
 import lazy_pixbuf_creator
