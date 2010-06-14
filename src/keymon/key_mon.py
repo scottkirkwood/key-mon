@@ -8,24 +8,28 @@ Shows their status graphically.
 """
 
 __author__ = 'Scott Kirkwood (scott+keymon@forusers.com)'
-__version__ = '0.16'
+__version__ = '1.0'
 
 import logging
 import pygtk
 pygtk.require('2.0')
+import gettext
 import gobject
 import gtk
 import os
 import sys
+import xlib
 
 import config
-import xlib
 import lazy_pixbuf_creator
 import mod_mapper
+import settings
 import shaped_window
 import two_state_image
 
 from ConfigParser import SafeConfigParser
+
+gettext.install('key_mon', 'locale')
 
 def FixSvgKeyClosure(fname, from_tos):
   """Create a closure to modify the key.
@@ -60,6 +64,7 @@ class KeyMon:
       emulate_middle: Emulate the middle mouse button.
       theme: Name of the theme to use to draw keys
     """
+    settings.SettingsDialog.Register()
     self.options = options
     self.pathname = os.path.dirname(__file__)
     self.scale = config.get("ui", "scale", float)
@@ -432,29 +437,10 @@ class KeyMon:
     toggle_chrome.show()
     menu.append(toggle_chrome)
 
-    toggle_visible_click = gtk.CheckMenuItem('_Visible Click')
-    visible_click = config.get('ui', 'visible-click', bool)
-    toggle_visible_click.set_active(visible_click)
-    toggle_visible_click.connect_object('activate', self.ToggleVisibleClick,
-       visible_click)
-    toggle_visible_click.show()
-    menu.append(toggle_visible_click)
-
-    toggle_mouse = gtk.CheckMenuItem('Mouse')
-    visible = self.mouse_image.flags() & gtk.VISIBLE
-    toggle_mouse.set_active(visible)
-    toggle_mouse.connect_object('activate', self.ToggleMouse,
-        visible)
-    toggle_mouse.show()
-    menu.append(toggle_mouse)
-
-    toggle_metakey = gtk.CheckMenuItem('Meta Key')
-    visible = self.meta_image.flags() & gtk.VISIBLE
-    toggle_metakey.set_active(visible)
-    toggle_metakey.connect_object('activate', self.ToggleMetaKey,
-        visible)
-    toggle_metakey.show()
-    menu.append(toggle_metakey)
+    settings_click = gtk.MenuItem('_Settings...')
+    settings_click.connect_object('activate', self.ShowSettingsDlg, None)
+    settings_click.show()
+    menu.append(settings_click)
 
     quit = gtk.MenuItem('_Quit\tCtrl-Q')
     quit.connect_object('activate', self.Destroy, None)
@@ -467,26 +453,36 @@ class KeyMon:
     self.window.set_decorated(not current)
     config.set('ui', 'decorated', not current)
 
-  def ToggleVisibleClick(self, current):
-    config.set('ui', 'visible-click', not current)
+  def ShowSettingsDlg(self, unused_arg):
+    dlg = settings.SettingsDialog(self.window)
+    dlg.connect('settings-changed', self.SettingsChanged)
+    dlg.show_all()
+    dlg.run()
+    dlg.destroy()
 
-  def ToggleMetaKey(self, current):
-    self._ToggleAKey(self.meta_image, 'META', current)
-    config.set('buttons', 'meta', not current)
+  def SettingsChanged(self, dlg):
+    self._ToggleAKey(self.mouse_image, 'MOUSE',
+        config.get('buttons', 'mouse', bool))
+    self._ToggleAKey(self.meta_image, 'META',
+        config.get('buttons', 'meta', bool))
+    self._ToggleAKey(self.shift_image, 'SHIFT',
+        config.get('buttons', 'shift', bool))
+    self._ToggleAKey(self.ctrl_image, 'CTRL',
+        config.get('buttons', 'ctrl', bool))
+    self._ToggleAKey(self.alt_image, 'ALT',
+        config.get('buttons', 'ALT', bool))
 
-  def ToggleMouse(self, current):
-    self._ToggleAKey(self.mouse_image, 'MOUSE', current)
-    config.set('buttons', 'mouse', not current)
-
-  def _ToggleAKey(self, image, name, current):
-    if current:
-      image.showit = False
-      self.enabled[name] = False
-      image.hide()
-    else:
+  def _ToggleAKey(self, image, name, show):
+    if self.enabled[name] == show:
+      return
+    if show:
       image.showit = True
       self.enabled[name] = True
       image.SwitchToDefault()
+    else:
+      image.showit = False
+      self.enabled[name] = False
+      image.hide()
 
 def ShowVersion():
   print 'Keymon version %s.' % __version__
