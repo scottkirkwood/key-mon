@@ -44,6 +44,12 @@ def BuildZip():
   print 'Built zip'
 
 
+def UploadToPyPi():
+  subprocess.call([
+    'python', 'setup.py', 'sdist', '--formats=zip', 'upload',])
+  print 'Upload to pypi'
+
+
 def BuildMan():
   try:
     subprocess.call([
@@ -113,13 +119,20 @@ def UploadFile(fname, username, password):
   import googlecode_upload as gup
   project = 'key-mon'
   print 'Uploading %s' % fname
-  gup.upload('dist/%s' % fname, project, username, password, fname)
+  summary = fname
+  if fname.endswith('.zip') or fname.endswith('.tar.gz'):
+    labels = ['Type-Source', 'OpSys-Linux']
+  elif fname.endswith('.deb'):
+    labels = ['Type-Package', 'OpSys-Linux']
+  else:
+    labels = None
+  gup.upload('dist/%s' % fname, project, username, password, fname, summary, labels)
   print 'Done.'
 
 
 def UploadFiles(ver):
   username = 'scott@forusers.com'
- 
+
   print 'Using user %r' % username
   # Read password if not loaded from svn config, or on subsequent tries.
   print 'Please enter your googlecode.com password.'
@@ -131,13 +144,44 @@ def UploadFiles(ver):
   UploadFile('key-mon-%s.tar.gz' % ver, username, password)
   UploadFile('key-mon_%s-2_all.deb' % ver, username, password)
 
+def DoPyPi():
+  UploadToPyPi()
 
 if __name__ == '__main__':
-  ver = GetVersion('src/keymon/key_mon.py')
+  import optparse
+  parser = optparse.OptionParser()
+
+  parser.add_option('--png', dest='png', action='store_true',
+                    help='Only build png files')
+  parser.add_option('--pypi', dest='pypi', action='store_true',
+                    help='Only upload to pypi')
+  parser.add_option('--dist', dest='dist', action='store_true',
+                    help='Only build distributions.')
+  parser.add_option('--upload', dest='upload', action='store_true',
+                    help='Only upload to google code.')
+  parser.add_option('--all', dest='all', action='store_true',
+                    help='Do everything')
+  (options, args) = parser.parse_args()
+  fname = 'src/keymon/key_mon.py'
+  ver = GetVersion(fname)
   print 'Version is %r' % ver
-  BuildScreenShots()
-  BuildMan()
-  BuildDeb(ver)
-  BuildZip()
-  #UploadFiles(ver)
-  # TODO upload to PyPi
+
+  if options.png:
+    BuildScreenShots()
+  elif options.dist:
+    BuildMan()
+    BuildDeb(ver)
+    BuildZip()
+  elif options.upload:
+    UploadFiles(ver)
+  elif options.pypi:
+    DoPyPi()
+  elif options.all:
+    BuildScreenShots()
+    BuildMan()
+    BuildDeb(ver)
+    BuildZip()
+    UploadFiles(ver)
+    DoPyPi()
+  else:
+    print 'Doing nothing.  --help for commands.'
