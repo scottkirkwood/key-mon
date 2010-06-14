@@ -38,12 +38,13 @@ class ShapedWindow(gtk.Window):
   def _OnSizeAllocate(self, win, allocation):
     w, h = allocation.width, allocation.height
     # Set the window shape
-    win.set_opacity(0.1)
     win.shape_combine_mask(self.mask, 0, 0)
     win.set_property('skip-taskbar-hint', True)
-    win.set_opacity(0.1)
+    if not win.is_composited():
+      print 'Unable to fade the window'
+    else:
+      win.set_opacity(0.5)
 
   def FadeAway(self):
     self.present()
-    #gobject.timeout_add(200, self.hide)
-
+    gobject.timeout_add(200, self.hide)
