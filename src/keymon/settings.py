@@ -39,13 +39,13 @@ class SettingsDialog(gtk.Dialog):
 
     self.notebook.show()
     self.show()
-  
+
   def SettingsChanged(self):
     self.emit('settings-changed')
 
   def _Response(self, dialog, response_id):
     if response_id == gtk.RESPONSE_CLOSE:
-      print 'Close'
+      _log.info('Close in _Response.')
       pass
     self.destroy()
 
@@ -73,7 +73,7 @@ class CommonFrame(gtk.Frame):
       bt.set_active(False)
     bt.connect('toggled', self._Toggled, option, sub_option)
     vbox.pack_start(bt, False, False)
-  
+
   def _AddDropdown(self, vbox, title, opt_lst, option, sub_option):
     hbox = gtk.HBox()
     label = gtk.Label(title)
@@ -139,7 +139,7 @@ class ButtonsFrame(CommonFrame):
 def TestSettingsChanged(widget):
   print widget
   print 'Settings changed'
-  
+
 def Main():
   SettingsDialog.Register()
   gettext.install('key_mon', 'locale')
