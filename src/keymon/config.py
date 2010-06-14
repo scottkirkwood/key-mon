@@ -63,9 +63,9 @@ import os
 
 from ConfigParser import SafeConfigParser
 
-PATH = os.path.expanduser(os.path.join("~", ".config", "key-mon", "config"))
+PATH = os.path.expanduser(os.path.join('~', '.config', 'key-mon', 'config'))
 
-_log = logging.getLogger("config")
+_log = logging.getLogger('config')
 
 # Internal object storing configuration
 _config = None
@@ -75,31 +75,31 @@ _config = None
 # properly from an existing configuration file.
 _defaults = {
     # User interface options
-    "ui": {
-        "decorated": "0",
-        "opacity": "0.9",
-        "scale": "1.0",
-        "theme": "classic",
-        "visible-click": "0",
+    'ui': {
+        'decorated': '0',
+        'opacity': '0.9',
+        'scale': '1.0',
+        'theme': 'classic',
+        'visible-click': '0',
     },
     # Button display options
-    "buttons": {
-        "mouse": "1",
-        "shift": "1",
-        "ctrl": "1",
-        "alt": "1",
-        "meta": "0",
-        "old-keys": "0",
+    'buttons': {
+        'mouse': '1',
+        'shift': '1',
+        'ctrl': '1',
+        'alt': '1',
+        'meta': '0',
+        'old-keys': '0',
     },
     # Device behavior options
-    "devices": {
-        "map": "us.kbd",
-        "emulate_middle": "0",
-        "swap_buttons": "0",
+    'devices': {
+        'map': 'us.kbd',
+        'emulate_middle': '0',
+        'swap_buttons': '0',
     },
-    "position": {
-        "x": -1,
-        "y": -1,
+    'position': {
+        'x': '-1',
+        'y': '-1',
     },
 }
 
@@ -114,7 +114,7 @@ def _create_default(path):
     """
     global _config
 
-    _log.info("Creating default configuration file %r" % PATH)
+    _log.info('Creating default configuration file %r' % PATH)
 
     _config = SafeConfigParser()
 
@@ -134,7 +134,7 @@ def init():
     """
     global _config
 
-    _log.debug("Initializing configuration system")
+    _log.debug('Initializing configuration system')
 
     if not os.path.exists(PATH):
         if not os.path.exists(os.path.dirname(PATH)):
@@ -165,7 +165,7 @@ def get(section, name, cast=lambda x: x):
     except:
         value = cast(_defaults[section][name])
 
-    _log.debug("Getting %s.%s = %s" % (section, name, str(value)))
+    _log.debug('Getting %s.%s = %s' % (section, name, str(value)))
 
     return value
 
@@ -182,7 +182,7 @@ def set(section, name, value):
     if type(value) == bool:
         value = int(value)
 
-    _log.debug("Setting %s.%s = %s" % (section, name, str(value)))
+    _log.debug('Setting %s.%s = %s' % (section, name, str(value)))
 
     if not _config.has_section(section):
       _config.add_section(section)
@@ -203,8 +203,8 @@ def _write():
     """
         Actually write the config. Used internally.
     """
-    _log.debug("Writing config %r" % PATH)
-    _config.write(open(PATH, "wb"))
+    _log.debug('Writing config %r' % PATH)
+    _config.write(open(PATH, 'wb'))
     _config.dirty = False
 
 def cleanup():
@@ -212,7 +212,7 @@ def cleanup():
         Cleanup the configuration system. Write pending cached data to disk and
         such. After this has been called you may safely exit your application.
     """
-    _log.debug("Checking if config needs to be written")
+    _log.debug('Checking if config needs to be written')
     if _config.dirty:
         _write()
 

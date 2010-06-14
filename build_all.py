@@ -139,5 +139,5 @@ if __name__ == '__main__':
   BuildMan()
   BuildDeb(ver)
   BuildZip()
-  UploadFiles(ver)
+  #UploadFiles(ver)
   # TODO upload to PyPi
