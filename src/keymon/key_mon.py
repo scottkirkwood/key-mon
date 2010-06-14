@@ -260,6 +260,10 @@ class KeyMon:
     self.hbox.show()
     self.AddEvents()
 
+    old_x = config.get('position', 'x', int)
+    old_y = config.get('position', 'y', int)
+    if old_x != -1 and old_y != -1 and old_x and old_y:
+      self.window.move(old_x, old_y)
     self.window.show()
 
   def SvgFname(self, fname):
@@ -274,6 +278,7 @@ class KeyMon:
   def AddEvents(self):
     self.window.connect('destroy', self.Destroy)
     self.window.connect('button-press-event', self.ButtonPressed)
+    self.window.connect('configure-event', self._WindowMoved)
     self.event_box.connect('button_release_event', self.RightClickHandler)
 
     accelgroup = gtk.AccelGroup()
@@ -292,6 +297,12 @@ class KeyMon:
       return True
     widget.begin_move_drag(evt.button, int(evt.x_root), int(evt.y_root), evt.time)
     return True
+
+  def _WindowMoved(self, widget, event):
+    x, y = widget.get_position()
+    logging.info('Moved window to %d, %d' % (x, y))
+    config.set('position', 'x', x)
+    config.set('position', 'y', y)
 
   def OnIdle(self):
     event = self.devices.next_event()
@@ -471,6 +482,9 @@ class KeyMon:
         config.get('buttons', 'ctrl', bool))
     self._ToggleAKey(self.alt_image, 'ALT',
         config.get('buttons', 'ALT', bool))
+    if config.get('ui', 'visible-click', bool):
+      self.mouse_indicator_win.FadeAway()
+    self.window.set_decorated(config.get('ui', 'decorated', bool))
 
   def _ToggleAKey(self, image, name, show):
     if self.enabled[name] == show:
