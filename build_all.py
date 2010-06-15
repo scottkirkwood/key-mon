@@ -10,10 +10,17 @@ Build everything for keymon.
 You'll need:
 sudo aptitude install alien help2man fakeroot
 """
+
+import codecs
 import getpass
+import httplib
+import netrc
 import os
 import re
+import release
 import shutil
+import setup
+import simplejson
 import subprocess
 import sys
 
@@ -30,7 +37,7 @@ def GetVersion(fname):
     print 'Setup versions agree'
   else:
     print 'Setup versions dissagree'
-    print 'key_mon.py = %r' % source_ver
+    print '%s = %r' % (setup.PY_SRC, source_ver)
     print 'setup.py = %r' % setup_ver
     print 'Please fix this before continuing'
     sys.exit(-1)
@@ -54,10 +61,10 @@ def BuildMan():
   try:
     subprocess.call([
       'help2man',
-      'src/keymon/key_mon.py',
-      '-i', 'man/key-mon.include',
-      '-o', 'man/key-mon.1'])
-    print 'Built key-mon.1'
+      '%s/%s' % (setup.DIR, setup.PY_SRC),
+      '-i', 'man/%s.include' % setup.NAME,
+      '-o', 'man/%s.1' % setup.NAME])
+    print 'Built %s.1' % setup.NAME
   except Exception, e:
     print 'You may need to install help2man', e
     sys.exit(-1)
@@ -66,7 +73,7 @@ def BuildMan():
 def BuildDeb(ver):
   subprocess.call([
     'python', 'setup.py', 'bdist_rpm',])
-  rpm_file = 'key-mon-%s-1.noarch.rpm' % ver
+  rpm_file = '%s-%s-1.noarch.rpm' % (setup.NAME, ver)
   print 'Converting %s to .deb' % rpm_file
   old_cwd = os.getcwd()
   os.chdir('dist')
@@ -87,13 +94,13 @@ def BuildDeb(ver):
 
 
 def KillConfig():
-  config_file = os.path.expanduser('~/.config/key-mon/config')
+  config_file = os.path.expanduser('~/.config/%s/config' % setup.NAME)
   if os.path.exists(config_file):
     os.unlink(config_file)
 
 
 def BuildScreenShots():
-  prog = 'src/keymon/key_mon.py'
+  prog = '%s/%s' % (setup.DIR, setup.PY_SRC)
   destdir = 'docs'
   all_buttons = ['KEY_A', 'KEY_LEFTCTRL', 'KEY_LEFTALT', 'KEY_LEFTSHIFT']
   todos = [
@@ -117,16 +124,17 @@ def BuildScreenShots():
 
 def UploadFile(fname, username, password):
   import googlecode_upload as gup
-  project = 'key-mon'
+  project = setup.NAME
   print 'Uploading %s' % fname
   summary = fname
   if fname.endswith('.zip') or fname.endswith('.tar.gz'):
     labels = ['Type-Source', 'OpSys-Linux']
   elif fname.endswith('.deb'):
+    summary += ' (python 2.6)'
     labels = ['Type-Package', 'OpSys-Linux']
   else:
     labels = None
-  gup.upload('dist/%s' % fname, project, username, password, fname, summary, labels)
+  gup.upload('dist/%s' % fname, project, username, password, summary, labels)
   print 'Done.'
 
 
@@ -140,9 +148,40 @@ def UploadFiles(ver):
   print 'It is the password you use to access repositories,'
   print 'and can be found here: http://code.google.com/hosting/settings'
   password = getpass.getpass()
-  UploadFile('key-mon-%s.zip' % ver, username, password)
-  UploadFile('key-mon-%s.tar.gz' % ver, username, password)
-  UploadFile('key-mon_%s-2_all.deb' % ver, username, password)
+  UploadFile('%s-%s.zip' % (setup.NAME, ver), username, password)
+  UploadFile('%s-%s.tar.gz' % (setup.NAME, ver), username, password)
+  UploadFile('%s_%s-2_all.deb' % (setup.NAME, ver), username, password)
+
+
+def AnnounceOnFreshmeat(ver, lines):
+  """Announce launch on freshmeat.
+  Args:
+    vers: the version string
+    lines: the lines from the release notes.
+  """
+  print 'Announcing on Freshmeat...'
+  rc = netrc.netrc(os.path.expanduser('~/.netrc'))
+  # Storing the auth_code as the account in the .netrc file
+  # ex. chmod 600 ~/.netrc
+  # machine freshmeat
+  #     login myname
+  #     account auth_code_given_by_freshmeat
+  #     password mypassword
+  auth_code = rc.authenticators('freshmeat')[1]
+  name = setup.NAME
+  tag = 'Bug fixes'
+  if ver.endswith('.0'):
+    tag = 'Feature enhancements'
+  changelog = ['Changes: '] + lines
+  release = dict(version=ver, changelog='\n'.join(changelog), tag_list=tag)
+  path = '/projects/%s/releases.json' % name
+  body = codecs.encode(simplejson.dumps(dict(auth_code=auth_code, release=release)))
+  connection = httplib.HTTPConnection('freshmeat.net')
+  connection.request('POST', path, body, {'Content-Type': 'application/json'})
+  response = connection.getresponse()
+  if response.status != 201:
+    print 'Request failed: %d %s' % (response.status, response.reason)
+  print 'Done announcing on Freshmeat.'
 
 def DoPyPi():
   UploadToPyPi()
@@ -155,6 +194,8 @@ if __name__ == '__main__':
                     help='Only build png files')
   parser.add_option('--pypi', dest='pypi', action='store_true',
                     help='Only upload to pypi')
+  parser.add_option('--freshmeat', dest='freshmeat', action='store_true',
+                    help='Announce on freshmeat')
   parser.add_option('--dist', dest='dist', action='store_true',
                     help='Only build distributions.')
   parser.add_option('--upload', dest='upload', action='store_true',
@@ -162,9 +203,18 @@ if __name__ == '__main__':
   parser.add_option('--all', dest='all', action='store_true',
                     help='Do everything')
   (options, args) = parser.parse_args()
-  fname = 'src/keymon/key_mon.py'
+  fname = '%s/%s' % (setup.DIR, setup.PY_SRC)
   ver = GetVersion(fname)
-  print 'Version is %r' % ver
+  rel_fname = 'docs/RELEASE.rst'
+  rel_ver, rel_date, rel_lines = release.ParseLastRelease(rel_fname)
+  if rel_ver != ver:
+    print 'Need to update the %r, version %r doesn\'t match %r' % (rel_fname, rel_ver, ver)
+    sys.exit(-1)
+  print 'Version is %r, date %r' % (ver, rel_date)
+  print 'Release notes'
+  print '-------------'
+  print '\n'.join(rel_lines)
+  print
 
   if options.png:
     BuildScreenShots()
@@ -176,6 +226,8 @@ if __name__ == '__main__':
     UploadFiles(ver)
   elif options.pypi:
     DoPyPi()
+  elif options.freshmeat:
+    AnnounceOnFreshmeat(ver, rel_lines)
   elif options.all:
     BuildScreenShots()
     BuildMan()
@@ -183,5 +235,6 @@ if __name__ == '__main__':
     BuildZip()
     UploadFiles(ver)
     DoPyPi()
+    AnnounceOnFreshmeat(ver, rel_lines)
   else:
     print 'Doing nothing.  --help for commands.'
