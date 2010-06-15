@@ -5,15 +5,14 @@
 """Create a shaped window to show mouse events.
 
 Thanks to mathias.gumz for the original code.
-
 """
 import gobject
 import gtk
-import math
 
 import lazy_pixbuf_creator
 
 class ShapedWindow(gtk.Window):
+  """Create a window shaped as fname."""
   def __init__(self, fname, scale=1.0):
     gtk.Window.__init__(self)
     self.connect('size-allocate', self._OnSizeAllocate)
@@ -35,8 +34,8 @@ class ShapedWindow(gtk.Window):
     self.image.show()
     self.add(self.image)
 
-  def _OnSizeAllocate(self, win, allocation):
-    w, h = allocation.width, allocation.height
+  def _OnSizeAllocate(self, win, unused_allocation):
+    """Called when first allocated."""
     # Set the window shape
     win.shape_combine_mask(self.mask, 0, 0)
     win.set_property('skip-taskbar-hint', True)
@@ -46,5 +45,6 @@ class ShapedWindow(gtk.Window):
       win.set_opacity(0.5)
 
   def FadeAway(self):
+    """Make the window fade in a little bit."""
     self.present()
     gobject.timeout_add(200, self.hide)
