@@ -41,12 +41,12 @@ def FixSvgKeyClosure(fname, from_tos):
 
   def FixSvgKey():
     """Given an SVG file return the SVG text fixed."""
-    logging.debug('Read file %r' % fname)
-    f = open(fname)
-    fbytes = f.read()
-    f.close()
-    for f, t in from_tos:
-      fbytes = fbytes.replace(f, t)
+    logging.debug('Read file %r', fname)
+    fi = open(fname)
+    fbytes = fi.read()
+    fi.close()
+    for fi, to in from_tos:
+      fbytes = fbytes.replace(fi, to)
     return fbytes
 
   return FixSvgKey
@@ -92,6 +92,7 @@ class KeyMon:
     self.CreateWindow()
 
   def DoScreenshot(self):
+    """Takes a screenshot after passing in some keys to show."""
     import time
     import evdev
     for key in self.options.screenshot.split(','):
@@ -102,7 +103,7 @@ class KeyMon:
         while gtk.events_pending():
           gtk.main_iteration(False)
         time.sleep(0.1)
-      except Exception, e:
+      except Exception, e:  # pylint: disable-msg=W0703
         print e
     while gtk.events_pending():
       gtk.main_iteration(False)
@@ -121,6 +122,7 @@ class KeyMon:
     self.Destroy(None)
 
   def CreateNamesToFnames(self):
+    """Returns an ID (name) to filenames in a list."""
     ftn = {
       'MOUSE': [self.SvgFname('mouse'),],
       'BTN_MIDDLE': [self.SvgFname('mouse'), self.SvgFname('middle-mouse')],
@@ -186,6 +188,8 @@ class KeyMon:
     return ftn
 
   def CreateWindow(self):
+    """Create the main window."""
+    # pylint: disable-msg=W0201
     self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
 
     self.window.set_title('Keyboard Status Monitor')
@@ -240,7 +244,7 @@ class KeyMon:
         self.meta_image, self.alt_image]
 
     prev_key_image = None
-    for n in range(self.options.old_keys):
+    for _ in range(self.options.old_keys):
       key_image = two_state_image.TwoStateImage(self.pixbufs, 'KEY_EMPTY')
       key_image.hide()
       key_image.timeout_secs = 0.5
@@ -267,6 +271,7 @@ class KeyMon:
     self.window.show()
 
   def SvgFname(self, fname):
+    """Get the SVG filename for the current theme."""
     fullname = os.path.join(self.pathname, 'themes/%s/%s%s.svg' % (
         config.get("ui", "theme"), fname, self.svg_size))
     if self.svg_size and not os.path.exists(fullname):
@@ -276,6 +281,7 @@ class KeyMon:
     return fullname
 
   def AddEvents(self):
+    """Add all the events that the main window will listen to."""
     self.window.connect('destroy', self.Destroy)
     self.window.connect('button-press-event', self.ButtonPressed)
     self.window.connect('configure-event', self._WindowMoved)
@@ -293,18 +299,21 @@ class KeyMon:
     gobject.idle_add(self.OnIdle)
 
   def ButtonPressed(self, widget, evt):
+    """A mouse button was pressed."""
     if evt.button != 1:
       return True
     widget.begin_move_drag(evt.button, int(evt.x_root), int(evt.y_root), evt.time)
     return True
 
-  def _WindowMoved(self, widget, event):
+  def _WindowMoved(self, widget, unused_event):
+    """The window has moved, let's save the position."""
     x, y = widget.get_position()
-    logging.info('Moved window to %d, %d' % (x, y))
+    logging.info('Moved window to %d, %d', x, y)
     config.set('position', 'x', x)
     config.set('position', 'y', y)
 
   def OnIdle(self):
+    """On idle we'll check for events."""
     event = self.devices.next_event()
     try:
       self.HandleEvent(event)
@@ -315,6 +324,7 @@ class KeyMon:
     return True  # continue calling
 
   def HandleEvent(self, event):
+    """Handle button or mouse event."""
     if not event:
       for button in self.buttons:
         button.EmptyEvent()
@@ -330,14 +340,19 @@ class KeyMon:
       self.HandleMouseScroll(event.value, event.value)
 
   def _HandleEvent(self, image, name, code):
+    """Handle the image change event."""
     if code == 1:
-      logging.debug('Switch to %s, code %s' % (name, code))
+      logging.debug('Switch to %s, code %s', name, code)
       image.SwitchTo(name)
     else:
       image.SwitchToDefault()
 
-
   def HandleKey(self, scan_code, value):
+    """Handle a key code event.
+    Args:
+      scan_code: the scancode as a position on the keyboard.
+      value: 1 is down, 0 is up.
+    """
     if scan_code in self.modmap:
       code, medium_name, short_name = self.modmap[scan_code]
     else:
@@ -345,7 +360,7 @@ class KeyMon:
       return
     if self.scale < 1.0 and short_name:
       medium_name = short_name
-    logging.debug('Key %s pressed = %r' % (code, medium_name))
+    logging.debug('Key %s pressed = %r', code, medium_name)
     if code in self.name_fnames:
       self._HandleEvent(self.key_image, code, value)
       return
@@ -376,7 +391,7 @@ class KeyMon:
     if code.startswith('KEY_'):
       letter = medium_name
       if code not in self.name_fnames:
-        logging.debug('code not in %s' % code)
+        logging.debug('code not in %s', code)
         if len(letter) == 1:
           template = 'one-char-template'
         else:
@@ -384,13 +399,15 @@ class KeyMon:
         self.name_fnames[code] = [
             FixSvgKeyClosure(self.SvgFname(template), [('&amp;', letter)])]
       else:
-        logging.debug('code in %s' % code)
+        logging.debug('code in %s', code)
       self._HandleEvent(self.key_image, code, value)
       return
 
   def HandleMouseButton(self, code, value):
+    """Handle mouse down/up event."""
     if self.enabled['MOUSE']:
-      if self.emulate_middle and ((self.mouse_image.current == 'BTN_LEFT' and code == 'BTN_RIGHT') or
+      if self.emulate_middle and (
+          (self.mouse_image.current == 'BTN_LEFT' and code == 'BTN_RIGHT') or
           (self.mouse_image.current == 'BTN_RIGHT' and code == 'BTN_LEFT')):
         code = 'BTN_MIDDLE'
       elif value == 1 and ((self.mouse_image.current == 'BTN_LEFT' and code == 'BTN_RIGHT') or
@@ -405,31 +422,34 @@ class KeyMon:
       self._HandleEvent(self.mouse_image, code, value)
 
     root = gtk.gdk.screen_get_default().get_root_window()
-    x, y, mods = root.get_pointer()
+    x, y, unused_mods = root.get_pointer()
     w, h = self.mouse_indicator_win.get_size()
     self.mouse_indicator_win.move(x - w/2, y - h/2)
     if value == 0 and config.get('ui', 'visible-click', bool):
       self.mouse_indicator_win.FadeAway()
     return True
 
-  def HandleMouseScroll(self, dir, value):
-    if dir > 0:
+  def HandleMouseScroll(self, direction, unused_value):
+    """Handle the scroll up/down."""
+    if direction > 0:
       self._HandleEvent(self.mouse_image, 'SCROLL_UP', 1)
-    elif dir < 0:
+    elif direction < 0:
       self._HandleEvent(self.mouse_image, 'SCROLL_DOWN', 1)
     self.mouse_image.SwitchToDefault()
     return True
 
-  def Quit(self, *args):
-    self.devices.Stop()
+  def Quit(self, *unused_args):
+    """Quit the program, by calling Destroy."""
     self.Destroy(None)
 
-  def Destroy(self, widget, data=None):
+  def Destroy(self, unused_widget, unused_data=None):
+    """Quit called as an event."""
     self.devices.Stop()
     config.cleanup()
     gtk.main_quit()
 
-  def RightClickHandler(self, widget, event):
+  def RightClickHandler(self, unused_widget, event):
+    """Handle the right click within the window (shows menu)."""
     if event.button != 3:
       return
 
@@ -439,6 +459,7 @@ class KeyMon:
     menu.popup(None, None, None, event.button, event.time)
 
   def CreateContextMenu(self):
+    """Create the right mouse button context menu."""
     menu = gtk.Menu()
 
     toggle_chrome = gtk.CheckMenuItem('Window _Chrome')
@@ -453,25 +474,28 @@ class KeyMon:
     settings_click.show()
     menu.append(settings_click)
 
-    quit = gtk.MenuItem('_Quit\tCtrl-Q')
-    quit.connect_object('activate', self.Destroy, None)
-    quit.show()
+    quit_menu = gtk.MenuItem('_Quit\tCtrl-Q')
+    quit_menu.connect_object('activate', self.Destroy, None)
+    quit_menu.show()
 
-    menu.append(quit)
+    menu.append(quit_menu)
     return menu
 
   def ToggleChrome(self, current):
+    """Turn on/off the window borders."""
     self.window.set_decorated(not current)
     config.set('ui', 'decorated', not current)
 
   def ShowSettingsDlg(self, unused_arg):
+    """Show the settings dialog."""
     dlg = settings.SettingsDialog(self.window)
     dlg.connect('settings-changed', self.SettingsChanged)
     dlg.show_all()
     dlg.run()
     dlg.destroy()
 
-  def SettingsChanged(self, dlg):
+  def SettingsChanged(self, unused_dlg):
+    """Event callback from settings dialog that something's changed."""
     self._ToggleAKey(self.mouse_image, 'MOUSE',
         config.get('buttons', 'mouse', bool))
     self._ToggleAKey(self.meta_image, 'META',
@@ -487,6 +511,7 @@ class KeyMon:
     self.window.set_decorated(config.get('ui', 'decorated', bool))
 
   def _ToggleAKey(self, image, name, show):
+    """Toggle the image passed."""
     if self.enabled[name] == show:
       return
     if show:
@@ -499,10 +524,12 @@ class KeyMon:
       image.hide()
 
 def ShowVersion():
+  """Show the version of the program."""
   print 'Keymon version %s.' % __version__
   print 'Written by %s' % __author__
 
 def Main():
+  """Parse the command line and run the program."""
   import optparse
   parser = optparse.OptionParser()
   parser.add_option('-s', '--smaller', dest='smaller', default=False, action='store_true',
@@ -577,7 +604,7 @@ def Main():
                     'Pass a comma separated list of keys to simulate (ex. "KEY_A,KEY_LEFTCTRL").')
   parser.add_option_group(group)
 
-  (options, args) = parser.parse_args()
+  (options, unused_args) = parser.parse_args()
 
   if options.version:
     ShowVersion()

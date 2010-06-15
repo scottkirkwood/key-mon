@@ -124,7 +124,7 @@ generated-members=REQUEST,acl_users,aq_parent
 init-import=no
 
 # A regular expression matching names used for dummy variables (i.e. not used).
-dummy-variables-rgx=_|dummy
+dummy-variables-rgx=_|dummy|unused_
 
 # List of additional names supposed to be defined in builtins. Remember that
 # you should avoid to define new builtins when possible.
