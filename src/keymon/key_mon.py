@@ -314,7 +314,7 @@ class KeyMon:
 
   def OnIdle(self):
     """On idle we'll check for events."""
-    event = self.devices.next_event()
+    event = self.devices.NextEvent()
     try:
       self.HandleEvent(event)
     except KeyboardInterrupt:

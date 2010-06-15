@@ -32,20 +32,24 @@ class TwoStateImage(gtk.Image):
     self.SwitchTo(self.normal)
 
   def SwitchTo(self, name):
+    """Switch to image with this name."""
     if self.current != self.normal:
       self._DeferTo(self.current)
     self._SwitchTo(name)
 
   def _SwitchTo(self, name):
+    """Internal, switch to image with this name even if same."""
     self.set_from_pixbuf(self.pixbufs.Get(name))
     self.current = name
     if self.showit:
       self.show()
 
   def SwitchToDefault(self):
+    """Switch to the default image."""
     self.count_down = time.time()
 
   def EmptyEvent(self):
+    """Sort of a idle event."""
     if self.count_down is None:
       return
     delta = time.time() - self.count_down

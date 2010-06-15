@@ -9,10 +9,8 @@ import codecs
 import os
 import re
 import subprocess
-import sys
 
 MEDIUM_NAME = {
-  'REDO': 'Redo',
   'ESCAPE': 'Esc',
   'PLUS': '+',
   'MINUS': '-',
@@ -86,7 +84,6 @@ MEDIUM_NAME = {
   'PAUSE': 'Pause',
   'KP_DECIMAL': '.',
   'SUPER_L': 'Super',
-  'MULTI_KEY': 'Multi',
   'MENU': 'Menu',
   'CANCEL': 'Cancel',
   'REDO': 'Redo',
@@ -134,21 +131,17 @@ MEDIUM_NAME = {
   'PARENLEFT': '(',
   'PARENRIGHT': ')',
   'XF86NEW': 'New',
-  'REDO': 'Redo',
   'MODE_SWITCH': 'Mode',
   'NOSYMBOL': '-',
-  'XF86AUDIOPLAY': 'Play',
   'XF86AUDIOPAUSE': 'Pause',
   'XF86LAUNCH3': 'Launch3',
   'XF86LAUNCH4': 'Launch4',
   'XF86SUSPEND': 'Suspend',
-  'XF86CLOSE': 'Close',
   'XF86WEBCAM': 'WebCam',
   'XF86MAIL': 'Mail',
   'XF86SEARCH': 'Search',
   'XF86FINANCE': 'Finance',
   'XF86SHOP': 'Shop',
-  'CANCEL': 'Cancel',
   'XF86MONBRIGHTNESSDOWN': 'BrightnessDown',
   'XF86MONBRIGHTNESSUP': 'BrightnessUp',
   'XF86AUDIOMEDIA': 'AudioMedia',
@@ -156,7 +149,6 @@ MEDIUM_NAME = {
   'XF86KBDLIGHTONOFF': 'LightOnOff',
   'XF86KBDBRIGHTNESSDOWN': 'BrightnessDown',
   'XF86KBDBRIGHTNESSUP': 'BrightnessUp',
-  'XF86SEND': 'Send',
   'XF86REPLY': 'Reply',
   'XF86MAILFORWARD': 'MailForward',
   'XF86SAVE': 'Save',
@@ -173,7 +165,6 @@ SHORT_NAME = {
   'SHIFT_L': 'Shft',
   'SHIFT_R': 'Shft',
   'SPACE': 'Spc',
-  'MULTI_KEY': 'Mul',
   'PRINT': 'Prt',
   'LINEFEED': 'Lf',
   'HOME': 'Hm',
@@ -208,6 +199,7 @@ def run_cmd(args):
 
 
 def parse_modmap(lines):
+  """Parse a modmap file."""
   re_range = re.compile(r'KeyCodes range from (\d+) to')
   lower_bound = 8
   re_line = re.compile(r'^\s+(\d+)\s+0x[\dA-Fa-f]+\s+(.*)')
@@ -222,12 +214,12 @@ def parse_modmap(lines):
     grps = re_line.search(line)
     if grps:
       code = int(grps.group(1)) - lower_bound
-      str = []
+      strlst = []
       for grp in re_remainder.finditer(grps.group(2)):
-        str.append(grp.group(1))
+        strlst.append(grp.group(1))
 
       # We'll pick the first one
-      alias = str[0].upper()
+      alias = strlst[0].upper()
       my_keyname = 'KEY_' + alias
       my_keyname = my_keyname.replace('XF86', '')
       ret[code] = (my_keyname, alias)
@@ -307,11 +299,11 @@ def SafelyReadModMap(fname):
 
 
 if __name__ == '__main__':
-  fname = 'my.kdb'
+  filename = 'my.kdb'
   modmap = ReadModMap()
-  CreateMykdb(fname, modmap)
-  entries = ReadKdb(fname)
-  print 'Read %r with %d entires' % (fname, len(entries))
-  for code in modmap:
-    if code not in entries:
-      print 'Missing entry for code %s' % code
+  CreateMykdb(filename, modmap)
+  entries = ReadKdb(filename)
+  print 'Read %r with %d entires' % (filename, len(entries))
+  for ecode in modmap:
+    if ecode not in entries:
+      print 'Missing entry for code %s' % ecode

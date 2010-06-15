@@ -40,6 +40,7 @@ class LazyPixbufCreator():
     self.name_fnames = name_fnames
 
   def Get(self, name):
+    """Get the pixbuf with this name."""
     if name not in self.pixbufs:
       name = self.CreatePixbuf(name)
     return self.pixbufs[name]
@@ -52,7 +53,7 @@ class LazyPixbufCreator():
       The name given or EMPTY if error.
     """
     if name not in self.name_fnames:
-      logging.error('Don\'t understand the name %r' % name)
+      logging.error('Don\'t understand the name %r', name)
       return 'KEY_EMPTY'
     ops = self.name_fnames[name]
     img = None
@@ -60,9 +61,9 @@ class LazyPixbufCreator():
       if isinstance(op, types.StringTypes):
         img = self._Composite(img, self._ReadFromFile(op))
       else:
-        bytes = op()
-        bytes = self._Resize(bytes)
-        img = self._Composite(img, self._ReadFromBytes(bytes))
+        image_bytes = op()
+        image_bytes = self._Resize(image_bytes)
+        img = self._Composite(img, self._ReadFromBytes(image_bytes))
     self.pixbufs[name] = img
     return name
 
@@ -84,47 +85,50 @@ class LazyPixbufCreator():
     return img2
 
   def _ReadFromFile(self, fname):
-    logging.debug('Read file %s' % fname)
+    """Read in the file in from fname."""
+    logging.debug('Read file %s', fname)
     if self.resize == 1.0:
       return gtk.gdk.pixbuf_new_from_file(fname)
-    f = open(fname)
-    bytes = self._Resize(f.read())
-    f.close()
-    return self._ReadFromBytes(bytes)
+    fi = open(fname)
+    image_bytes = self._Resize(fi.read())
+    fi.close()
+    return self._ReadFromBytes(image_bytes)
 
-
-  def _ReadFromBytes(self, bytes):
+  def _ReadFromBytes(self, image_bytes):
     """Writes the bytes to a file and then reads the file."""
-    f, fname = tempfile.mkstemp(prefix='keymon-', suffix='.svg')
-    os.write(f, bytes)
-    os.close(f)
+    fo, fname = tempfile.mkstemp(prefix='keymon-', suffix='.svg')
+    os.write(fo, image_bytes)
+    os.close(fo)
     try:
       img = gtk.gdk.pixbuf_new_from_file(fname)
     except:
-      logging.error('Unable to read %r: %s' % (fname, bytes))
+      logging.error('Unable to read %r: %s', fname, image_bytes)
       sys.exit(-1)
+
     try:
       os.unlink(fname)
     except OSError:
       pass
     return img
 
-  def _Resize(self, bytes):
+  def _Resize(self, image_bytes):
+    """Resize the image by manipulating the svg."""
     if self.resize == 1.0:
-      return bytes
+      return image_bytes
     template = r'(<svg[^<]+)(%s=")(\d+\.?\d*)'
-    bytes = self._ResizeText(bytes, template % 'width')
-    bytes = self._ResizeText(bytes, template % 'height')
-    bytes = bytes.replace('<g',
+    image_bytes = self._ResizeText(image_bytes, template % 'width')
+    image_bytes = self._ResizeText(image_bytes, template % 'height')
+    image_bytes = image_bytes.replace('<g',
         '<g transform="scale(%f, %f)"' % (self.resize, self.resize), 1)
-    return bytes
+    return image_bytes
 
-  def _ResizeText(self, bytes, regular_exp):
+  def _ResizeText(self, image_bytes, regular_exp):
+    """Change the numeric value of some sizing text by regular expression."""
     re_x = re.compile(regular_exp)
-    grps = re_x.search(bytes)
+    grps = re_x.search(image_bytes)
     if grps:
       num = float(grps.group(3))
       num = num * self.resize
       replace = grps.group(1) + grps.group(2) + str(num)
-      bytes = re_x.sub(replace, bytes, 1)
-    return bytes
+      image_bytes = re_x.sub(replace, image_bytes, 1)
+    return image_bytes
