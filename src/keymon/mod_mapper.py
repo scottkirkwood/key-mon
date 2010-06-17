@@ -6,6 +6,7 @@
 __author__ = 'scott@forusers.com (scottkirkwood)'
 
 import codecs
+import logging
 import os
 import re
 import subprocess
@@ -197,6 +198,38 @@ SHORT_NAME = {
   'XF86MENUKB': 'MenuKb',
 }
 
+class ModMapper(object):
+  def __init__(self):
+    self.map = {}
+    self.alt_map = {}
+
+  def Done(self):
+    for key in self.map:
+      vals = self.map[key]
+      code = vals[0]
+      self.alt_map[code] = vals
+
+  def Set(self, code, vals):
+    self.map[code] = vals
+
+  def GetAndCheck(self, scancode, name):
+    if scancode in self.map:
+      vals = self.map[scancode]
+      if vals[0] == name:
+        return vals
+      else:
+        logging.debug('code %s != %s', vals[1], name)
+    if name in self.alt_map:
+      logging.info('Found key via alt lookup %s', name)
+      return self.alt_map[name]
+    logging.info('scancode: %r name:%r not found', scancode, name)
+    return None, None, None
+
+  def __getitem__(self, key):
+    return self.map[key]
+
+  def __contains__(self, key):
+    return key in self.map
 
 def mod_map_args():
   return ['xmodmap', '-display', ':0', '-pk']
@@ -212,7 +245,7 @@ def parse_modmap(lines):
   lower_bound = 8
   re_line = re.compile(r'^\s+(\d+)\s+0x[\dA-Fa-f]+\s+(.*)')
   re_remainder = re.compile(r'\((.+?)\)')
-  ret = {}
+  ret = ModMapper()
   for line in lines.split('\n'):
     if not line:
       continue
@@ -230,7 +263,8 @@ def parse_modmap(lines):
       alias = str[0].upper()
       my_keyname = 'KEY_' + alias
       my_keyname = my_keyname.replace('XF86', '')
-      ret[code] = (my_keyname, alias)
+      ret.Set(code, (my_keyname, alias))
+  ret.Done()
   return ret
 
 
@@ -241,13 +275,14 @@ def ReadKdb(fname):
 
 def ParseKdb(text):
   re_line = re.compile(r'(\d+) (\S+) (\S+)\s?(\S*)')
-  ret = {}
+  ret = ModMapper()
   for line in text.split('\n'):
     if not line:
       continue
     grps = re_line.search(line)
     if grps:
-      ret[int(grps.group(1))] = (grps.group(2), grps.group(3), grps.group(4))
+      ret.Set(int(grps.group(1)), (grps.group(2), grps.group(3), grps.group(4)))
+  ret.Done()
   return ret
 
 
@@ -267,7 +302,7 @@ def CreateMykdb(fname, codes):
 
 def ReadModMap():
   xmodmap = parse_modmap(run_cmd(mod_map_args()))
-  ret = {}
+  ret = ModMapper()
   for code in xmodmap:
     key = xmodmap[code][0]
     key_name = xmodmap[code][1]
@@ -279,7 +314,8 @@ def ReadModMap():
       short_name = SHORT_NAME[key_name]
     else:
       short_name = None
-    ret[code] = (key, medium_name, short_name)
+    ret.Set(code, (key, medium_name, short_name))
+  ret.Done()
   return ret
 
 

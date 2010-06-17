@@ -327,7 +327,7 @@ class KeyMon:
       if type(event.code) == str:
         if event.code.startswith('KEY'):
           code_num = event.scancode
-          self.HandleKey(code_num, event.value)
+          self.HandleKey(code_num, event.code, event.value)
         elif event.code.startswith('BTN'):
           self.HandleMouseButton(event.code, event.value)
     elif event.type.startswith('EV_REL') and event.code == 'REL_WHEEL':
@@ -341,15 +341,16 @@ class KeyMon:
       image.SwitchToDefault()
 
 
-  def HandleKey(self, scan_code, value):
-    if scan_code in self.modmap:
-      code, medium_name, short_name = self.modmap[scan_code]
-    else:
+  def HandleKey(self, scan_code, xlib_name, value):
+    code, medium_name, short_name = self.modmap.GetAndCheck(scan_code,
+                                                            xlib_name)
+    if not code:
       print 'No mapping for scan_code %d' % scan_code
       return
     if self.scale < 1.0 and short_name:
       medium_name = short_name
-    logging.debug('Key %s pressed = %r' % (code, medium_name))
+    logging.debug('Scan code %d, Key %s pressed = %r' % (scan_code,
+                                                         code, medium_name))
     if code in self.name_fnames:
       self._HandleEvent(self.key_image, code, value)
       return
