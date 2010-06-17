@@ -134,7 +134,7 @@ def CleanAll():
     print 'rm -r %s' % docs
     shutil.rmtree(docs)
 
-  for script in setup.SETUP_OPTIONS.scripts:
+  for script in setup.SETUP['scripts']:
     bin_script = '/usr/local/bin/%s' % os.path.basename(script)
     if os.path.exists(bin_script):
       print 'rm %s' % bin_script
