@@ -1,9 +1,4 @@
 #!/usr/bin/python
-# Copyright 2009 Scott Kirkwood. All Rights Reserved.
-
-"""Get events via Xlib "RECORD" module.
-If installed you should see librecord.so in Xorg.0.log
-"""
 from Xlib import display
 from Xlib import X
 from Xlib import XK
@@ -13,33 +8,32 @@ import sys
 import threading
 import collections
 
-class XEvent(object):
+class XEvent:
   """An event, mimics edev.py events."""
   def __init__(self, atype, scancode, code, value):
-    self._type = atype
+    self._type = atype;
     self._scancode = scancode
     self._code = code
     self._value = value
 
-  def GetType(self):
+  def get_type(self):
     return self._type
-  type = property(GetType)
+  type = property(get_type)
 
-  def GetScancode(self):
+  def get_scancode(self):
     return self._scancode
-  scancode = property(GetScancode)
+  scancode = property(get_scancode)
 
-  def GetCode(self):
+  def get_code(self):
     return self._code
-  code = property(GetCode)
+  code = property(get_code)
 
-  def GetValue(self):
+  def get_value(self):
     return self._value
-  value = property(GetValue)
+  value = property(get_value)
 
   def __str__(self):
-    return 'type:%s scancode:%s code:%s value:%s' % (self._type, self._scancode,
-        self._code, self._value)
+    return 'type:%s scancode:%s code:%s value:%s' % (self._type, self._scancode, self._code, self._value)
 
 class XEvents(threading.Thread):
   _butn_to_code = collections.defaultdict(lambda: 'BTN_DUNNO',
@@ -65,7 +59,7 @@ class XEvents(threading.Thread):
         code = getattr(XK, name)
         self.keycode_to_symbol[code] = 'KEY_' + name[3:].upper()
 
-  def NextEvent(self):
+  def next_event(self):
     """Returns the next event in queue, or None if none."""
     if self.events:
       return self.events.pop(0)
@@ -150,12 +144,13 @@ class XEvents(threading.Thread):
     self.events.append(XEvent('EV_KEY', event.detail - 8, self.keycode_to_symbol[keysym], value))
 
 if __name__ == '__main__':
+  print 'Press ESCape to quit'
   e = XEvents()
   e.start()
   try:
     while e.Listening():
       try:
-        evt = e.NextEvent()
+        evt = e.next_event()
       except KeyboardInterrupt:
         print 'User interrupted'
         e.Stop()
