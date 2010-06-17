@@ -194,13 +194,13 @@
        sodipodi:type="inkscape:persp3d" />
   </defs>
   <sodipodi:namedview
-     inkscape:window-y="24"
+     inkscape:window-y="25"
      inkscape:window-x="0"
-     inkscape:window-height="975"
-     inkscape:window-width="1680"
+     inkscape:window-height="825"
+     inkscape:window-width="1440"
      inkscape:current-layer="layer1"
-     inkscape:cy="22.528602"
-     inkscape:cx="-0.03929078"
+     inkscape:cy="32.998712"
+     inkscape:cx="-16.010645"
      inkscape:zoom="11.270178"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
@@ -247,7 +247,7 @@
      inkscape:groupmode="layer"
      inkscape:label="Layer 1">
     <path
-       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;color:#000000;fill:#000000;fill-opacity:0.50220265;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:aakar;-inkscape-font-specification:aakar"
+       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;color:#000000;fill:#550000;fill-opacity:0.78431374;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:aakar;-inkscape-font-specification:aakar"
        d="m 13.263288,5.9347876 c -1.460413,1.5450928 -0.997371,6.1880864 -0.997371,12.0967394 0,0 10.729986,-0.01924 10.729986,-0.01924 -0.03983,-4.586239 0.0082,-9.157158 0.03292,-13.7394687 -5.691438,-0.026149 -7.608217,-0.744827 -9.765536,1.6619753 z"
        id="rect4600"
        sodipodi:nodetypes="ccccc" />
