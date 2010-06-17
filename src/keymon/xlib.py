@@ -34,12 +34,12 @@ class XEvent:
 
   def __str__(self):
     return 'type:%s scancode:%s code:%s value:%s' % (self._type, self._scancode, self._code, self._value)
-     
+
 class XEvents(threading.Thread):
   _butn_to_code = collections.defaultdict(lambda: 'BTN_DUNNO',
       [(1, 'BTN_LEFT'), (2, 'BTN_MIDDLE'), (3, 'BTN_RIGHT'),
        (4, 'REL_WHEEL'), (5, 'REL_WHEEL')])
-  
+
   def __init__(self):
     threading.Thread.__init__(self)
     self._listening = False
@@ -144,6 +144,7 @@ class XEvents(threading.Thread):
     self.events.append(XEvent('EV_KEY', event.detail - 8, self.keycode_to_symbol[keysym], value))
 
 if __name__ == '__main__':
+  print 'Press ESCape to quit'
   e = XEvents()
   e.start()
   try:
