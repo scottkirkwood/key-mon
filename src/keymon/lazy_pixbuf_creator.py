@@ -27,7 +27,7 @@ import re
 import tempfile
 import types
 
-class LazyPixbufCreator():
+class LazyPixbufCreator(object):
   """Class to create SVG images on the fly."""
   def __init__(self, name_fnames, resize):
     """Initialize with empty.
