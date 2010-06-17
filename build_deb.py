@@ -228,7 +228,7 @@ Homepage: %(url)s
 
 Package: %(package)s
 Architecture: %(architecture)s
-Depends: python2.5, %(depends)s
+Depends: python2.6, %(depends)s
 Description: %(description)s.
 %(long_description)s
 """

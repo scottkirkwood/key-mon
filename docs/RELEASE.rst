@@ -1,5 +1,10 @@
 Release Notes
 =============
+Jun. 17th, 2010 v 1.1
+---------------------
+* A little smarter about key names when the keycodes don't seem to match.
+* Fixed and improved the debian install.
+* Fixed Issue 25. Darken the mouse buttons.
 
 Jun. 13th, 2010 v 1.0
 ----------------------
