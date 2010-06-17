@@ -13,13 +13,14 @@ sudo aptitude install alien help2man fakeroot
 
 import codecs
 import getpass
+import glob
 import httplib
+import setup
 import netrc
 import os
 import re
 import release
 import shutil
-import setup
 import simplejson
 import subprocess
 import sys
@@ -29,10 +30,7 @@ def GetVersion(fname):
   grps = re_py_ver.search(open(fname).read())
   source_ver = grps.group(1)
 
-  fname = 'setup.py'
-  re_setup_ver = re.compile(r'VER=\'(.*)\'')
-  grps = re_setup_ver.search(open(fname).read())
-  setup_ver = grps.group(1)
+  setup_ver = setup.VER
   if setup_ver == source_ver:
     print 'Setup versions agree'
   else:
@@ -71,26 +69,43 @@ def BuildMan():
 
 
 def BuildDeb(ver):
-  subprocess.call([
-    'python', 'setup.py', 'bdist_rpm',])
-  rpm_file = '%s-%s-1.noarch.rpm' % (setup.NAME, ver)
-  print 'Converting %s to .deb' % rpm_file
-  old_cwd = os.getcwd()
-  os.chdir('dist')
-  try:
-    ret = subprocess.call([
-      'fakeroot', 'alien', rpm_file])
-    if ret:
-      print 'You may need to install fakeroot and/or alien'
-      print 'Failed to build debian package'
-      sys.exit(-1)
-      return
-  except Exception, e:
-    print 'You may need to install fakeroot and/or alien', e
-    os.chdir(old_cwd)
-    sys.exit(-1)
-  os.chdir(old_cwd)
+  import distutils.core
+  import build_deb
+  sys.argv = [sys.argv[0], 'bdist_deb', '--sdist=dist/%s-%s.tar.gz' % (setup.NAME, ver)]
+  setup.SETUP.update(dict(
+      cmdclass={'bdist_deb': build_deb.bdist_deb},
+      options=dict(
+        bdist_deb=dict(
+          package=setup.DEB_NAME,
+          title=setup.NAME,
+          description=setup.SETUP['description'],
+          long_description=setup.SETUP['long_description'],
+          version=ver,
+          author=setup.AUTHOR_NAME,
+          author_email=setup.SETUP['author_email'],
+          copyright=setup.COPYRIGHT,
+          license=setup.LICENSE_TITLE_AND_VERSION,
+          license_abbrev=setup.LICENSE_TITLE_AND_VERSION_ABBREV,
+          license_path='/usr/share/common-licenses/GPL-3',
+          license_summary=setup.LICENSE_NOTICE,
+          subsection=setup.MENU_SUBSECTION,
+          depends='python-xlib',
+          url=setup.SETUP['url'],
+          command='/usr/bin/'))))
+  distutils.core.setup(**setup.SETUP)
+  GetDebFilenames(ver)
   print 'Built debian package'
+  return
+
+
+def GetDebFilenames(ver):
+  debs = ['dist/%s_%s-1_all.deb' % (setup.DEB_NAME, ver)]
+  for deb in debs:
+    if not os.path.exists(deb):
+      print 'Missing debian file %s' % deb
+      sys.exit(-1)
+
+  return debs
 
 
 def KillConfig():
@@ -98,6 +113,32 @@ def KillConfig():
   if os.path.exists(config_file):
     os.unlink(config_file)
 
+def CleanAll():
+  KillConfig()
+  dist_dir = '/usr/local/lib/python2.6/dist-packages'
+  dist_packages = '%s/%s' % (dist_dir, os.path.basename(setup.DIR))
+  if os.path.exists(dist_packages):
+    print 'rm -r %s' % dist_packages
+    shutil.rmtree(dist_packages)
+  dist_egg = '%s/%s-*.egg-info' % (dist_dir, setup.PY_NAME)
+  for fname in glob.glob(dist_egg):
+    if os.path.exists(fname):
+      if os.path.isdir(fname):
+        print 'rm -r %s' % fname
+        shutil.rmtree(fname)
+      else:
+        print 'rm %s' % fname
+        os.unlink(fname)
+  docs = '/usr/share/doc/%s' % setup.NAME
+  if os.path.exists(docs):
+    print 'rm -r %s' % docs
+    shutil.rmtree(docs)
+
+  for script in setup.SETUP_OPTIONS.scripts:
+    bin_script = '/usr/local/bin/%s' % os.path.basename(script)
+    if os.path.exists(bin_script):
+      print 'rm %s' % bin_script
+      os.unlink(bin_script)
 
 def BuildScreenShots():
   prog = '%s/%s' % (setup.DIR, setup.PY_SRC)
@@ -150,7 +191,8 @@ def UploadFiles(ver):
   password = getpass.getpass()
   UploadFile('%s-%s.zip' % (setup.NAME, ver), username, password)
   UploadFile('%s-%s.tar.gz' % (setup.NAME, ver), username, password)
-  UploadFile('%s_%s-2_all.deb' % (setup.NAME, ver), username, password)
+  for deb in GetDebFilenames(ver):
+    UploadFile(deb, username, password)
 
 
 def AnnounceOnFreshmeat(ver, lines):
@@ -189,7 +231,8 @@ def DoPyPi():
 if __name__ == '__main__':
   import optparse
   parser = optparse.OptionParser()
-
+  parser.add_option('--clean', dest='doclean', action='store_true',
+                    help='Uninstall things')
   parser.add_option('--png', dest='png', action='store_true',
                     help='Only build png files')
   parser.add_option('--pypi', dest='pypi', action='store_true',
@@ -218,6 +261,8 @@ if __name__ == '__main__':
 
   if options.png:
     BuildScreenShots()
+  elif options.doclean:
+    CleanAll()
   elif options.dist:
     BuildMan()
     BuildDeb(ver)
