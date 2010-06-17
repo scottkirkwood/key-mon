@@ -1,0 +1,2 @@
+#!/bin/bash
+python -c 'import keymon.key_mon as km;km.Main()' $*
