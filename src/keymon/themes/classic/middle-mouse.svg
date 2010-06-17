@@ -194,13 +194,13 @@
        sodipodi:type="inkscape:persp3d" />
   </defs>
   <sodipodi:namedview
-     inkscape:window-y="24"
+     inkscape:window-y="25"
      inkscape:window-x="0"
-     inkscape:window-height="975"
-     inkscape:window-width="1680"
+     inkscape:window-height="825"
+     inkscape:window-width="1440"
      inkscape:current-layer="layer1"
-     inkscape:cy="28.981381"
-     inkscape:cx="9.2884143"
+     inkscape:cy="32.136681"
+     inkscape:cx="17.208726"
      inkscape:zoom="25.354167"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
@@ -247,7 +247,7 @@
      inkscape:groupmode="layer"
      inkscape:label="Layer 1">
     <rect
-       style="fill:#000000;fill-opacity:0.54625555;stroke:none"
+       style="fill:#550000;fill-opacity:0.78431374;stroke:none"
        id="rect4669"
        width="9.7000647"
        height="14.945751"
