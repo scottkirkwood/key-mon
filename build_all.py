@@ -43,7 +43,7 @@ def GetVersion(fname):
   return setup_ver
 
 
-def BuildTarZip():
+def BuildZipTar():
   subprocess.call([
     'python', 'setup.py', 'sdist', '--formats=gztar,zip'])
   print 'Built zip'
@@ -265,8 +265,8 @@ if __name__ == '__main__':
     CleanAll()
   elif options.dist:
     BuildMan()
-    BuildDeb(ver)
     BuildZipTar()
+    BuildDeb(ver)
   elif options.upload:
     UploadFiles(ver)
   elif options.pypi:
@@ -276,8 +276,8 @@ if __name__ == '__main__':
   elif options.all:
     BuildScreenShots()
     BuildMan()
-    BuildDeb(ver)
     BuildZipTar()
+    BuildDeb(ver)
     UploadFiles(ver)
     DoPyPi()
     AnnounceOnFreshmeat(ver, rel_lines)
