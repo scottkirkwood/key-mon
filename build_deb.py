@@ -43,6 +43,7 @@ class bdist_deb(Command, object):
       ('license-path=', None, 'path of the license on Debian systems'),
       ('url=', None, 'url of the application homepage'),
       ('architecture=', None, 'architecure of the deb package [all]'),
+      ('man-src=', None, 'Where to find the man dir.'),
       ('depends=', None, 'list of dependancies')]
 
   def initialize_options(self):
@@ -59,7 +60,7 @@ class bdist_deb(Command, object):
         self.author_email = self.copyright = self.license = \
         self.license_abbrev = self.license_summary = self.license_path = \
         self.url = self.version = self.package_version = \
-        self.distribution = self.depends = None
+        self.distribution = self.man_src = self.depends = None
 
   def finalize_options(self):
     mandatoryOptions = [\
@@ -154,7 +155,7 @@ class bdist_deb(Command, object):
   def write_debian_file(self, filename, contents):
     filename = os.path.join(self.debian_dir, filename)
     if self.verbose:
-        log.info('writing %s'%filename)
+        log.info('writing %s', filename)
     fd = file(filename, 'w')
     fd.write(contents)
     fd.close()
@@ -205,9 +206,10 @@ include /usr/share/cdbs/1/rules/simple-patchsys.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/python-distutils.mk
 
-binary-install/taskcoach::
+binary-install/%(package)s::
 \tdh_desktop
 \tdh_icons
+\tdh_installman -p%(package)s %(man_src)s
 """
 
 menu = """?package(%(package)s):needs="X11"\\

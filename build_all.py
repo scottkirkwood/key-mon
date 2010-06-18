@@ -57,11 +57,18 @@ def UploadToPyPi():
 
 def BuildMan():
   try:
+    dest_dir = 'man'
+    dest_name = '%s/%s.1' % (dest_dir, setup.NAME)
+    if not os.path.isdir(dest_dir):
+      os.makedirs(dest_dir)
     subprocess.call([
       'help2man',
       '%s/%s' % (setup.DIR, setup.PY_SRC),
+      #'%s' % setup.NAME,
+      '-N', # no pointer to TextInfo
       '-i', 'man/%s.include' % setup.NAME,
-      '-o', 'man/%s.1' % setup.NAME])
+      '-o', dest_name])
+
     print 'Built %s.1' % setup.NAME
   except Exception, e:
     print 'You may need to install help2man', e
@@ -91,6 +98,7 @@ def BuildDeb(ver):
           subsection=setup.MENU_SUBSECTION,
           depends='python-xlib',
           url=setup.SETUP['url'],
+          man_src='man/%s.1' % setup.SETUP['name'],
           command='/usr/bin/'))))
   distutils.core.setup(**setup.SETUP)
   GetDebFilenames(ver)
@@ -192,7 +200,7 @@ def UploadFiles(ver):
   UploadFile('%s-%s.zip' % (setup.NAME, ver), username, password)
   UploadFile('%s-%s.tar.gz' % (setup.NAME, ver), username, password)
   for deb in GetDebFilenames(ver):
-    UploadFile(deb, username, password)
+    UploadFile(deb.replace('dist/', ''), username, password)
 
 
 def AnnounceOnFreshmeat(ver, lines):
