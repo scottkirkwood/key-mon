@@ -597,7 +597,7 @@ def Main():
 
   if options.version:
     ShowVersion()
-    sys.exit(-1)
+    sys.exit(0)
   if options.debug:
     logging.basicConfig(
         level=logging.DEBUG,

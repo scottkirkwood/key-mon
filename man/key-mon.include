@@ -1,5 +1,5 @@
 [NAME]
-Keymon \- Keyboard and mouse monitor window fot gtk.
+Keymon \- Keyboard and mouse monitor window for GTK.
 
 [SYNOPSIS]
 .B key-mon [options]

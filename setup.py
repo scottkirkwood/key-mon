@@ -7,10 +7,10 @@ import re
 # setup.py bdist
 
 NAME='key-mon'
+VER='1.2'
 DIR='src/keymon'
 PY_NAME='key_mon'
 DEB_NAME=NAME.replace('-', '')
-VER='1.2'
 
 PY_SRC='%s.py' % PY_NAME
 DEPENDS=['python-xlib']
@@ -49,6 +49,7 @@ SETUP = dict(
       'Operating System :: POSIX :: Linux',
       'Topic :: Education :: Computer Aided Instruction (CAI)',
   ],
+  #zip_safe=False,
 )
 
 COPYRIGHT = 'Copyright (C) 2010 %s' % (AUTHOR_NAME) # pylint: disable-msg=W0622

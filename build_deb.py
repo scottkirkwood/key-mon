@@ -209,15 +209,15 @@ include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/python-distutils.mk
 
 binary-install/%(package)s::
-\tdh_desktop
 \tdh_icons
 %(man_rule)s"""
 
 menu = """?package(%(package)s):needs="X11"\\
- section="%(section)s/%(subsection)s"\\
- title="%(title)s"\\
- description="%(description)s"\\
- command="%(command)s"
+  section="%(section)s/%(subsection)s"\\
+  title="%(title)s"\\
+  description="%(description)s"\\
+  command="%(command)s"
+  icon=%(icon)s"
 """
 
 control = """Source: %(package)s
