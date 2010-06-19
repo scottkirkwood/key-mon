@@ -99,6 +99,8 @@ class bdist_deb(Command, object):
                                                 indent='    ')
     self.long_description = self.wrap_paragraphs(self.long_description,
                                                  indent=' ')
+    if self.man_src:
+      self.man_rule = '\tdh_installman -p%s %s\n' % (self.package, self.man_src)
 
   def run(self):
     self.copy_sdist()
@@ -209,8 +211,7 @@ include /usr/share/cdbs/1/class/python-distutils.mk
 binary-install/%(package)s::
 \tdh_desktop
 \tdh_icons
-\tdh_installman -p%(package)s %(man_src)s
-"""
+%(man_rule)s"""
 
 menu = """?package(%(package)s):needs="X11"\\
  section="%(section)s/%(subsection)s"\\

@@ -18,30 +18,6 @@ MENU_SUBSECTION='Graphics'
 DEPENDS_STR=' '.join(DEPENDS)
 AUTHOR_NAME='Scott Kirkwood'
 KEYWORDS=['keyboard', 'status', 'monitor', 'education']
-COPYRIGHT = 'Copyright (C) 2010 %s' % (AUTHOR_NAME) # pylint: disable-msg=W0622
-LICENSE_TITLE = 'GNU General Public License'
-LICENSE_SHORT = 'GPL'
-LICENSE_VERSION = '3'
-LICENSE_TITLE_AND_VERSION = '%s version %s' % (LICENSE_TITLE, LICENSE_VERSION)
-LICENSE = '%s or any later version' % LICENSE_TITLE_AND_VERSION # pylint: disable-msg=W0622
-LICENSE_TITLE_AND_VERSION_ABBREV = 'GPLv%s' % LICENSE_VERSION
-LICENSE_ABBREV = '%s+' % LICENSE_TITLE_AND_VERSION_ABBREV
-LICENSE_NOTICE = '''%(name)s is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-%(name)s is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.''' % dict(name=NAME)
-
-LICENSE_NOTICE_HTML = '<p>%s</p>' % LICENSE_NOTICE.replace('\n\n', '</p><p>')
-LICENSE_NOTICE_HTML = re.sub(r'<http([^>]*)>', r'<a href="http\1" target="_blank">http\1</a>', LICENSE_NOTICE_HTML)
-
 
 SETUP = dict(
   name = NAME,
@@ -74,6 +50,30 @@ SETUP = dict(
       'Topic :: Education :: Computer Aided Instruction (CAI)',
   ],
 )
+
+COPYRIGHT = 'Copyright (C) 2010 %s' % (AUTHOR_NAME) # pylint: disable-msg=W0622
+LICENSE_TITLE = 'GNU General Public License'
+LICENSE_SHORT = 'GPL'
+LICENSE_VERSION = '3'
+LICENSE_TITLE_AND_VERSION = '%s version %s' % (LICENSE_TITLE, LICENSE_VERSION)
+LICENSE = '%s or any later version' % LICENSE_TITLE_AND_VERSION # pylint: disable-msg=W0622
+LICENSE_TITLE_AND_VERSION_ABBREV = 'GPLv%s' % LICENSE_VERSION
+LICENSE_ABBREV = '%s+' % LICENSE_TITLE_AND_VERSION_ABBREV
+LICENSE_NOTICE = '''%(name)s is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+%(name)s is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.''' % dict(name=NAME)
+
+LICENSE_NOTICE_HTML = '<p>%s</p>' % LICENSE_NOTICE.replace('\n\n', '</p><p>')
+LICENSE_NOTICE_HTML = re.sub(r'<http([^>]*)>', r'<a href="http\1" target="_blank">http\1</a>', LICENSE_NOTICE_HTML)
 
 if __name__ == '__main__':
   setup(**SETUP)
