@@ -10,7 +10,7 @@ NAME='key-mon'
 DIR='src/keymon'
 PY_NAME='key_mon'
 DEB_NAME=NAME.replace('-', '')
-VER='1.1'
+VER='1.2'
 
 PY_SRC='%s.py' % PY_NAME
 DEPENDS=['python-xlib']

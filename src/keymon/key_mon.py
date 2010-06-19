@@ -8,7 +8,7 @@ Shows their status graphically.
 """
 
 __author__ = 'Scott Kirkwood (scott+keymon@forusers.com)'
-__version__ = '1.1'
+__version__ = '1.2'
 
 import logging
 import pygtk
@@ -97,11 +97,22 @@ class KeyMon:
 
   def DoScreenshot(self):
     import time
-    import evdev
     for key in self.options.screenshot.split(','):
       try:
-        scancode = evdev.Event.codeMaps['EV_KEY'].toNumber(key)
-        event = xlib.XEvent('EV_KEY', scancode=scancode, code=key, value=1)
+        if key == 'KEY_EMPTY':
+          continue
+        if key.startswith('KEY_'):
+          key_info = self.modmap.GetFromName(key)
+          if not key_info:
+            print 'Key %s not found' % key
+            self.Destroy(None)
+            return
+          scancode = key_info[0]
+          code = key_info[1]
+          event = xlib.XEvent('EV_KEY', scancode=scancode, code=key, value=1)
+        elif key.startswith('BTN_'):
+          event = xlib.XEvent('EV_KEY', scancode=0, code=key, value=1)
+
         self.HandleEvent(event)
         while gtk.events_pending():
           gtk.main_iteration(False)

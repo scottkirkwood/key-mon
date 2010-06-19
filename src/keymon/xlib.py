@@ -58,6 +58,12 @@ class XEvents(threading.Thread):
       if name[:3] == "XK_":
         code = getattr(XK, name)
         self.keycode_to_symbol[code] = 'KEY_' + name[3:].upper()
+    self.keycode_to_symbol[65027] = 'KEY_ISO_LEVEL3_SHIFT'
+    self.keycode_to_symbol[269025062] = 'KEY_BACK'
+    self.keycode_to_symbol[269025063] = 'KEY_FORWARD'
+    self.keycode_to_symbol[16777215] = 'KEY_CAPS_LOCK'
+    self.keycode_to_symbol[269025067] = 'KEY_WAKEUP'
+
 
   def next_event(self):
     """Returns the next event in queue, or None if none."""
@@ -122,16 +128,16 @@ class XEvents(threading.Thread):
     Params:
       event: the event info
       value: 1=down, 0=up
-    """ 
+    """
     if event.detail in [4, 5]:
       if event.detail == 5:
         value = -1
       else:
         value = 1
-      self.events.append(XEvent('EV_REL', 
+      self.events.append(XEvent('EV_REL',
           0, XEvents._butn_to_code[event.detail], value))
     else:
-      self.events.append(XEvent('EV_KEY', 
+      self.events.append(XEvent('EV_KEY',
           0, XEvents._butn_to_code[event.detail], value))
 
   def _HandleKey(self, event, value):
@@ -141,6 +147,8 @@ class XEvents(threading.Thread):
       value: 1=down, 0=up
     """
     keysym = self.local_display.keycode_to_keysym(event.detail, 0)
+    if keysym not in self.keycode_to_symbol:
+      print 'Missing code for %d = %d' % (event.detail - 8, keysym)
     self.events.append(XEvent('EV_KEY', event.detail - 8, self.keycode_to_symbol[keysym], value))
 
 if __name__ == '__main__':

@@ -2,8 +2,7 @@
 Keymon \- Keyboard and mouse monitor window fot gtk.
 
 [SYNOPSIS]
-.B key-mon
-\[options\]
+.B key-mon [options]
 
 [DESCRIPTON]
 .B Keymon
