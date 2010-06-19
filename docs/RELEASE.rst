@@ -1,5 +1,11 @@
 Release Notes
 =============
+June 18th, 2010 v 1.2
+---------------------
+* Added the man page to the debian install.
+* Build is now super automated.
+* Fixed the screenshots.
+
 Jun. 17th, 2010 v 1.1
 ---------------------
 * A little smarter about key names when the keycodes don't seem to match.

@@ -193,12 +193,14 @@ class ModMapper(object):
   def __init__(self):
     self.map = {}
     self.alt_map = {}
+    self.name_to_code = {}
 
   def Done(self):
     for key in self.map:
       vals = self.map[key]
-      code = vals[0]
-      self.alt_map[code] = vals
+      code_name = vals[0]
+      self.alt_map[code_name] = vals
+      self.name_to_code[code_name] = key
 
   def Set(self, code, vals):
     self.map[code] = vals
@@ -215,6 +217,12 @@ class ModMapper(object):
       return self.alt_map[name]
     logging.info('scancode: %r name:%r not found', scancode, name)
     return None, None, None
+
+  def GetFromName(self, name):
+    if name in self.name_to_code:
+      return self.name_to_code[name], self.alt_map[name]
+    logging.info('Key %s not found', name)
+    return None
 
   def __getitem__(self, key):
     return self.map[key]

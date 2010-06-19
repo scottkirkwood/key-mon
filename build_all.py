@@ -151,17 +151,17 @@ def CleanAll():
 def BuildScreenShots():
   prog = '%s/%s' % (setup.DIR, setup.PY_SRC)
   destdir = 'docs'
-  all_buttons = ['KEY_A', 'KEY_LEFTCTRL', 'KEY_LEFTALT', 'KEY_LEFTSHIFT']
+  all_buttons = ['KEY_A', 'KEY_CONTROL_L', 'KEY_ALT_L', 'KEY_SHIFT_L']
   todos = [
-    ('screenshot', [], all_buttons),
+    ('screenshot', [], all_buttons + ['BTN_LEFT']),
     ('screenshot-blank', [], ['KEY_EMPTY']),
-    ('screenshot-smaller', ['--smaller'], all_buttons),
-    ('screenshot-larger', ['--larger'], all_buttons),
-    ('screenshot-apple', ['--theme', 'apple'], all_buttons),
-    ('screenshot-oblivion', ['--theme', 'oblivion'], all_buttons),
-    ('screenshot-modern', ['--theme', 'modern'], all_buttons),
-    ('2x-no-mouse-meta', ['--nomouse', '--scale', '2.0', '--meta'], all_buttons + ['KEY_LEFTMETA']),
-    ('old-keys-2', ['--nomouse', '--old-keys', '2'], ['KEY_Y', 'KEY_Y', 'KEY_P']),
+    ('screenshot-smaller', ['--smaller'], all_buttons + ['BTN_LEFT']),
+    ('screenshot-larger', ['--larger'], all_buttons + ['BTN_LEFT']),
+    ('screenshot-apple', ['--theme', 'apple'], all_buttons + ['BTN_RIGHT']),
+    ('screenshot-oblivion', ['--theme', 'oblivion'], all_buttons + ['BTN_LEFT']),
+    ('screenshot-modern', ['--theme', 'modern'], all_buttons + ['BTN_LEFT']),
+    ('2x-no-mouse-meta', ['--nomouse', '--scale', '2.0', '--meta'], all_buttons + ['KEY_SUPER_L']),
+    ('old-keys-2', ['--noctrl', '--noalt', '--nomouse', '--old-keys', '2'], ['KEY_Y', 'KEY_Y', 'KEY_P']),
   ]
   for fname, options, keys in todos:
     KillConfig()
