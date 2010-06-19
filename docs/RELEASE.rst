@@ -1,5 +1,6 @@
 Release Notes
 =============
+
 June 18th, 2010 v 1.2
 ---------------------
 * Added the man page to the debian install.

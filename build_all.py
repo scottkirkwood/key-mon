@@ -1,4 +1,7 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+#
+# Copyright 2009 Scott Kirkwood. All Rights Reserved.
 """
 Build everything for keymon.
 
@@ -14,12 +17,13 @@ sudo aptitude install alien help2man fakeroot
 import codecs
 import getpass
 import glob
+import googlecode_upload as gup
 import httplib
-import setup
 import netrc
 import os
 import re
 import release
+import setup
 import shutil
 import simplejson
 import subprocess
@@ -46,7 +50,7 @@ def GetVersion(fname):
 def BuildZipTar():
   subprocess.call([
     'python', 'setup.py', 'sdist', '--formats=gztar,zip'])
-  print 'Built zip'
+  print 'Built zip and tar'
 
 
 def UploadToPyPi():
@@ -99,7 +103,7 @@ def BuildDeb(ver):
           depends='python-xlib',
           url=setup.SETUP['url'],
           man_src='man/%s.1' % setup.SETUP['name'],
-          command='/usr/bin/'))))
+          command='/usr/bin/%s' % setup.SETUP['name']))))
   distutils.core.setup(**setup.SETUP)
   GetDebFilenames(ver)
   print 'Built debian package'
@@ -121,9 +125,10 @@ def KillConfig():
   if os.path.exists(config_file):
     os.unlink(config_file)
 
+
 def CleanAll():
   KillConfig()
-  dist_dir = '/usr/local/lib/python2.6/dist-packages'
+  dist_dir = '/usr/share/pyshared'
   dist_packages = '%s/%s' % (dist_dir, os.path.basename(setup.DIR))
   if os.path.exists(dist_packages):
     print 'rm -r %s' % dist_packages
@@ -142,11 +147,15 @@ def CleanAll():
     print 'rm -r %s' % docs
     shutil.rmtree(docs)
 
+  man = '/usr/share/man/man1/%s.1.gz' % setup.NAME
+  if os.path.exists(man):
+    print 'rm %s' % man
   for script in setup.SETUP['scripts']:
     bin_script = '/usr/local/bin/%s' % os.path.basename(script)
     if os.path.exists(bin_script):
       print 'rm %s' % bin_script
       os.unlink(bin_script)
+
 
 def BuildScreenShots():
   prog = '%s/%s' % (setup.DIR, setup.PY_SRC)
@@ -171,8 +180,7 @@ def BuildScreenShots():
   KillConfig()
 
 
-def UploadFile(fname, username, password):
-  import googlecode_upload as gup
+def UploadToGoogleCode(fname, username, password):
   project = setup.NAME
   print 'Uploading %s' % fname
   summary = fname
@@ -197,10 +205,10 @@ def UploadFiles(ver):
   print 'It is the password you use to access repositories,'
   print 'and can be found here: http://code.google.com/hosting/settings'
   password = getpass.getpass()
-  UploadFile('%s-%s.zip' % (setup.NAME, ver), username, password)
-  UploadFile('%s-%s.tar.gz' % (setup.NAME, ver), username, password)
+  UploadToGoogleCode('%s-%s.zip' % (setup.NAME, ver), username, password)
+  UploadToGoogleCode('%s-%s.tar.gz' % (setup.NAME, ver), username, password)
   for deb in GetDebFilenames(ver):
-    UploadFile(deb.replace('dist/', ''), username, password)
+    UploadToGoogleCode(deb.replace('dist/', ''), username, password)
 
 
 def AnnounceOnFreshmeat(ver, lines):
@@ -233,8 +241,10 @@ def AnnounceOnFreshmeat(ver, lines):
     print 'Request failed: %d %s' % (response.status, response.reason)
   print 'Done announcing on Freshmeat.'
 
+
 def DoPyPi():
   UploadToPyPi()
+
 
 if __name__ == '__main__':
   import optparse
