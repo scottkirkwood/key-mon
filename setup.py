@@ -11,13 +11,17 @@ VER='1.2'
 DIR='src/keymon'
 PY_NAME='key_mon'
 DEB_NAME=NAME.replace('-', '')
+RELEASE_FILE='docs/RELEASE.rst'
 
 PY_SRC='%s.py' % PY_NAME
-DEPENDS=['python-xlib']
+DEPENDS=['python-xlib', 'python-gtk2']
 MENU_SUBSECTION='Graphics'
 DEPENDS_STR=' '.join(DEPENDS)
 AUTHOR_NAME='Scott Kirkwood'
+GOOGLE_CODE_EMAIL='scott@forusers.com'
 KEYWORDS=['keyboard', 'status', 'monitor', 'education']
+MAN_FILE='man/%s.1' % NAME
+COMMAND='/usr/local/bin/%s' % NAME
 
 SETUP = dict(
   name = NAME,
@@ -42,10 +46,10 @@ SETUP = dict(
   'Now I'm pressing the Ctrl-D key', your students can just see the keystroke for themselves.
   """,
   classifiers=[
-      'Development Status :: 4 - Beta',
+      'Development Status :: 5 - Production/Stable',
       'Environment :: X11 Applications',
       'Intended Audience :: Education',
-      'License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)',
+      'License :: OSI Approved :: Apache Software License',
       'Operating System :: POSIX :: Linux',
       'Topic :: Education :: Computer Aided Instruction (CAI)',
   ],
@@ -53,16 +57,18 @@ SETUP = dict(
 )
 
 COPYRIGHT = 'Copyright (C) 2010 %s' % (AUTHOR_NAME) # pylint: disable-msg=W0622
-LICENSE_TITLE = 'GNU General Public License'
-LICENSE_SHORT = 'GPL'
-LICENSE_VERSION = '3'
+LICENSE_TITLE = 'Apache License'
+LICENSE_SHORT = 'Apache'
+LICENSE_VERSION = '2.0'
 LICENSE_TITLE_AND_VERSION = '%s version %s' % (LICENSE_TITLE, LICENSE_VERSION)
 LICENSE = '%s or any later version' % LICENSE_TITLE_AND_VERSION # pylint: disable-msg=W0622
-LICENSE_TITLE_AND_VERSION_ABBREV = 'GPLv%s' % LICENSE_VERSION
+LICENSE_TITLE_AND_VERSION_ABBREV = '%s v%s' % (LICENSE_SHORT, LICENSE_VERSION)
 LICENSE_ABBREV = '%s+' % LICENSE_TITLE_AND_VERSION_ABBREV
+LICENSE_URL = 'http://www.apache.org/licenses/LICENSE-2.0'
+LICENSE_PATH = '/usr/share/common-licenses/Apache-2.0'
 LICENSE_NOTICE = '''%(name)s is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
+it under the terms of the Apache License as published by
+the Apache Software Foundation, either version 2 of the License, or
 (at your option) any later version.
 
 %(name)s is distributed in the hope that it will be useful,
@@ -70,9 +76,8 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.''' % dict(name=NAME)
-
+You should have received a copy of the Apache License
+along with this program.  If not, see <%(url)s>.''' % dict(name=NAME, url=LICENSE_URL)
 LICENSE_NOTICE_HTML = '<p>%s</p>' % LICENSE_NOTICE.replace('\n\n', '</p><p>')
 LICENSE_NOTICE_HTML = re.sub(r'<http([^>]*)>', r'<a href="http\1" target="_blank">http\1</a>', LICENSE_NOTICE_HTML)
 
