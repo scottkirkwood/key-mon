@@ -177,10 +177,10 @@ def UploadFile(fname, username, password):
   print 'Uploading %s' % fname
   summary = fname
   if fname.endswith('.zip') or fname.endswith('.tar.gz'):
-    labels = ['Type-Source', 'OpSys-Linux']
+    labels = ['Type-Source', 'OpSys-Linux', 'Featured']
   elif fname.endswith('.deb'):
     summary += ' (python 2.6)'
-    labels = ['Type-Package', 'OpSys-Linux']
+    labels = ['Type-Package', 'OpSys-Linux', 'Featured']
   else:
     labels = None
   gup.upload('dist/%s' % fname, project, username, password, summary, labels)
