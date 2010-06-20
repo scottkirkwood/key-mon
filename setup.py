@@ -21,7 +21,8 @@ AUTHOR_NAME='Scott Kirkwood'
 GOOGLE_CODE_EMAIL='scott@forusers.com'
 KEYWORDS=['keyboard', 'status', 'monitor', 'education']
 MAN_FILE='man/%s.1' % NAME
-COMMAND='/usr/local/bin/%s' % NAME
+ICON='icons/key-mon.xpm'
+COMMAND='/usr/bin/%s' % NAME
 
 SETUP = dict(
   name = NAME,
