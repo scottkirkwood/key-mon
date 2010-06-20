@@ -1,8 +1,8 @@
-.pyc$
-dist/
+syntax: regexp
+\.pyc$
+^dist/
 .egg-info/
-.swp$
-build/
-MANIFEST
-man/key-mon.1
-
+\.swp$
+^build/
+MANIFEST$
+^man/.*\.1

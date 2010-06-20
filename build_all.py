@@ -84,6 +84,8 @@ if __name__ == '__main__':
     pybdist.UploadToPyPi(setup)
   elif options.freshmeat:
     pybdist.AnnounceOnFreshmeat(setup)
+  elif options.twitter:
+    pybdist.AnnounceOnTwitter(setup)
   elif options.all:
     BuildScreenShots()
     pybdist.BuildMan(setup)
