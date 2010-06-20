@@ -21,6 +21,7 @@ AUTHOR_NAME='Scott Kirkwood'
 GOOGLE_CODE_EMAIL='scott@forusers.com'
 KEYWORDS=['keyboard', 'status', 'monitor', 'education']
 MAN_FILE='man/%s.1' % NAME
+DESKTOP_FILE='icons/%s.desktop' % NAME
 ICON='icons/key-mon.xpm'
 COMMAND='/usr/bin/%s' % NAME
 
@@ -31,7 +32,7 @@ SETUP = dict(
   package_dir = {
       'keymon': 'src/keymon'},
   package_data = {
-      'keymon': ['themes/apple/*', 'themes/classic/*', '*.kbd'],
+      'keymon': ['themes/apple/*', 'themes/classic/*', '*.kbd', 'icons/key-mon.desktop'],
   },
   scripts=['src/key-mon'],
   author=AUTHOR_NAME,
@@ -41,7 +42,7 @@ SETUP = dict(
   keywords=' '.join(KEYWORDS),
   url='http://code.google.com/p/%s' % NAME,
   download_url='http://%s.googlecode.com/files/%s-%s.zip' % (NAME, NAME, VER),
-  description='A screencast utility that displays your keyboard and mouse status.',
+  description='A screencast utility that displays your keyboard and mouse status',
   long_description="""Key-mon is useful for teaching since it shows the current status of your
   keyboard and mouse and you use them in another application.  No longer do you need to say
   'Now I'm pressing the Ctrl-D key', your students can just see the keystroke for themselves.
