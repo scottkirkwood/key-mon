@@ -1,6 +1,10 @@
 Release Notes
 =============
 
+June 20th, 2010 v 1.2.1
+-----------------------
+* Added icon to the debian install.
+
 June 18th, 2010 v 1.2
 ---------------------
 * Added the man page to the debian install.

@@ -7,7 +7,7 @@ import re
 # setup.py bdist
 
 NAME='key-mon'
-VER='1.2'
+VER='1.2.1'
 DIR='src/keymon'
 PY_NAME='key_mon'
 DEB_NAME=NAME.replace('-', '')
