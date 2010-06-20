@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=KeyMon
+Comment=Keyboard and Mouse Monitor for Screencasts
+Exec=key-mon
+Icon=/usr/share/pixmaps/key-mon.xpm
+Terminal=false
+Type=Application
+Categories=GTK;Graphics;
+StartupNotify=true
