@@ -1,10 +1,21 @@
 #!/usr/bin/env python
+#
+# Copyright 2010 Google Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 from distutils.core import setup
 import re
-
-# setup.py sdist --formats=gztar,zip upload
-# setup.py bdist
 
 NAME='key-mon'
 VER='1.2.1'
@@ -16,8 +27,10 @@ RELEASE_FILE='docs/RELEASE.rst'
 PY_SRC='%s.py' % PY_NAME
 DEPENDS=['python-xlib', 'python-gtk2']
 DEPENDS_STR=' '.join(DEPENDS)
+
 MENU_SUBSECTION='Graphics'
 AUTHOR_NAME='Scott Kirkwood'
+COPYRIGHT_NAME='Google Inc.'
 GOOGLE_CODE_EMAIL='scott@forusers.com'
 KEYWORDS=['keyboard', 'status', 'monitor', 'education']
 MAN_FILE='man/%s.1' % NAME
@@ -58,7 +71,7 @@ SETUP = dict(
   #zip_safe=False,
 )
 
-COPYRIGHT = 'Copyright (C) 2010 %s' % (AUTHOR_NAME) # pylint: disable-msg=W0622
+COPYRIGHT = 'Copyright (C) 2010 %s' % (COPYRIGHT_NAME) # pylint: disable-msg=W0622
 LICENSE_TITLE = 'Apache License'
 LICENSE_SHORT = 'Apache'
 LICENSE_VERSION = '2.0'
