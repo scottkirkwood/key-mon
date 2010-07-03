@@ -3,9 +3,9 @@ Section: graphics
 Priority: optional
 Maintainer: Scott Kirkwood <scott@forusers.com>
 Build-Depends: cdbs, debhelper (>= 7), python (>= 2.4), python-support
+XS-Python-Version: >= 2.4
 Standards-Version: 3.8.4
 Homepage: http://code.google.com/p/key-mon/
-
 Package: keymon
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends} python-xlib, python-gtk2
