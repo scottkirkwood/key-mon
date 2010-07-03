@@ -4,3 +4,4 @@ include COPYING
 include src/keymon/key-mon
 include man/key-mon.1
 include icons/key-mon.desktop
+include icons/key-mon.xpm

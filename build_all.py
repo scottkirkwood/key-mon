@@ -63,7 +63,11 @@ def CopyDir(from_dir, to_dir):
   print 'Copying from %r to %r' % (from_dir, to_dir)
   os.makedirs(to_dir)
   for fname in os.listdir(from_dir):
-    shutil.copy2(os.path.join(from_dir, fname), to_dir)
+    from_name = os.path.join(from_dir, fname)
+    if os.path.isdir(from_name):
+      CopyDir(from_name, os.path.join(to_dir, fname))
+    else:
+      shutil.copy2(from_name, to_dir)
 
 
 def BuildDeb(setup):
@@ -88,14 +92,20 @@ def BuildDeb(setup):
     print 'Error untarring file'
     sys.exit(-1)
   old_cwd = os.getcwd()
-  os.chdir(os.path('tmp', dest_dir))
-  args = ['debuild']
+  os.chdir(os.path.join('tmp', dest_dir))
+  args = ['debuild', 
+      '--lintian-opts', '--info', '--display-info', '--display-experimental',
+      #'--pedantic'
+      ]
   print ' '.join(args)
   ret = subprocess.call(args)
   if ret:
     print 'Error running debuild'
     sys.exit(-1)
   os.chdir(old_cwd)
+  # Move
+  # Cleanup
+
 
 
 if __name__ == '__main__':

@@ -7,9 +7,3 @@ include /usr/share/cdbs/1/class/python-distutils.mk
 
 # Don't compress .py files
 DEB_COMPRESS_EXCLUDE := .py
-
-# Add here any variable or target overrides you need.
-binary-install/key-mon::
-	dh_installman -pkey-mon man/key-mon.1
-	dh_install -pkey-mon icon/key-mon.desktop /usr/share/applications/
-	dh_install -pkey-mon icon/key-mon.xpm /usr/share/pixmap/key-mon.xpm
