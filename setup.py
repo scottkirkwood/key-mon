@@ -41,11 +41,11 @@ COMMAND='/usr/bin/%s' % NAME
 SETUP = dict(
   name = NAME,
   version = VER,
-  packages = ['keymon'],
+  packages = ['key-mon'],
   package_dir = {
-      'keymon': 'src/keymon'},
+      'key-mon': 'src/keymon'},
   package_data = {
-      'keymon': ['themes/apple/*', 'themes/classic/*', '*.kbd', 'icons/key-mon.desktop'],
+      'key-mon': ['themes/apple/*', 'themes/classic/*', '*.kbd', 'icons/key-mon.desktop'],
   },
   scripts=['src/key-mon'],
   author=AUTHOR_NAME,

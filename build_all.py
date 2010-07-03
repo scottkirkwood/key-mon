@@ -33,6 +33,7 @@ import sys
 import re
 from pybdist import pybdist
 import setup
+import shutil
 
 def BuildScreenShots():
   prog = '%s/%s' % (setup.DIR, setup.PY_SRC)
@@ -55,6 +56,26 @@ def BuildScreenShots():
       'python', prog] + options + ['--screenshot', ','.join(keys)])
     shutil.move('screenshot.png', os.path.join(destdir, fname + '.png'))
   pybdist.KillConfig()
+
+
+def CopyDir(from_dir, to_dir):
+  os.path.make_dirs(to_dir)
+  for fname in os.listdir(from_dir):
+    shutil.copy2(os.path.join(from_dir, fname), to_dir)
+
+
+def BuildDeb(setup):
+  shutil.rmtree('tmp')
+  dest_dir = '%s-%s' % (setup.NAME, setup.VER)
+  CopyDir('debian', os.path.join('tmp', dest_dir, 'debian'))
+  tarname = dest_dir + '.tar.gz'
+  os.symlink(os.path.join('dist', tarname), os.path.join('tmp', tarname))
+  tarname = dest_dir + '.orig.tar.gz'
+  os.symlink(os.path.join('dist', tarname), os.path.join('tmp', tarname))
+  ret = subprocess.call(['tar', 'zfx', os.path.join('tmp', dest_dir + '.orig.tar.gz')])
+  if ret:
+    print 'Error untarring file'
+    sys.exit(-1)
 
 
 if __name__ == '__main__':
@@ -90,7 +111,7 @@ if __name__ == '__main__':
   elif options.dist:
     pybdist.BuildMan(setup)
     pybdist.BuildZipTar(setup)
-    pybdist.BuildDeb(setup)
+    BuildDeb(setup)
   elif options.upload:
     pybdist.UploadToGoogleCode(setup)
   elif options.pypi:
@@ -103,7 +124,7 @@ if __name__ == '__main__':
     BuildScreenShots()
     pybdist.BuildMan(setup)
     pybdist.BuildZipTar(setup)
-    pybdist.BuildDeb(setup)
+    BuildDeb(setup)
     pybdist.UploadToGoogleCode(setup)
     pybdist.UploadToPyPi(setup)
     pybdist.AnnounceOnFreshmeat(setup)
