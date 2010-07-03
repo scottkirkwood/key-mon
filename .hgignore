@@ -6,3 +6,4 @@ syntax: regexp
 ^build/
 MANIFEST$
 ^man/.*\.1
+^tmp.?/

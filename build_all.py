@@ -34,6 +34,7 @@ import re
 from pybdist import pybdist
 import setup
 import shutil
+import subprocess
 
 def BuildScreenShots():
   prog = '%s/%s' % (setup.DIR, setup.PY_SRC)
@@ -59,23 +60,42 @@ def BuildScreenShots():
 
 
 def CopyDir(from_dir, to_dir):
-  os.path.make_dirs(to_dir)
+  print 'Copying from %r to %r' % (from_dir, to_dir)
+  os.makedirs(to_dir)
   for fname in os.listdir(from_dir):
     shutil.copy2(os.path.join(from_dir, fname), to_dir)
 
 
 def BuildDeb(setup):
-  shutil.rmtree('tmp')
+  shutil.rmtree('tmp', True)
   dest_dir = '%s-%s' % (setup.NAME, setup.VER)
+  dest_tar = '%s_%s' % (setup.NAME, setup.VER)
   CopyDir('debian', os.path.join('tmp', dest_dir, 'debian'))
-  tarname = dest_dir + '.tar.gz'
-  os.symlink(os.path.join('dist', tarname), os.path.join('tmp', tarname))
-  tarname = dest_dir + '.orig.tar.gz'
-  os.symlink(os.path.join('dist', tarname), os.path.join('tmp', tarname))
-  ret = subprocess.call(['tar', 'zfx', os.path.join('tmp', dest_dir + '.orig.tar.gz')])
+
+  src_tarname = dest_dir + '.tar.gz'
+  dest_tarname = dest_tar + '.tar.gz'
+  os.symlink(os.path.abspath(os.path.join('dist', src_tarname)),
+             os.path.abspath(os.path.join('tmp', dest_tarname)))
+
+  dest_tarname = dest_tar + '.orig.tar.gz'
+  os.symlink(os.path.abspath(os.path.join('dist', src_tarname)),
+             os.path.abspath(os.path.join('tmp', dest_tarname)))
+
+  args = ['tar', '-zx', '--directory', 'tmp', '-f', os.path.join('dist', dest_dir + '.tar.gz')]
+  print ' '.join(args)
+  ret = subprocess.call(args)
   if ret:
     print 'Error untarring file'
     sys.exit(-1)
+  old_cwd = os.getcwd()
+  os.chdir(os.path('tmp', dest_dir))
+  args = ['debuild']
+  print ' '.join(args)
+  ret = subprocess.call(args)
+  if ret:
+    print 'Error running debuild'
+    sys.exit(-1)
+  os.chdir(old_cwd)
 
 
 if __name__ == '__main__':
