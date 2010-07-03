@@ -60,6 +60,7 @@ def BuildScreenShots():
 
 
 def CopyDir(from_dir, to_dir):
+  """Recursively copy all the files from `from_dir` and below to `to_dir`."""
   print 'Copying from %r to %r' % (from_dir, to_dir)
   os.makedirs(to_dir)
   for fname in os.listdir(from_dir):
@@ -69,33 +70,44 @@ def CopyDir(from_dir, to_dir):
     else:
       shutil.copy2(from_name, to_dir)
 
+def MoveTopFilesToDir(from_dir, to_dir):
+  """Copy top level files (only) in `from_dir` to `to_dir`."""
+  os.makedirs(to_dir)
+  for fname in os.listdir(from_dir):
+    from_name = os.path.join(from_dir, fname)
+    if os.path.isfile(from_name):
+      shutil.move(from_name, to_dir)
+  print 'Moved files to %r' % to_dir
 
 def BuildDeb(setup):
-  shutil.rmtree('tmp', True)
+  tmpdir = 'tmp'
+  shutil.rmtree(tmpdir, True)
   dest_dir = '%s-%s' % (setup.NAME, setup.VER)
   dest_tar = '%s_%s' % (setup.NAME, setup.VER)
-  CopyDir('debian', os.path.join('tmp', dest_dir, 'debian'))
+  CopyDir('debian', os.path.join(tmpdir, dest_dir, 'debian'))
 
   src_tarname = dest_dir + '.tar.gz'
   dest_tarname = dest_tar + '.tar.gz'
   os.symlink(os.path.abspath(os.path.join('dist', src_tarname)),
-             os.path.abspath(os.path.join('tmp', dest_tarname)))
+             os.path.abspath(os.path.join(tmpdir, dest_tarname)))
 
   dest_tarname = dest_tar + '.orig.tar.gz'
   os.symlink(os.path.abspath(os.path.join('dist', src_tarname)),
-             os.path.abspath(os.path.join('tmp', dest_tarname)))
+             os.path.abspath(os.path.join(tmpdir, dest_tarname)))
 
-  args = ['tar', '-zx', '--directory', 'tmp', '-f', os.path.join('dist', dest_dir + '.tar.gz')]
+  args = ['tar', '-zx', '--directory', tmpdir, '-f', os.path.join('dist', dest_dir + '.tar.gz')]
   print ' '.join(args)
   ret = subprocess.call(args)
   if ret:
     print 'Error untarring file'
     sys.exit(-1)
   old_cwd = os.getcwd()
-  os.chdir(os.path.join('tmp', dest_dir))
-  args = ['debuild', 
+  os.chdir(os.path.join(tmpdir, dest_dir))
+  args = ['debuild',
       '--lintian-opts', '--info', '--display-info', '--display-experimental',
+      '--color', 'always',
       #'--pedantic'
+      #'--fail-on-warnings',
       ]
   print ' '.join(args)
   ret = subprocess.call(args)
@@ -104,8 +116,16 @@ def BuildDeb(setup):
     sys.exit(-1)
   os.chdir(old_cwd)
   # Move
-  # Cleanup
+  if os.path.exists('/etc/debian_version'):
+    deb_ver = open('/etc/debian_version').read().rstrip()
+  else:
+    deb_ver = 'UNKNOWN'
+  debdir='debian-%s' % deb_ver
+  shutil.rmtree(debdir, True)
+  MoveTopFilesToDir(tmpdir, debdir)
 
+  # Cleanup
+  shutil.rmtree(tmpdir, True)
 
 
 if __name__ == '__main__':

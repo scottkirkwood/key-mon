@@ -7,3 +7,4 @@ syntax: regexp
 MANIFEST$
 ^man/.*\.1
 ^tmp.?/
+^debian-.*/
