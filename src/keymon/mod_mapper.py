@@ -152,7 +152,6 @@ MEDIUM_NAME = {
   'XF86LAUNCH4': 'Launch4',
   'XF86SUSPEND': 'Suspend',
   'XF86WEBCAM': 'WebCam',
-  'XF86MAIL': 'Mail',
   'XF86SEARCH': 'Search',
   'XF86FINANCE': 'Finance',
   'XF86SHOP': 'Shop',
@@ -203,22 +202,26 @@ SHORT_NAME = {
 }
 
 class ModMapper(object):
+  """Converts Mod Map codes into names and strings."""
   def __init__(self):
     self.map = {}
     self.alt_map = {}
     self.name_to_code = {}
 
-  def Done(self):
+  def done(self):
+    """done setup, now create alt_map and name_to_code."""
     for key in self.map:
       vals = self.map[key]
       code_name = vals[0]
       self.alt_map[code_name] = vals
       self.name_to_code[code_name] = key
 
-  def Set(self, code, vals):
+  def set_map(self, code, vals):
+    """Set one code."""
     self.map[code] = vals
 
-  def GetAndCheck(self, scancode, name):
+  def get_and_check(self, scancode, name):
+    """Get the scan code, or get from name."""
     if scancode in self.map:
       vals = self.map[scancode]
       if vals[0] == name:
@@ -231,7 +234,8 @@ class ModMapper(object):
     logging.info('scancode: %r name:%r not found', scancode, name)
     return None, None, None
 
-  def GetFromName(self, name):
+  def get_from_name(self, name):
+    """Get the scancode from a name."""
     if name in self.name_to_code:
       return self.name_to_code[name], self.alt_map[name]
     logging.info('Key %s not found', name)
@@ -242,15 +246,6 @@ class ModMapper(object):
 
   def __contains__(self, key):
     return key in self.map
-
-def mod_map_args():
-  return ['xmodmap', '-display', ':0', '-pk']
-
-
-def run_cmd(args):
-  """Run the command and collect the output."""
-  return subprocess.Popen(args, stdout=subprocess.PIPE).communicate()[0]
-
 
 def parse_modmap(lines):
   """Parse a modmap file."""
@@ -276,17 +271,19 @@ def parse_modmap(lines):
       alias = strlst[0].upper()
       my_keyname = 'KEY_' + alias
       my_keyname = my_keyname.replace('XF86', '')
-      ret.Set(code, (my_keyname, alias))
-  ret.Done()
+      ret.set_map(code, (my_keyname, alias))
+  ret.done()
   return ret
 
 
-def ReadKdb(fname):
-  return ParseKdb(codecs.open(os.path.join(os.path.dirname(__file__), fname),
+def read_kdb(fname):
+  """Read the kdb file."""
+  return parse_kdb(codecs.open(os.path.join(os.path.dirname(__file__), fname),
                               'r', 'utf-8').read())
 
 
-def ParseKdb(text):
+def parse_kdb(text):
+  """Parse a kdb text file."""
   re_line = re.compile(r'(\d+) (\S+) (\S+)\s?(\S*)')
   ret = ModMapper()
   for line in text.split('\n'):
@@ -294,26 +291,37 @@ def ParseKdb(text):
       continue
     grps = re_line.search(line)
     if grps:
-      ret.Set(int(grps.group(1)), (grps.group(2), grps.group(3), grps.group(4)))
-  ret.Done()
+      ret.set_map(int(grps.group(1)), (grps.group(2), grps.group(3), grps.group(4)))
+  ret.done()
   return ret
 
 
-def CreateMykdb(fname, codes):
-  f = codecs.open(fname, 'w', 'utf-8')
-  f.write('# This is a space separated file with UTF-8 encoding\n')
-  f.write('# Short name is optional, will default to the medium-name\n')
-  f.write('# Scancode Map-Name Medium-Name Short-Name\n')
+def create_my_kdb(fname, codes):
+  """Create a kdb file from scancodes."""
+  fout = codecs.open(fname, 'w', 'utf-8')
+  fout.write('# This is a space separated file with UTF-8 encoding\n')
+  fout.write('# Short name is optional, will default to the medium-name\n')
+  fout.write('# Scancode Map-Name Medium-Name Short-Name\n')
   for code, (key, medium_name, short_name) in codes.items():
     if short_name:
-      f.write('%d %s %s %s\n' % (code, key, medium_name, short_name))
+      fout.write('%d %s %s %s\n' % (code, key, medium_name, short_name))
     else:
-      f.write('%d %s %s\n' % (code, key, medium_name))
+      fout.write('%d %s %s\n' % (code, key, medium_name))
   print 'Output %r with %d entries' % (fname, len(codes))
-  f.close()
+  fout.close()
+
+def mod_map_args():
+  """Return the arguments to pass to xmodmap."""
+  return ['xmodmap', '-display', ':0', '-pk']
 
 
-def ReadModMap():
+def run_cmd(args):
+  """Run the command and collect the output."""
+  return subprocess.Popen(args, stdout=subprocess.PIPE).communicate()[0]
+
+
+def read_mod_map():
+  """Read a mod_map by runing xmodmap."""
   xmodmap = parse_modmap(run_cmd(mod_map_args()))
   ret = ModMapper()
   for code in xmodmap:
@@ -327,25 +335,26 @@ def ReadModMap():
       short_name = SHORT_NAME[key_name]
     else:
       short_name = None
-    ret.Set(code, (key, medium_name, short_name))
-  ret.Done()
+    ret.set_map(code, (key, medium_name, short_name))
+  ret.done()
   return ret
 
 
-def SafelyReadModMap(fname):
+def safely_read_mod_map(fname):
+  """Read the specified mod_map file or get the US version by default."""
   pathname = os.path.dirname(__file__)
   default = 'us.kbd'
   if fname:
     if os.path.exists(fname):
-      return ReadKdb(fname)
+      return read_kdb(fname)
     else:
-      return ReadKdb(os.path.join(pathname, fname))
+      return read_kdb(os.path.join(pathname, fname))
   ret = None
   try:
-    ret = ReadModMap()
-  except:
+    ret = read_mod_map()
+  except OSError:
     print 'Error: unable execute xmodmap, reading default %r' % fname
-  defaults = ReadKdb(os.path.join(pathname, default))
+  defaults = read_kdb(os.path.join(pathname, default))
   if not ret:
     return defaults
   # Merge the defaults with modmap
@@ -354,13 +363,17 @@ def SafelyReadModMap(fname):
       ret[keycode] = defaults[keycode]
   return ret
 
-
-if __name__ == '__main__':
+def _run_test():
+  """Run some tests on the my.kbd file."""
   filename = 'my.kdb'
-  modmap = ReadModMap()
-  CreateMykdb(filename, modmap)
-  entries = ReadKdb(filename)
+  modmap = read_mod_map()
+  create_my_kdb(filename, modmap)
+  entries = read_kdb(filename)
   print 'Read %r with %d entires' % (filename, len(entries))
   for ecode in modmap:
     if ecode not in entries:
       print 'Missing entry for code %s' % ecode
+
+
+if __name__ == '__main__':
+  _run_test()
