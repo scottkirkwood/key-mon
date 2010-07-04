@@ -367,11 +367,11 @@ class KeyMon:
     code, medium_name, short_name = self.modmap.GetAndCheck(scan_code,
                                                             xlib_name)
     if not code:
-      print 'No mapping for scan_code %d' % scan_code
+      print 'No mapping for scan_code %s' % scan_code
       return
     if self.scale < 1.0 and short_name:
       medium_name = short_name
-    logging.debug('Scan code %d, Key %s pressed = %r' % (scan_code,
+    logging.debug('Scan code %s, Key %s pressed = %r' % (scan_code,
                                                          code, medium_name))
     if code in self.name_fnames:
       self._HandleEvent(self.key_image, code, value)
@@ -448,11 +448,11 @@ class KeyMon:
     return True
 
   def Quit(self, *unused_args):
-    self.devices.Stop()
+    self.devices.stop_listening()
     self.Destroy(None)
 
   def Destroy(self, unused_widget, unused_data=None):
-    self.devices.Stop()
+    self.devices.stop_listening()
     config.cleanup()
     gtk.main_quit()
 
