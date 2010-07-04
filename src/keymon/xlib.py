@@ -46,7 +46,6 @@ class XEvent(object):
 
   def get_scancode(self):
     """Get the scancode if any."""
-    return self._type
     return self._scancode
   scancode = property(get_scancode)
 
@@ -65,6 +64,8 @@ class XEvent(object):
         self._scancode, self._code, self._value)
 
 class XEvents(threading.Thread):
+  """A thread to queue up X window events from RECORD extension."""
+
   _butn_to_code = collections.defaultdict(lambda: 'BTN_DUNNO',
       [(1, 'BTN_LEFT'), (2, 'BTN_MIDDLE'), (3, 'BTN_RIGHT'),
        (4, 'REL_WHEEL'), (5, 'REL_WHEEL')])
@@ -80,9 +81,11 @@ class XEvents(threading.Thread):
     self.events = []  # each of type XEvent
 
   def run(self):
+    """Standard run method for threading."""
     self.start_listening()
 
   def _setup_lookup(self):
+    """Setup the key lookups."""
     for name in dir(XK):
       if name[:3] == "XK_":
         code = getattr(XK, name)
@@ -101,6 +104,7 @@ class XEvents(threading.Thread):
     return None
 
   def start_listening(self):
+    """Start listening to RECORD extension and queuing events."""
     if not self.display.has_extension("RECORD"):
       print "RECORD extension not found"
       sys.exit(1)
@@ -126,6 +130,7 @@ class XEvents(threading.Thread):
     self.display.record_free_context(self.ctx)
 
   def stop_listening(self):
+    """Stop listening to events."""
     if not self._listening:
       return
     self.local_display.record_disable_context(self.ctx)
@@ -134,9 +139,11 @@ class XEvents(threading.Thread):
     self._listening = False
 
   def listening(self):
+    """Are you listening?"""
     return self._listening
 
   def _handler(self, reply):
+    """Handle an event."""
     data = reply.data
     while len(data):
       event, data = rq.EventField(None).parse_binary_value(
@@ -180,20 +187,25 @@ class XEvents(threading.Thread):
       print 'Missing code for %d = %d' % (event.detail - 8, keysym)
     self.events.append(XEvent('EV_KEY', event.detail - 8, self.keycode_to_symbol[keysym], value))
 
-if __name__ == '__main__':
+def _run_test():
+  """Run a test or debug session."""
   print 'Press ESCape to quit'
-  e = XEvents()
-  e.start()
+  events = XEvents()
+  events.start()
   try:
-    while e.listening():
+    while events.listening():
       try:
-        evt = e.next_event()
+        evt = events.next_event()
       except KeyboardInterrupt:
         print 'User interrupted'
-        e.stop_listening()
+        events.stop_listening()
       if evt:
         print evt
         if evt.code == 'KEY_ESCAPE':
-          e.stop_listening()
+          events.stop_listening()
   finally:
-    e.stop_listening()
+    events.stop_listening()
+
+
+if __name__ == '__main__':
+  _run_test()
