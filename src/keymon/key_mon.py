@@ -343,7 +343,7 @@ class KeyMon:
   def HandleEvent(self, event):
     if not event:
       for button in self.buttons:
-        button.EmptyEvent()
+        button.empty_event()
       return
     if event.type == 'EV_KEY' and event.value in (0, 1):
       if type(event.code) == str:
@@ -444,7 +444,7 @@ class KeyMon:
       self._HandleEvent(self.mouse_image, 'SCROLL_UP', 1)
     elif dir < 0:
       self._HandleEvent(self.mouse_image, 'SCROLL_DOWN', 1)
-    self.mouse_image.SwitchToDefault()
+    self.mouse_image.switch_to_default()
     return True
 
   def Quit(self, *unused_args):
