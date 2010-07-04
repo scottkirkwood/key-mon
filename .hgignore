@@ -1,10 +1,9 @@
 syntax: regexp
 \.pyc$
-^dist/
-.egg-info/
-\.swp$
 ^build/
-MANIFEST$
-^man/.*\.1
-^tmp.?/
+^dist/
+\.egg-info/
+\.swp$
+^MANIFEST$
+^man/.*\.1$
 ^debian-.*/

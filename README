@@ -1,0 +1,23 @@
+key-mon
+-------
+
+A screencast utility that displays your keyboard and mouse status.
+
+Key-mon is useful for teaching since it shows the current status of your
+keyboard and mouse and you use them in another application.
+No longer do you need to say 'Now I'm pressing the Ctrl-D key',
+your students can just see the keystroke for themselves.
+
+Home Page
+=========
+
+You can find the key-mon hosted at:
+  http://code.google.com/p/key-mon/
+
+If you find any bugs or problems file a bug at:
+  http://code.google.com/p/key-mon/issues/list
+
+If you find the latest downloads at:
+  http://code.google.com/p/key-mon/downloads/list
+
+

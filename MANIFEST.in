@@ -1,6 +1,8 @@
 recursive-include docs *.rst
 recursive-include src *.py *.svg *.kbd
 include COPYING
+include INSTALL
+include README
 include src/keymon/key-mon
 include man/key-mon.1
 include icons/key-mon.desktop
