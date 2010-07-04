@@ -41,35 +41,35 @@ class TwoStateImage(gtk.Image):
     self.current = ''
     self.defer_to = defer_to
     self.timeout_secs = DEFAULT_TIMEOUT_SECS
-    self.SwitchTo(self.normal)
+    self.switch_to(self.normal)
 
-  def SwitchTo(self, name):
+  def switch_to(self, name):
     """Switch to image with this name."""
     if self.current != self.normal:
-      self._DeferTo(self.current)
-    self._SwitchTo(name)
+      self._defer_to(self.current)
+    self._switch_to(name)
 
-  def _SwitchTo(self, name):
+  def _switch_to(self, name):
     """Internal, switch to image with this name even if same."""
     self.set_from_pixbuf(self.pixbufs.Get(name))
     self.current = name
     if self.showit:
       self.show()
 
-  def SwitchToDefault(self):
+  def switch_to_default(self):
     """Switch to the default image."""
     self.count_down = time.time()
 
-  def EmptyEvent(self):
+  def empty_event(self):
     """Sort of a idle event."""
     if self.count_down is None:
       return
     delta = time.time() - self.count_down
     if delta > self.timeout_secs:
       self.count_down = None
-      self._SwitchTo(self.normal)
+      self._switch_to(self.normal)
 
-  def _DeferTo(self, old_name):
+  def _defer_to(self, old_name):
     """If possible the button is passed on."""
     if not self.defer_to:
       return
