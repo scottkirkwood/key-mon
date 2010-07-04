@@ -96,7 +96,7 @@ class KeyMon:
         'ALT': config.get("buttons", "alt", bool),
     }
     self.emulate_middle = config.get("devices", "emulate_middle", bool)
-    self.modmap = mod_mapper.SafelyReadModMap(config.get("devices", "map"))
+    self.modmap = mod_mapper.safely_read_mod_map(config.get("devices", "map"))
     self.swap_buttons = config.get("devices", "swap_buttons", bool)
 
     self.name_fnames = self.CreateNamesToFnames()
@@ -114,7 +114,7 @@ class KeyMon:
         if key == 'KEY_EMPTY':
           continue
         if key.startswith('KEY_'):
-          key_info = self.modmap.GetFromName(key)
+          key_info = self.modmap.get_from_name(key)
           if not key_info:
             print 'Key %s not found' % key
             self.Destroy(None)
@@ -364,7 +364,7 @@ class KeyMon:
 
 
   def HandleKey(self, scan_code, xlib_name, value):
-    code, medium_name, short_name = self.modmap.GetAndCheck(scan_code,
+    code, medium_name, short_name = self.modmap.get_and_check(scan_code,
                                                             xlib_name)
     if not code:
       print 'No mapping for scan_code %s' % scan_code
@@ -436,7 +436,7 @@ class KeyMon:
     w, h = self.mouse_indicator_win.get_size()
     self.mouse_indicator_win.move(x - w/2, y - h/2)
     if value == 0 and config.get('ui', 'visible-click', bool):
-      self.mouse_indicator_win.FadeAway()
+      self.mouse_indicator_win.fade_away()
     return True
 
   def HandleMouseScroll(self, dir, unused_value):
@@ -510,7 +510,7 @@ class KeyMon:
     self._ToggleAKey(self.alt_image, 'ALT',
         config.get('buttons', 'ALT', bool))
     if config.get('ui', 'visible-click', bool):
-      self.mouse_indicator_win.FadeAway()
+      self.mouse_indicator_win.fade_away()
     self.window.set_decorated(config.get('ui', 'decorated', bool))
 
   def _ToggleAKey(self, image, name, show):
