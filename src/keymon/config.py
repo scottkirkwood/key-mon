@@ -108,7 +108,7 @@ def reset():
     global _config
     _config = SafeConfigParser()
 
-def _create_default(path):
+def _create_default(unused_path):
     """
         Create the default configuration file and load it for use.
     """

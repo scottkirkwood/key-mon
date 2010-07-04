@@ -55,14 +55,14 @@ class SettingsDialog(gtk.Dialog):
   def SettingsChanged(self):
     self.emit('settings-changed')
 
-  def _Response(self, dialog, response_id):
+  def _Response(self, unused_dialog, response_id):
     if response_id == gtk.RESPONSE_CLOSE:
       _log.info('Close in _Response.')
       pass
     self.destroy()
 
   @classmethod
-  def Register(self):
+  def Register(cls):
     """Register this class as a Gtk widget."""
     gobject.type_register(SettingsDialog)
 
