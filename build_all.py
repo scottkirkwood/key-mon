@@ -90,7 +90,7 @@ if __name__ == '__main__':
   elif options.dist:
     pybdist.BuildMan(setup)
     pybdist.BuildZipTar(setup)
-    BuildDeb(setup)
+    pybdist.BuildDeb(setup)
   elif options.upload:
     pybdist.UploadToGoogleCode(setup)
   elif options.pypi:
@@ -103,7 +103,7 @@ if __name__ == '__main__':
     BuildScreenShots()
     pybdist.BuildMan(setup)
     pybdist.BuildZipTar(setup)
-    BuildDeb(setup)
+    pybdist.BuildDeb(setup)
     pybdist.UploadToGoogleCode(setup)
     pybdist.UploadToPyPi(setup)
     pybdist.AnnounceOnFreshmeat(setup)
