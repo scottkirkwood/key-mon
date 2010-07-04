@@ -28,13 +28,13 @@ sudo apt-get install alien help2man fakeroot lintian
 Also pip pybdist
 """
 
-import os
-import sys
-import re
 from pybdist import pybdist
+import os
 import setup
+import shutil
+import subprocess
 
-def BuildScreenShots():
+def build_screen_shots():
   prog = '%s/%s' % (setup.DIR, setup.PY_SRC)
   destdir = 'docs'
   all_buttons = ['KEY_A', 'KEY_CONTROL_L', 'KEY_ALT_L', 'KEY_SHIFT_L']
@@ -54,58 +54,19 @@ def BuildScreenShots():
     subprocess.call([
       'python', prog] + options + ['--screenshot', ','.join(keys)])
     shutil.move('screenshot.png', os.path.join(destdir, fname + '.png'))
-  pybdist.KillConfig()
+  pybdist.kill_config()
 
 
 if __name__ == '__main__':
   import optparse
   parser = optparse.OptionParser()
-  parser.add_option('--clean', dest='doclean', action='store_true',
-                    help='Uninstall things')
   parser.add_option('--png', dest='png', action='store_true',
                     help='Only build png files')
-  parser.add_option('--pypi', dest='pypi', action='store_true',
-                    help='Only upload to pypi')
-  parser.add_option('--freshmeat', dest='freshmeat', action='store_true',
-                    help='Announce on freshmeat')
-  parser.add_option('--dist', dest='dist', action='store_true',
-                    help='Only build distributions.')
-  parser.add_option('--upload', dest='upload', action='store_true',
-                    help='Only upload to google code.')
-  parser.add_option('--all', dest='all', action='store_true',
-                    help='Do everything')
+  pybdist.add_standard_options(parser)
   (options, args) = parser.parse_args()
-  ver = pybdist.GetAndVerifyVersions(setup)
-  rel_date, rel_lines = pybdist.ParseLastRelease(setup)
-  print 'Version is %r, date %r' % (ver, rel_date)
-  print 'Release notes'
-  print '-------------'
-  print '\n'.join(rel_lines)
-  print
+  pybdist.get_and_verify_versions(setup)
 
   if options.png:
-    BuildScreenShots()
-  elif options.doclean:
-    pybdist.CleanAll(setup)
-  elif options.dist:
-    pybdist.BuildMan(setup)
-    pybdist.BuildZipTar(setup)
-    pybdist.BuildDeb(setup)
-  elif options.upload:
-    pybdist.UploadToGoogleCode(setup)
-  elif options.pypi:
-    pybdist.UploadToPyPi(setup)
-  elif options.freshmeat:
-    pybdist.AnnounceOnFreshmeat(setup)
-  elif options.twitter:
-    pybdist.AnnounceOnTwitter(setup)
-  elif options.all:
-    BuildScreenShots()
-    pybdist.BuildMan(setup)
-    pybdist.BuildZipTar(setup)
-    pybdist.BuildDeb(setup)
-    pybdist.UploadToGoogleCode(setup)
-    pybdist.UploadToPyPi(setup)
-    pybdist.AnnounceOnFreshmeat(setup)
-  else:
+    build_screen_shots()
+  elif not pybdist.handle_standard_options(options, setup):
     print 'Doing nothing.  --help for commands.'

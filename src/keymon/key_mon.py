@@ -120,7 +120,6 @@ class KeyMon:
             self.Destroy(None)
             return
           scancode = key_info[0]
-          code = key_info[1]
           event = xlib.XEvent('EV_KEY', scancode=scancode, code=key, value=1)
         elif key.startswith('BTN_'):
           event = xlib.XEvent('EV_KEY', scancode=0, code=key, value=1)
@@ -267,7 +266,7 @@ class KeyMon:
         self.meta_image, self.alt_image]
 
     prev_key_image = None
-    for n in range(self.options.old_keys):
+    for _ in range(self.options.old_keys):
       key_image = two_state_image.TwoStateImage(self.pixbufs, 'KEY_EMPTY')
       key_image.hide()
       key_image.timeout_secs = 0.5
@@ -325,7 +324,7 @@ class KeyMon:
     widget.begin_move_drag(evt.button, int(evt.x_root), int(evt.y_root), evt.time)
     return True
 
-  def _WindowMoved(self, widget, event):
+  def _WindowMoved(self, widget, unused_event):
     x, y = widget.get_position()
     logging.info('Moved window to %d, %d' % (x, y))
     config.set('position', 'x', x)
@@ -440,7 +439,7 @@ class KeyMon:
       self.mouse_indicator_win.FadeAway()
     return True
 
-  def HandleMouseScroll(self, dir, value):
+  def HandleMouseScroll(self, dir, unused_value):
     if dir > 0:
       self._HandleEvent(self.mouse_image, 'SCROLL_UP', 1)
     elif dir < 0:
@@ -448,16 +447,16 @@ class KeyMon:
     self.mouse_image.SwitchToDefault()
     return True
 
-  def Quit(self, *args):
+  def Quit(self, *unused_args):
     self.devices.Stop()
     self.Destroy(None)
 
-  def Destroy(self, widget, data=None):
+  def Destroy(self, unused_widget, unused_data=None):
     self.devices.Stop()
     config.cleanup()
     gtk.main_quit()
 
-  def RightClickHandler(self, widget, event):
+  def RightClickHandler(self, unused_widget, event):
     if event.button != 3:
       return
 
@@ -481,11 +480,11 @@ class KeyMon:
     settings_click.show()
     menu.append(settings_click)
 
-    quit = gtk.MenuItem('_Quit\tCtrl-Q')
-    quit.connect_object('activate', self.Destroy, None)
-    quit.show()
+    quitcmd = gtk.MenuItem('_Quit\tCtrl-Q')
+    quitcmd.connect_object('activate', self.Destroy, None)
+    quitcmd.show()
 
-    menu.append(quit)
+    menu.append(quitcmd)
     return menu
 
   def ToggleChrome(self, current):
@@ -499,7 +498,7 @@ class KeyMon:
     dlg.run()
     dlg.destroy()
 
-  def SettingsChanged(self, dlg):
+  def SettingsChanged(self, unused_dlg):
     self._ToggleAKey(self.mouse_image, 'MOUSE',
         config.get('buttons', 'mouse', bool))
     self._ToggleAKey(self.meta_image, 'META',
