@@ -75,7 +75,7 @@ if __name__ == '__main__':
   parser.add_option('--all', dest='all', action='store_true',
                     help='Do everything')
   (options, args) = parser.parse_args()
-  ver = pybdist.GetVersion(setup)
+  ver = pybdist.GetAndVerifyVersions(setup)
   rel_date, rel_lines = pybdist.ParseLastRelease(setup)
   print 'Version is %r, date %r' % (ver, rel_date)
   print 'Release notes'
