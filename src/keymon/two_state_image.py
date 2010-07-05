@@ -73,5 +73,5 @@ class TwoStateImage(gtk.Image):
     """If possible the button is passed on."""
     if not self.defer_to:
       return
-    self.defer_to.SwitchTo(old_name)
-    self.defer_to.SwitchToDefault()
+    self.defer_to.switch_to(old_name)
+    self.defer_to.switch_to_default()
