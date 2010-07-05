@@ -17,35 +17,35 @@
 from distutils.core import setup
 import re
 
-NAME='key-mon'
-VER='1.2.2'
-DIR='src/keymon'
-PY_NAME='key_mon'
-DEB_NAME=NAME.replace('-', '')
-RELEASE_FILE='docs/RELEASE.rst'
+NAME = 'key-mon'
+VER = '1.2.3'
+DIR = 'src/keymon'
+PY_NAME = 'key_mon'
+DEB_NAME = NAME.replace('-', '')
+RELEASE_FILE = 'docs/RELEASE.rst'
 
-PY_SRC='%s.py' % PY_NAME
-DEPENDS=['python-xlib', 'python-gtk2']
-DEPENDS_STR=' '.join(DEPENDS)
+PY_SRC = '%s.py' % PY_NAME
+DEPENDS = ['python-xlib', 'python-gtk2']
+DEPENDS_STR = ' '.join(DEPENDS)
 
-MENU_SUBSECTION='Graphics'
-AUTHOR_NAME='Scott Kirkwood'
-COPYRIGHT_NAME='Google Inc.'
-GOOGLE_CODE_EMAIL='scott@forusers.com'
-KEYWORDS=['keyboard', 'status', 'monitor', 'education']
-MAN_FILE='man/%s.1' % NAME
-DESKTOP_FILE='icons/%s.desktop' % NAME
-ICON='icons/key-mon.xpm'
-COMMAND='/usr/bin/%s' % NAME
+MENU_SUBSECTION = 'Graphics'
+AUTHOR_NAME = 'Scott Kirkwood'
+COPYRIGHT_NAME = 'Google Inc.'
+GOOGLE_CODE_EMAIL = 'scott@forusers.com'
+KEYWORDS = ['keyboard', 'status', 'monitor', 'education']
+MAN_FILE = 'man/%s.1' % NAME
+DESKTOP_FILE = 'icons/%s.desktop' % NAME
+ICON = 'icons/key-mon.xpm'
+COMMAND = '/usr/bin/%s' % NAME
 
 SETUP = dict(
-  name = NAME,
-  version = VER,
-  packages = ['key-mon'],
-  package_dir = {
-      'key-mon': 'src/keymon'},
+  name=NAME,
+  version=VER,
+  packages=['keymon'],
+  package_dir={
+      'keymon': 'src/keymon'},
   package_data = {
-      'key-mon': ['themes/apple/*', 'themes/classic/*', '*.kbd', 'icons/key-mon.desktop'],
+      'keymon': ['themes/apple/*', 'themes/classic/*', '*.kbd', 'icons/key-mon.desktop'],
   },
   scripts=['src/key-mon'],
   author=AUTHOR_NAME,
@@ -94,7 +94,8 @@ GNU General Public License for more details.
 You should have received a copy of the Apache License
 along with this program.  If not, see <%(url)s>.''' % dict(name=NAME, url=LICENSE_URL)
 LICENSE_NOTICE_HTML = '<p>%s</p>' % LICENSE_NOTICE.replace('\n\n', '</p><p>')
-LICENSE_NOTICE_HTML = re.sub(r'<http([^>]*)>', r'<a href="http\1" target="_blank">http\1</a>', LICENSE_NOTICE_HTML)
+LICENSE_NOTICE_HTML = re.sub(r'<http([^>]*)>', r'<a href="http\1" target="_blank">http\1</a>',
+    LICENSE_NOTICE_HTML)
 
 if __name__ == '__main__':
   setup(**SETUP)

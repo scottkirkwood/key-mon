@@ -1,0 +1,30 @@
+#
+# .pycheckrc file created by PyChecker v0.8.18 @ Sun Jul  4 22:10:50 2010
+#
+# It should be placed in your home directory (value of $HOME).
+# If $HOME is not set, it will look in the current directory.
+#
+
+# the maximum number of warnings to be displayed
+limit = 30
+
+# First argument to methods
+methodArgName = 'self'
+
+# First argument to classmethods
+classmethodArgNames = ['cls', 'klass']
+
+# ignore warnings from the list of modules
+blacklist = ['Tkinter', 'wxPython', 'gtk', 'GTK', 'GDK']
+
+# ignore global variables not used if name is one of these values
+variablesToIgnore = ['__version__', '__warningregistry__', '__all__',
+  '__credits__', '__test__', '__author__', '__email__', '__revision__',
+   '__id__', '__copyright__', '__license__', '__date__']
+
+# ignore unused locals/arguments if name is one of these values
+unusedNames = ['_', 'empty', 'unused', 'dummy']
+
+# ignore missing class attributes if name is one of these values
+missingAttrs = []
+

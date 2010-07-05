@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+July 4th, 2010 v 1.2.3
+----------------------
+* Changed the style to be more PEP 8 compatible.
+* Fixed a few small bugs.
+* Using new version of pybdist.
+
 June 20th, 2010 v 1.2.2
 -----------------------
 * Added the correct copyright notices.

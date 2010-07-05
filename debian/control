@@ -1,4 +1,4 @@
-Source: key-mon
+Source: keymon
 Section: graphics
 Priority: optional
 Maintainer: Scott Kirkwood <scott@forusers.com>
@@ -10,7 +10,7 @@ Vcs-Hg: https://key-mon.googlecode.com/hg/
 Vcs-Browser: http://key-mon.googlecode.com/hg/
 
 Package: keymon
-Architecture: any
+Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, python-xlib, python-gtk2
 XB-Python-Version: ${python:Versions}
 Description: A screencast utility that displays your keyboard and mouse status
