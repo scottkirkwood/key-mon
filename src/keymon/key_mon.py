@@ -358,9 +358,9 @@ class KeyMon:
   def _HandleEvent(self, image, name, code):
     if code == 1:
       logging.debug('Switch to %s, code %s' % (name, code))
-      image.SwitchTo(name)
+      image.switch_to(name)
     else:
-      image.SwitchToDefault()
+      image.switch_to_default()
 
 
   def HandleKey(self, scan_code, xlib_name, value):
@@ -519,7 +519,7 @@ class KeyMon:
     if show:
       image.showit = True
       self.enabled[name] = True
-      image.SwitchToDefault()
+      image.switch_to_default()
     else:
       image.showit = False
       self.enabled[name] = False
