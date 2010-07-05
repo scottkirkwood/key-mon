@@ -24,27 +24,28 @@ import config
 import gettext
 import logging
 
-_log = logging.getLogger('settings')
+LOG = logging.getLogger('settings')
 
 class SettingsDialog(gtk.Dialog):
+  """Create a settings/preferences dialog for keymon."""
+
   __gproperties__ = {}
   __gsignals__ = {
         'settings-changed' : (
           gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ())
   }
 
-  """Preferences dialog."""
   def __init__(self, view):
     gtk.Dialog.__init__(self, title='Preferences', parent=view,
-        flags=gtk.DIALOG_MODAL|gtk.DIALOG_DESTROY_WITH_PARENT,
+        flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
         buttons=(gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE))
     self.set_default_size(350, 350)
-    self.connect('response', self._Response)
+    self.connect('response', self._response)
     self.notebook = gtk.Notebook()
     self.vbox.pack_start(self.notebook)
 
-    bu = ButtonsFrame(self)
-    self.notebook.append_page(bu, gtk.Label(_('Buttons')))
+    buttons = ButtonsFrame(self)
+    self.notebook.append_page(buttons, gtk.Label(_('Buttons')))
 
     misc = MiscFrame(self)
     self.notebook.append_page(misc, gtk.Label(_('Misc')))
@@ -52,41 +53,46 @@ class SettingsDialog(gtk.Dialog):
     self.notebook.show()
     self.show()
 
-  def SettingsChanged(self):
+  def settings_changed(self):
+    """Emit the settings changed message to parent."""
     self.emit('settings-changed')
 
-  def _Response(self, unused_dialog, response_id):
+  def _response(self, unused_dialog, response_id):
+    """Wait for the close response."""
     if response_id == gtk.RESPONSE_CLOSE:
-      _log.info('Close in _Response.')
-      pass
+      LOG.info('Close in _Response.')
     self.destroy()
 
   @classmethod
-  def Register(cls):
+  def register(cls):
     """Register this class as a Gtk widget."""
     gobject.type_register(SettingsDialog)
 
 class CommonFrame(gtk.Frame):
+  """Stuff common to several frames."""
   def __init__(self, settings):
     gtk.Frame.__init__(self)
     self.settings = settings
-    self.CreateLayout()
+    self.create_layout()
 
-  def CreateLayout(self):
+  def create_layout(self):
+    """Do nothing."""
     pass
 
-  def _AddCheck(self, vbox, title, option, sub_option):
-    bt = gtk.CheckButton(label=title)
+  def _add_check(self, vbox, title, option, sub_option):
+    """Add a check button."""
+    check_button = gtk.CheckButton(label=title)
     val = config.get(option, sub_option, bool)
-    logging.info('got option %s/%s as %s' % (option, sub_option, val))
+    logging.info('got option %s/%s as %s', option, sub_option, val)
     if val:
-      bt.set_active(True)
+      check_button.set_active(True)
     else:
-      bt.set_active(False)
-    bt.connect('toggled', self._Toggled, option, sub_option)
-    vbox.pack_start(bt, False, False)
+      check_button.set_active(False)
+    check_button.connect('toggled', self._toggled, option, sub_option)
+    vbox.pack_start(check_button, False, False)
 
-  def _AddDropdown(self, vbox, title, opt_lst, option, sub_option):
+  def _add_dropdown(self, vbox, title, opt_lst, option, sub_option):
+    """Add a dropdown box."""
     hbox = gtk.HBox()
     label = gtk.Label(title)
     hbox.pack_start(label, expand=False, fill=False)
@@ -97,72 +103,82 @@ class CommonFrame(gtk.Frame):
     val = config.get(option, sub_option, int)
     combo.set_active(val)
     hbox.pack_start(combo, expand=False, fill=False, padding=10)
-    logging.info('got option %s/%s as %s' % (option, sub_option, val))
-    combo.connect('changed', self._ComboChanged, option, sub_option)
+    logging.info('got option %s/%s as %s', option, sub_option, val)
+    combo.connect('changed', self._combo_changed, option, sub_option)
 
     vbox.pack_start(hbox, expand=False, fill=False)
 
-  def _Toggled(self, widget, option, sub_option):
+  def _toggled(self, widget, option, sub_option):
+    """The checkbox was toggled."""
     if widget.get_active():
       val = 1
     else:
       val = 0
-    self._UpdateOption(option, sub_option, val)
+    self._update_option(option, sub_option, val)
 
-  def _ComboChanged(self, widget, option, sub_option):
+  def _combo_changed(self, widget, option, sub_option):
+    """The combo box changed."""
     val = widget.get_active()
-    self._UpdateOption(option, sub_option, val)
+    self._update_option(option, sub_option, val)
 
-  def _UpdateOption(self, option, sub_option, val):
+  def _update_option(self, option, sub_option, val):
+    """Update an option."""
     config.set(option, sub_option, val)
     config.write()
     config.cleanup()
-    _log.info('Set option %s/%s to %s' % (option, sub_option, val))
+    LOG.info('Set option %s/%s to %s' % (option, sub_option, val))
     self.settings.SettingsChanged()
 
 class MiscFrame(CommonFrame):
+  """The miscellaneous frame."""
   def __init__(self, settings):
     CommonFrame.__init__(self, settings)
 
-  def CreateLayout(self):
+  def create_layout(self):
+    """Create the box's layout."""
     vbox = gtk.VBox()
-    self._AddCheck(vbox, _('Swap left-right mouse buttons'), 'devices', 'swap_buttons')
-    self._AddCheck(vbox, _('Left+right buttons emulates middle mouse button'),
+    self._add_check(vbox, _('Swap left-right mouse buttons'), 'devices', 'swap_buttons')
+    self._add_check(vbox, _('Left+right buttons emulates middle mouse button'),
        'devices', 'emulate_middle')
-    self._AddCheck(vbox, _('Highly visible click'), 'ui', 'visible-click')
-    self._AddCheck(vbox, _('Window decoration'), 'ui', 'decorated')
+    self._add_check(vbox, _('Highly visible click'), 'ui', 'visible-click')
+    self._add_check(vbox, _('Window decoration'), 'ui', 'decorated')
     self.add(vbox)
 
 class ButtonsFrame(CommonFrame):
+  """The buttons frame."""
   def __init__(self, settings):
     CommonFrame.__init__(self, settings)
 
-  def CreateLayout(self):
+  def create_layout(self):
+    """Create the layout for buttons."""
     vbox = gtk.VBox()
 
-    self._AddCheck(vbox, _('_Mouse'), 'buttons', 'mouse')
-    self._AddCheck(vbox, _('_Shift'), 'buttons', 'shift')
-    self._AddCheck(vbox, _('_Ctrl'), 'buttons', 'ctrl')
-    self._AddCheck(vbox, _('Meta (_windows keys)'), 'buttons', 'meta')
-    self._AddCheck(vbox, _('_Alt'), 'buttons', 'alt')
-    self._AddDropdown(vbox, _('Old Keys:'), [0, 1, 2, 3, 4], 'buttons', 'old-keys')
+    self._add_check(vbox, _('_Mouse'), 'buttons', 'mouse')
+    self._add_check(vbox, _('_Shift'), 'buttons', 'shift')
+    self._add_check(vbox, _('_Ctrl'), 'buttons', 'ctrl')
+    self._add_check(vbox, _('Meta (_windows keys)'), 'buttons', 'meta')
+    self._add_check(vbox, _('_Alt'), 'buttons', 'alt')
+    self._add_dropdown(vbox, _('Old Keys:'), [0, 1, 2, 3, 4], 'buttons', 'old-keys')
     self.add(vbox)
 
-def TestSettingsChanged(widget):
+def _test_settings_changed(widget):
+  """Help to test if the settings change message is received."""
   print widget
   print 'Settings changed'
 
-def Main():
-  SettingsDialog.Register()
+
+def test_dialog():
+  """Test the dialog without starting keymon."""
+  SettingsDialog.register()
   gettext.install('key_mon', 'locale')
   logging.basicConfig(
       level=logging.DEBUG,
       format = '%(filename)s [%(lineno)d]: %(levelname)s %(message)s')
   dlg = SettingsDialog(None)
-  dlg.connect('settings-changed', TestSettingsChanged)
+  dlg.connect('settings-changed', _test_settings_changed)
   dlg.show_all()
   dlg.run()
   return 0
 
 if __name__ == '__main__':
-  Main()
+  test_dialog()
