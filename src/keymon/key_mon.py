@@ -47,7 +47,7 @@ from ConfigParser import SafeConfigParser
 
 gettext.install('key_mon', 'locale')
 
-def FixSvgKeyClosure(fname, from_tos):
+def fix_svg_key_closure(fname, from_tos):
   """Create a closure to modify the key.
   Args:
     from_tos: list of from, to pairs for search replace.
@@ -55,21 +55,21 @@ def FixSvgKeyClosure(fname, from_tos):
     A bound function which returns the file fname with modifications.
   """
 
-  def FixSvgKey():
+  def fix_svg_key():
     """Given an SVG file return the SVG text fixed."""
-    logging.debug('Read file %r' % fname)
-    f = open(fname)
-    fbytes = f.read()
-    f.close()
-    for f, t in from_tos:
-      fbytes = fbytes.replace(f, t)
+    logging.debug('Read file %r', fname)
+    fin = open(fname)
+    fbytes = fin.read()
+    fin.close()
+    for fin, t in from_tos:
+      fbytes = fbytes.replace(fin, t)
     return fbytes
 
-  return FixSvgKey
+  return fix_svg_key
 
 
 class KeyMon:
-  """Main KeyMon window class."""
+  """main KeyMon window class."""
 
   def __init__(self, options):
     """Create the Key Mon window.
@@ -88,6 +88,19 @@ class KeyMon:
       self.svg_size = '-small'
     else:
       self.svg_size = ''
+    # Make lint happy by defining these.
+    self.mouse_image = None
+    self.alt_image = None
+    self.hbox = None
+    self.window = None
+    self.event_box = None
+    self.mouse_indicator_win = None
+    self.key_image = None
+    self.shift_image = None
+    self.ctrl_image = None
+    self.meta_image = None
+    self.buttons = None
+
     self.enabled = {
         'MOUSE': config.get("buttons", "mouse", bool),
         'SHIFT': config.get("buttons", "shift", bool),
@@ -99,15 +112,16 @@ class KeyMon:
     self.modmap = mod_mapper.safely_read_mod_map(config.get("devices", "map"))
     self.swap_buttons = config.get("devices", "swap_buttons", bool)
 
-    self.name_fnames = self.CreateNamesToFnames()
+    self.name_fnames = self.create_names_to_fnames()
     self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames,
                                                          self.scale)
     self.devices = xlib.XEvents()
     self.devices.start()
 
-    self.CreateWindow()
+    self.create_window()
 
-  def DoScreenshot(self):
+  def do_screenshot(self):
+    """Create a screenshot showing some keys."""
     import time
     for key in self.options.screenshot.split(','):
       try:
@@ -117,19 +131,19 @@ class KeyMon:
           key_info = self.modmap.get_from_name(key)
           if not key_info:
             print 'Key %s not found' % key
-            self.Destroy(None)
+            self.destroy(None)
             return
           scancode = key_info[0]
           event = xlib.XEvent('EV_KEY', scancode=scancode, code=key, value=1)
         elif key.startswith('BTN_'):
           event = xlib.XEvent('EV_KEY', scancode=0, code=key, value=1)
 
-        self.HandleEvent(event)
+        self.handle_event(event)
         while gtk.events_pending():
           gtk.main_iteration(False)
         time.sleep(0.1)
-      except Exception, e:
-        print e
+      except Exception, exp:
+        print exp
     while gtk.events_pending():
       gtk.main_iteration(False)
     time.sleep(0.1)
@@ -144,74 +158,76 @@ class KeyMon:
     fname = 'screenshot.png'
     screenshot.save(fname, 'png')
     print 'Saved screenshot %r' % fname
-    self.Destroy(None)
+    self.destroy(None)
 
-  def CreateNamesToFnames(self):
+  def create_names_to_fnames(self):
+    """Give a name to images."""
     ftn = {
-      'MOUSE': [self.SvgFname('mouse'),],
-      'BTN_MIDDLE': [self.SvgFname('mouse'), self.SvgFname('middle-mouse')],
-      'SCROLL_UP': [self.SvgFname('mouse'), self.SvgFname('scroll-up-mouse')],
-      'SCROLL_DOWN': [self.SvgFname('mouse'), self.SvgFname('scroll-dn-mouse')],
+      'MOUSE': [self.svg_name('mouse'),],
+      'BTN_MIDDLE': [self.svg_name('mouse'), self.svg_name('middle-mouse')],
+      'SCROLL_UP': [self.svg_name('mouse'), self.svg_name('scroll-up-mouse')],
+      'SCROLL_DOWN': [self.svg_name('mouse'), self.svg_name('scroll-dn-mouse')],
 
-      'SHIFT': [self.SvgFname('shift')],
-      'SHIFT_EMPTY': [self.SvgFname('shift'), self.SvgFname('whiteout-72')],
-      'CTRL': [self.SvgFname('ctrl')],
-      'CTRL_EMPTY': [self.SvgFname('ctrl'), self.SvgFname('whiteout-58')],
-      'META': [self.SvgFname('meta'), self.SvgFname('meta')],
-      'META_EMPTY': [self.SvgFname('meta'), self.SvgFname('whiteout-58')],
-      'ALT': [self.SvgFname('alt')],
-      'ALT_EMPTY': [self.SvgFname('alt'), self.SvgFname('whiteout-58')],
+      'SHIFT': [self.svg_name('shift')],
+      'SHIFT_EMPTY': [self.svg_name('shift'), self.svg_name('whiteout-72')],
+      'CTRL': [self.svg_name('ctrl')],
+      'CTRL_EMPTY': [self.svg_name('ctrl'), self.svg_name('whiteout-58')],
+      'META': [self.svg_name('meta'), self.svg_name('meta')],
+      'META_EMPTY': [self.svg_name('meta'), self.svg_name('whiteout-58')],
+      'ALT': [self.svg_name('alt')],
+      'ALT_EMPTY': [self.svg_name('alt'), self.svg_name('whiteout-58')],
       'KEY_EMPTY': [
-          FixSvgKeyClosure(self.SvgFname('one-char-template'), [('&amp;', '')]),
-              self.SvgFname('whiteout-48')],
+          fix_svg_key_closure(self.svg_name('one-char-template'), [('&amp;', '')]),
+              self.svg_name('whiteout-48')],
       'BTN_LEFTRIGHT': [
-          self.SvgFname('mouse'), self.SvgFname('left-mouse'), self.SvgFname('right-mouse')],
+          self.svg_name('mouse'), self.svg_name('left-mouse'), self.svg_name('right-mouse')],
     }
     if self.swap_buttons:
       ftn.update({
-        'BTN_RIGHT': [self.SvgFname('mouse'), self.SvgFname('left-mouse')],
-        'BTN_LEFT': [self.SvgFname('mouse'), self.SvgFname('right-mouse')],
+        'BTN_RIGHT': [self.svg_name('mouse'), self.svg_name('left-mouse')],
+        'BTN_LEFT': [self.svg_name('mouse'), self.svg_name('right-mouse')],
       })
     else:
       ftn.update({
-        'BTN_LEFT': [self.SvgFname('mouse'), self.SvgFname('left-mouse')],
-        'BTN_RIGHT': [self.SvgFname('mouse'), self.SvgFname('right-mouse')],
+        'BTN_LEFT': [self.svg_name('mouse'), self.svg_name('left-mouse')],
+        'BTN_RIGHT': [self.svg_name('mouse'), self.svg_name('right-mouse')],
       })
 
     if self.scale >= 1.0:
       ftn.update({
         'KEY_SPACE': [
-            FixSvgKeyClosure(self.SvgFname('two-line-wide'),
+            fix_svg_key_closure(self.svg_name('two-line-wide'),
             [('TOP', 'Space'), ('BOTTOM', '')])],
         'KEY_TAB': [
-            FixSvgKeyClosure(self.SvgFname('two-line-wide'),
+            fix_svg_key_closure(self.svg_name('two-line-wide'),
             [('TOP', 'Tab'), ('BOTTOM', u'\u21B9')])],
         'KEY_BACKSPACE': [
-            FixSvgKeyClosure(self.SvgFname('two-line-wide'),
+            fix_svg_key_closure(self.svg_name('two-line-wide'),
             [('TOP', 'Back'), ('BOTTOM', u'\u21fd')])],
         'KEY_RETURN': [
-            FixSvgKeyClosure(self.SvgFname('two-line-wide'),
+            fix_svg_key_closure(self.svg_name('two-line-wide'),
             [('TOP', 'Enter'), ('BOTTOM', u'\u23CE')])],
         'KEY_CAPS_LOCK': [
-            FixSvgKeyClosure(self.SvgFname('two-line-wide'),
+            fix_svg_key_closure(self.svg_name('two-line-wide'),
             [('TOP', 'Capslock'), ('BOTTOM', '')])],
       })
     else:
       ftn.update({
         'KEY_SPACE': [
-            FixSvgKeyClosure(self.SvgFname('one-line-wide'), [('&amp;', 'Space')])],
+            fix_svg_key_closure(self.svg_name('one-line-wide'), [('&amp;', 'Space')])],
         'KEY_TAB': [
-            FixSvgKeyClosure(self.SvgFname('one-line-wide'), [('&amp;', 'Tab')])],
+            fix_svg_key_closure(self.svg_name('one-line-wide'), [('&amp;', 'Tab')])],
         'KEY_BACKSPACE': [
-            FixSvgKeyClosure(self.SvgFname('one-line-wide'), [('&amp;', 'Back')])],
+            fix_svg_key_closure(self.svg_name('one-line-wide'), [('&amp;', 'Back')])],
         'KEY_RETURN': [
-            FixSvgKeyClosure(self.SvgFname('one-line-wide'), [('&amp;', 'Enter')])],
+            fix_svg_key_closure(self.svg_name('one-line-wide'), [('&amp;', 'Enter')])],
         'KEY_CAPS_LOCK': [
-            FixSvgKeyClosure(self.SvgFname('one-line-wide'), [('&amp;', 'Capslck')])],
+            fix_svg_key_closure(self.svg_name('one-line-wide'), [('&amp;', 'Capslck')])],
       })
     return ftn
 
-  def CreateWindow(self):
+  def create_window(self):
+    """Create the main window."""
     self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
 
     self.window.set_title('Keyboard Status Monitor')
@@ -219,7 +235,7 @@ class KeyMon:
     self.window.set_default_size(int(width), int(height))
     self.window.set_decorated(config.get("ui", "decorated", bool))
 
-    self.mouse_indicator_win = shaped_window.ShapedWindow(self.SvgFname('mouse-indicator'))
+    self.mouse_indicator_win = shaped_window.ShapedWindow(self.svg_name('mouse-indicator'))
 
     #self.window.set_opacity(1.0)
     self.window.set_keep_above(True)
@@ -284,7 +300,7 @@ class KeyMon:
     self.hbox.pack_start(self.key_image, True, True, 0)
 
     self.hbox.show()
-    self.AddEvents()
+    self.add_events()
 
     old_x = config.get('position', 'x', int)
     old_y = config.get('position', 'y', int)
@@ -292,7 +308,8 @@ class KeyMon:
       self.window.move(old_x, old_y)
     self.window.show()
 
-  def SvgFname(self, fname):
+  def svg_name(self, fname):
+    """Return an svg filename given the theme, system."""
     fullname = os.path.join(self.pathname, 'themes/%s/%s%s.svg' % (
         config.get("ui", "theme"), fname, self.svg_size))
     if self.svg_size and not os.path.exists(fullname):
@@ -301,46 +318,51 @@ class KeyMon:
                               (config.get("ui", "theme"), fname))
     return fullname
 
-  def AddEvents(self):
-    self.window.connect('destroy', self.Destroy)
-    self.window.connect('button-press-event', self.ButtonPressed)
-    self.window.connect('configure-event', self._WindowMoved)
-    self.event_box.connect('button_release_event', self.RightClickHandler)
+  def add_events(self):
+    """Add events for the window to listen to."""
+    self.window.connect('destroy', self.destroy)
+    self.window.connect('button-press-event', self.button_pressed)
+    self.window.connect('configure-event', self._window_moved)
+    self.event_box.connect('button_release_event', self.right_click_handler)
 
     accelgroup = gtk.AccelGroup()
     key, modifier = gtk.accelerator_parse('<Control>q')
-    accelgroup.connect_group(key, modifier, gtk.ACCEL_VISIBLE, self.Quit)
+    accelgroup.connect_group(key, modifier, gtk.ACCEL_VISIBLE, self.quit_program)
     self.window.add_accel_group(accelgroup)
 
     if self.options.screenshot:
-      gobject.timeout_add(700, self.DoScreenshot)
+      gobject.timeout_add(700, self.do_screenshot)
       return
 
-    gobject.idle_add(self.OnIdle)
+    gobject.idle_add(self.on_idle)
 
-  def ButtonPressed(self, widget, evt):
+  def button_pressed(self, widget, evt):
+    """A mouse button was pressed."""
     if evt.button != 1:
       return True
     widget.begin_move_drag(evt.button, int(evt.x_root), int(evt.y_root), evt.time)
     return True
 
-  def _WindowMoved(self, widget, unused_event):
+  def _window_moved(self, widget, unused_event):
+    """The window has moved position, save it."""
     x, y = widget.get_position()
     logging.info('Moved window to %d, %d' % (x, y))
     config.set('position', 'x', x)
     config.set('position', 'y', y)
 
-  def OnIdle(self):
+  def on_idle(self):
+    """Check for events on idle."""
     event = self.devices.next_event()
     try:
-      self.HandleEvent(event)
+      self.handle_event(event)
     except KeyboardInterrupt:
       print 'Quit from OnIdle()'
-      self.Quit()
+      self.quit_program()
       return False
     return True  # continue calling
 
-  def HandleEvent(self, event):
+  def handle_event(self, event):
+    """Handle an X event."""
     if not event:
       for button in self.buttons:
         button.empty_event()
@@ -349,13 +371,14 @@ class KeyMon:
       if type(event.code) == str:
         if event.code.startswith('KEY'):
           code_num = event.scancode
-          self.HandleKey(code_num, event.code, event.value)
+          self.handle_key(code_num, event.code, event.value)
         elif event.code.startswith('BTN'):
-          self.HandleMouseButton(event.code, event.value)
+          self.handle_mouse_button(event.code, event.value)
     elif event.type.startswith('EV_REL') and event.code == 'REL_WHEEL':
-      self.HandleMouseScroll(event.value, event.value)
+      self.handle_mouse_scroll(event.value, event.value)
 
-  def _HandleEvent(self, image, name, code):
+  def _handle_event(self, image, name, code):
+    """Handle an event given image and code."""
     if code == 1:
       logging.debug('Switch to %s, code %s' % (name, code))
       image.switch_to(name)
@@ -363,7 +386,8 @@ class KeyMon:
       image.switch_to_default()
 
 
-  def HandleKey(self, scan_code, xlib_name, value):
+  def handle_key(self, scan_code, xlib_name, value):
+    """Handle a keyboard event."""
     code, medium_name, short_name = self.modmap.get_and_check(scan_code,
                                                             xlib_name)
     if not code:
@@ -371,53 +395,55 @@ class KeyMon:
       return
     if self.scale < 1.0 and short_name:
       medium_name = short_name
-    logging.debug('Scan code %s, Key %s pressed = %r' % (scan_code,
-                                                         code, medium_name))
+    logging.debug('Scan code %s, Key %s pressed = %r', scan_code,
+                                                       code, medium_name)
     if code in self.name_fnames:
-      self._HandleEvent(self.key_image, code, value)
+      self._handle_event(self.key_image, code, value)
       return
     if code.startswith('KEY_SHIFT'):
       if self.enabled['SHIFT']:
-        self._HandleEvent(self.shift_image, 'SHIFT', value)
+        self._handle_event(self.shift_image, 'SHIFT', value)
       return
     if code.startswith('KEY_ALT') or code == 'KEY_ISO_LEVEL3_SHIFT':
       if self.enabled['ALT']:
-        self._HandleEvent(self.alt_image, 'ALT', value)
+        self._handle_event(self.alt_image, 'ALT', value)
       return
     if code.startswith('KEY_CONTROL'):
       if self.enabled['CTRL']:
-        self._HandleEvent(self.ctrl_image, 'CTRL', value)
+        self._handle_event(self.ctrl_image, 'CTRL', value)
       return
     if code.startswith('KEY_SUPER') or code == 'KEY_MULTI_KEY':
       if self.enabled['META']:
-        self._HandleEvent(self.meta_image, 'META', value)
+        self._handle_event(self.meta_image, 'META', value)
       return
     if code.startswith('KEY_KP'):
       letter = medium_name
       if code not in self.name_fnames:
         template = 'one-char-numpad-template'
         self.name_fnames[code] = [
-            FixSvgKeyClosure(self.SvgFname(template), [('&amp;', letter)])]
-      self._HandleEvent(self.key_image, code, value)
+            fix_svg_key_closure(self.svg_name(template), [('&amp;', letter)])]
+      self._handle_event(self.key_image, code, value)
       return
     if code.startswith('KEY_'):
       letter = medium_name
       if code not in self.name_fnames:
-        logging.debug('code not in %s' % code)
+        logging.debug('code not in %s', code)
         if len(letter) == 1:
           template = 'one-char-template'
         else:
           template = 'multi-char-template'
         self.name_fnames[code] = [
-            FixSvgKeyClosure(self.SvgFname(template), [('&amp;', letter)])]
+            fix_svg_key_closure(self.svg_name(template), [('&amp;', letter)])]
       else:
-        logging.debug('code in %s' % code)
-      self._HandleEvent(self.key_image, code, value)
+        logging.debug('code in %s', code)
+      self._handle_event(self.key_image, code, value)
       return
 
-  def HandleMouseButton(self, code, value):
+  def handle_mouse_button(self, code, value):
+    """Handle the mouse button event."""
     if self.enabled['MOUSE']:
-      if self.emulate_middle and ((self.mouse_image.current == 'BTN_LEFT' and code == 'BTN_RIGHT') or
+      if self.emulate_middle and ((self.mouse_image.current == 'BTN_LEFT' 
+          and code == 'BTN_RIGHT') or
           (self.mouse_image.current == 'BTN_RIGHT' and code == 'BTN_LEFT')):
         code = 'BTN_MIDDLE'
       elif value == 1 and ((self.mouse_image.current == 'BTN_LEFT' and code == 'BTN_RIGHT') or
@@ -429,91 +455,100 @@ class KeyMon:
           code = 'BTN_RIGHT'
         elif code == 'BTN_RIGHT':
           code = 'BTN_LEFT'
-      self._HandleEvent(self.mouse_image, code, value)
+      self._handle_event(self.mouse_image, code, value)
 
     root = gtk.gdk.screen_get_default().get_root_window()
-    x, y, mods = root.get_pointer()
+    x, y, _ = root.get_pointer()
     w, h = self.mouse_indicator_win.get_size()
     self.mouse_indicator_win.move(x - w/2, y - h/2)
     if value == 0 and config.get('ui', 'visible-click', bool):
       self.mouse_indicator_win.fade_away()
     return True
 
-  def HandleMouseScroll(self, dir, unused_value):
-    if dir > 0:
-      self._HandleEvent(self.mouse_image, 'SCROLL_UP', 1)
-    elif dir < 0:
-      self._HandleEvent(self.mouse_image, 'SCROLL_DOWN', 1)
+  def handle_mouse_scroll(self, direction, unused_value):
+    """Handle the mouse scroll button event."""
+    if direction > 0:
+      self._handle_event(self.mouse_image, 'SCROLL_UP', 1)
+    elif direction < 0:
+      self._handle_event(self.mouse_image, 'SCROLL_DOWN', 1)
     self.mouse_image.switch_to_default()
     return True
 
-  def Quit(self, *unused_args):
+  def quit_program(self, *unused_args):
+    """Quit the program."""
     self.devices.stop_listening()
-    self.Destroy(None)
+    self.destroy(None)
 
-  def Destroy(self, unused_widget, unused_data=None):
+  def destroy(self, unused_widget, unused_data=None):
+    """Also quit the program."""
     self.devices.stop_listening()
     config.cleanup()
     gtk.main_quit()
 
-  def RightClickHandler(self, unused_widget, event):
+  def right_click_handler(self, unused_widget, event):
+    """Handle the right click button and show a menu."""
     if event.button != 3:
       return
 
-    menu = self.CreateContextMenu()
+    menu = self.create_context_menu()
 
     menu.show()
     menu.popup(None, None, None, event.button, event.time)
 
-  def CreateContextMenu(self):
+  def create_context_menu(self):
+    """Create a context menu on right click."""
     menu = gtk.Menu()
 
     toggle_chrome = gtk.CheckMenuItem('Window _Chrome')
     toggle_chrome.set_active(self.window.get_decorated())
-    toggle_chrome.connect_object('activate', self.ToggleChrome,
+    toggle_chrome.connect_object('activate', self.toggle_chrome,
        self.window.get_decorated())
     toggle_chrome.show()
     menu.append(toggle_chrome)
 
     settings_click = gtk.MenuItem('_Settings...')
-    settings_click.connect_object('activate', self.ShowSettingsDlg, None)
+    settings_click.connect_object('activate', self.show_settings_dlg, None)
     settings_click.show()
     menu.append(settings_click)
 
     quitcmd = gtk.MenuItem('_Quit\tCtrl-Q')
-    quitcmd.connect_object('activate', self.Destroy, None)
+    quitcmd.connect_object('activate', self.destroy, None)
     quitcmd.show()
 
     menu.append(quitcmd)
     return menu
 
-  def ToggleChrome(self, current):
+  def toggle_chrome(self, current):
+    """Toggle whether the window has chrome or not."""
     self.window.set_decorated(not current)
     config.set('ui', 'decorated', not current)
 
-  def ShowSettingsDlg(self, unused_arg):
+  def show_settings_dlg(self, unused_arg):
+    """Show the settings dialog."""
     dlg = settings.SettingsDialog(self.window)
-    dlg.connect('settings-changed', self.SettingsChanged)
+    dlg.connect('settings-changed', self.settings_changed)
     dlg.show_all()
     dlg.run()
     dlg.destroy()
 
-  def SettingsChanged(self, unused_dlg):
-    self._ToggleAKey(self.mouse_image, 'MOUSE',
+  def settings_changed(self, unused_dlg):
+    """Event received from the settings dialog."""
+    self._toggle_a_key(self.mouse_image, 'MOUSE',
         config.get('buttons', 'mouse', bool))
-    self._ToggleAKey(self.meta_image, 'META',
+    self._toggle_a_key(self.meta_image, 'META',
         config.get('buttons', 'meta', bool))
-    self._ToggleAKey(self.shift_image, 'SHIFT',
+    self._toggle_a_key(self.shift_image, 'SHIFT',
         config.get('buttons', 'shift', bool))
-    self._ToggleAKey(self.ctrl_image, 'CTRL',
+    self._toggle_a_key(self.ctrl_image, 'CTRL',
         config.get('buttons', 'ctrl', bool))
-    self._ToggleAKey(self.alt_image, 'ALT',
+    self._toggle_a_key(self.alt_image, 'ALT',
         config.get('buttons', 'ALT', bool))
     if config.get('ui', 'visible-click', bool):
       self.mouse_indicator_win.fade_away()
     self.window.set_decorated(config.get('ui', 'decorated', bool))
 
-  def _ToggleAKey(self, image, name, show):
+  def _toggle_a_key(self, image, name, show):
+    """Toggle show/hide a key."""
     if self.enabled[name] == show:
       return
     if show:
@@ -525,11 +560,13 @@ class KeyMon:
       self.enabled[name] = False
       image.hide()
 
-def ShowVersion():
+def show_version():
+  """Show the version number and author, used by help2man."""
   print 'Keymon version %s.' % __version__
   print 'Written by %s' % __author__
 
-def Main():
+def main():
+  """Run the program."""
   import optparse
   parser = optparse.OptionParser()
   parser.add_option('-s', '--smaller', dest='smaller', default=False, action='store_true',
@@ -604,10 +641,10 @@ def Main():
                     'Pass a comma separated list of keys to simulate (ex. "KEY_A,KEY_LEFTCTRL").')
   parser.add_option_group(group)
 
-  (options, args) = parser.parse_args()
+  (options, unused_args) = parser.parse_args()
 
   if options.version:
-    ShowVersion()
+    show_version()
     sys.exit(0)
   if options.debug:
     logging.basicConfig(
@@ -653,7 +690,7 @@ def Main():
     gtk.main()
   except KeyboardInterrupt:
     print 'Quit from gtk.main()'
-    keymon.Quit()
+    keymon.quit_program()
 
 if __name__ == '__main__':
-  Main()
+  main()
