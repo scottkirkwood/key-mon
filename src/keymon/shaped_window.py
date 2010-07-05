@@ -36,7 +36,7 @@ class ShapedWindow(gtk.Window):
     }
     self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames,
                                                          self.scale)
-    self.pixbuf = self.pixbufs.Get('mouse')
+    self.pixbuf = self.pixbufs.get('mouse')
     self.resize(self.pixbuf.get_width(), self.pixbuf.get_height())
 
     # a pixmap widget to contain the pixmap

@@ -51,7 +51,7 @@ class TwoStateImage(gtk.Image):
 
   def _switch_to(self, name):
     """Internal, switch to image with this name even if same."""
-    self.set_from_pixbuf(self.pixbufs.Get(name))
+    self.set_from_pixbuf(self.pixbufs.get(name))
     self.current = name
     if self.showit:
       self.show()
