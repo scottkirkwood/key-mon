@@ -147,6 +147,7 @@ class MiscFrame(CommonFrame):
 class ButtonsFrame(CommonFrame):
   """The buttons frame."""
   def __init__(self, settings):
+    """Create common frame."""
     CommonFrame.__init__(self, settings)
 
   def create_layout(self):
