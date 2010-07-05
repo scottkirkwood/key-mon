@@ -35,6 +35,7 @@ import shutil
 import subprocess
 
 def build_screen_shots():
+  """Build the screenshots for key-mon."""
   prog = '%s/%s' % (setup.DIR, setup.PY_SRC)
   destdir = 'docs'
   all_buttons = ['KEY_A', 'KEY_CONTROL_L', 'KEY_ALT_L', 'KEY_SHIFT_L']
@@ -47,26 +48,31 @@ def build_screen_shots():
     ('screenshot-oblivion', ['--theme', 'oblivion'], all_buttons + ['BTN_LEFT']),
     ('screenshot-modern', ['--theme', 'modern'], all_buttons + ['BTN_LEFT']),
     ('2x-no-mouse-meta', ['--nomouse', '--scale', '2.0', '--meta'], all_buttons + ['KEY_SUPER_L']),
-    ('old-keys-2', ['--noctrl', '--noalt', '--nomouse', '--old-keys', '2'], ['KEY_Y', 'KEY_Y', 'KEY_P']),
+    ('old-keys-2', ['--noctrl', '--noalt', '--nomouse', '--old-keys', '2'],
+        ['KEY_Y', 'KEY_Y', 'KEY_P']),
   ]
   for fname, options, keys in todos:
-    pybdist.KillConfig()
+    pybdist.clean_config(setup)
     subprocess.call([
       'python', prog] + options + ['--screenshot', ','.join(keys)])
     shutil.move('screenshot.png', os.path.join(destdir, fname + '.png'))
-  pybdist.kill_config()
+  pybdist.clean_config(setup)
 
 
-if __name__ == '__main__':
+def main():
+  """Run the program, put here to make linter happy."""
   import optparse
   parser = optparse.OptionParser()
   parser.add_option('--png', dest='png', action='store_true',
                     help='Only build png files')
   pybdist.add_standard_options(parser)
-  (options, args) = parser.parse_args()
+  (options, unused_args) = parser.parse_args()
   pybdist.get_and_verify_versions(setup)
 
   if options.png:
     build_screen_shots()
   elif not pybdist.handle_standard_options(options, setup):
     print 'Doing nothing.  --help for commands.'
+
+if __name__ == '__main__':
+  main()

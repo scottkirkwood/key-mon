@@ -1,4 +1,12 @@
-key-mon (1.2.2-1) unstable; urgency=low
+keymon (1.2.3-1) unstable; urgency=low
+
+  * Changed the style to be more PEP 8 compatible.
+  * Fixed a few small bugs.
+  * Using new version of pybdist.
+
+ -- Scott Kirkwood <scott@forusers.com>  Sun, 04 Jul 2010 22:24:00 -0300
+
+keymon (1.2.2-1) unstable; urgency=low
 
   * Initial release.
 
