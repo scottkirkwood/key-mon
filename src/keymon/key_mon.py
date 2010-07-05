@@ -80,7 +80,7 @@ class KeyMon:
       emulate_middle: Emulate the middle mouse button.
       theme: Name of the theme to use to draw keys
     """
-    settings.SettingsDialog.Register()
+    settings.SettingsDialog.register()
     self.options = options
     self.pathname = os.path.dirname(__file__)
     self.scale = config.get("ui", "scale", float)
