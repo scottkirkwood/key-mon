@@ -51,13 +51,13 @@ class LazyPixbufCreator(object):
     self.resize = resize
     self.name_fnames = name_fnames
 
-  def Get(self, name):
+  def get(self, name):
     """Get the pixbuf with this name."""
     if name not in self.pixbufs:
-      name = self.CreatePixbuf(name)
+      name = self.create_pixbuf(name)
     return self.pixbufs[name]
 
-  def CreatePixbuf(self, name):
+  def create_pixbuf(self, name):
     """Creates the image.
     Args:
       name: name of the image we are to create.
@@ -69,17 +69,17 @@ class LazyPixbufCreator(object):
       return 'KEY_EMPTY'
     ops = self.name_fnames[name]
     img = None
-    for op in ops:
-      if isinstance(op, types.StringTypes):
-        img = self._Composite(img, self._ReadFromFile(op))
+    for operation in ops:
+      if isinstance(operation, types.StringTypes):
+        img = self._composite(img, self._read_from_file(operation))
       else:
-        image_bytes = op()
-        image_bytes = self._Resize(image_bytes)
-        img = self._Composite(img, self._ReadFromBytes(image_bytes))
+        image_bytes = operation()
+        image_bytes = self._resize(image_bytes)
+        img = self._composite(img, self._read_from_bytes(image_bytes))
     self.pixbufs[name] = img
     return name
 
-  def _Composite(self, img, img2):
+  def _composite(self, img, img2):
     """Combine/layer img2 on top of img.
     Args:
       img: original image (or None).
@@ -96,21 +96,21 @@ class LazyPixbufCreator(object):
       return img
     return img2
 
-  def _ReadFromFile(self, fname):
+  def _read_from_file(self, fname):
     """Read in the file in from fname."""
     logging.debug('Read file %s', fname)
     if self.resize == 1.0:
       return gtk.gdk.pixbuf_new_from_file(fname)
-    fi = open(fname)
-    image_bytes = self._Resize(fi.read())
-    fi.close()
-    return self._ReadFromBytes(image_bytes)
+    fin = open(fname)
+    image_bytes = self._resize(fin.read())
+    fin.close()
+    return self._read_from_bytes(image_bytes)
 
-  def _ReadFromBytes(self, image_bytes):
+  def _read_from_bytes(self, image_bytes):
     """Writes the bytes to a file and then reads the file."""
-    fo, fname = tempfile.mkstemp(prefix='keymon-', suffix='.svg')
-    os.write(fo, image_bytes)
-    os.close(fo)
+    fout, fname = tempfile.mkstemp(prefix='keymon-', suffix='.svg')
+    os.write(fout, image_bytes)
+    os.close(fout)
     try:
       img = gtk.gdk.pixbuf_new_from_file(fname)
     except:
@@ -123,18 +123,18 @@ class LazyPixbufCreator(object):
       pass
     return img
 
-  def _Resize(self, image_bytes):
+  def _resize(self, image_bytes):
     """Resize the image by manipulating the svg."""
     if self.resize == 1.0:
       return image_bytes
     template = r'(<svg[^<]+)(%s=")(\d+\.?\d*)'
-    image_bytes = self._ResizeText(image_bytes, template % 'width')
-    image_bytes = self._ResizeText(image_bytes, template % 'height')
+    image_bytes = self._resize_text(image_bytes, template % 'width')
+    image_bytes = self._resize_text(image_bytes, template % 'height')
     image_bytes = image_bytes.replace('<g',
         '<g transform="scale(%f, %f)"' % (self.resize, self.resize), 1)
     return image_bytes
 
-  def _ResizeText(self, image_bytes, regular_exp):
+  def _resize_text(self, image_bytes, regular_exp):
     """Change the numeric value of some sizing text by regular expression."""
     re_x = re.compile(regular_exp)
     grps = re_x.search(image_bytes)
