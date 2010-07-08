@@ -11,7 +11,8 @@ Vcs-Browser: http://key-mon.googlecode.com/hg/
 
 Package: keymon
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, python-xlib, python-gtk2
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, python-xlib,
+  python-gtk2, librsvg2-common
 XB-Python-Version: ${python:Versions}
 Description: A screencast utility that displays your keyboard and mouse status
  Key-mon is useful for teaching since it shows the current status of your

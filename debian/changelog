@@ -1,3 +1,9 @@
+keymon (1.2.4-1) unstable; urgency=low
+
+  * Added missing librsvg2-common to Debian package.
+
+ -- Scott Kirkwood <scott@forusers.com>  Wed, 07 Jul 2010 22:09:00 -0300
+
 keymon (1.2.3-1) unstable; urgency=low
 
   * Changed the style to be more PEP 8 compatible.

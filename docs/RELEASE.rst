@@ -1,5 +1,8 @@
 Release Notes
 =============
+July 7th, 2010 v 1.2.4
+----------------------
+* Added missing librsvg2-common to Debian package.
 
 July 4th, 2010 v 1.2.3
 ----------------------
