@@ -18,7 +18,7 @@ from distutils.core import setup
 import re
 
 NAME = 'key-mon'
-VER = '1.2.3'
+VER = '1.2.4'
 DIR = 'src/keymon'
 PY_NAME = 'key_mon'
 DEB_NAME = NAME.replace('-', '')
