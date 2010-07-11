@@ -29,6 +29,7 @@ Also pip pybdist
 """
 
 from pybdist import pybdist
+import optparse
 import os
 import setup
 import shutil
@@ -61,7 +62,6 @@ def build_screen_shots():
 
 def main():
   """Run the program, put here to make linter happy."""
-  import optparse
   parser = optparse.OptionParser()
   parser.add_option('--png', dest='png', action='store_true',
                     help='Only build png files')
