@@ -16,18 +16,18 @@ June 20th, 2010 v 1.2.2
 
 June 20th, 2010 v 1.2.1
 -----------------------
-* Added icon to the debian install.
+* Added icon to the Debian install.
 
 June 18th, 2010 v 1.2
 ---------------------
-* Added the man page to the debian install.
+* Added the man page to the Debian install.
 * Build is now super automated.
 * Fixed the screenshots.
 
 Jun. 17th, 2010 v 1.1
 ---------------------
 * A little smarter about key names when the keycodes don't seem to match.
-* Fixed and improved the debian install.
+* Fixed and improved the Debian install.
 * Fixed Issue 25. Darken the mouse buttons.
 
 Jun. 13th, 2010 v 1.0

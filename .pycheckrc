@@ -1,0 +1,33 @@
+#
+# .pycheckrc file created by PyChecker v0.8.18 @ Sun Jul 11 12:45:22 2010
+#
+# It should be placed in your home directory (value of $HOME).
+# If $HOME is not set, it will look in the current directory.
+#
+
+# module does import and from ... import
+mixImport = 0
+
+# all unused class data members
+membersUsed = 0
+
+# ignore warnings from the list of modules
+blacklist = ['ConfigParser', 'ssl', 'threading', 'optparse', 'wx', 'Tkinter', 'wxPython', 'gtk', 'GTK', 'GDK']
+
+# ignore global variables not used if name is one of these values
+variablesToIgnore = ['__version__', '__warningregistry__', '__all__', '__credits__', '__test__', '__author__', '__email__', '__revision__', '__id__', '__copyright__', '__license__', '__date__',
+                     '__class__', '__dict__', '__new__', '__subclasshook__', '__weakref__']
+
+# ignore unused locals/arguments if name is one of these values
+unusedNames = ['_', 'empty', 'unused', 'dummy', 'cls']
+
+# ignore missing class attributes if name is one of these values
+missingAttrs = ['instance']
+
+# dict: suppress warnings
+# keys: 'module', 'module.function', 'module.class, 'module.class.method'
+# values: command line argument, minus the --
+suppressions = {
+  'key_mon': 'no-objattrs',
+}
+
