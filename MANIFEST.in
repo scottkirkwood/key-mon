@@ -1,9 +1,9 @@
 recursive-include docs *.rst
-recursive-include src *.py *.svg *.kbd
+recursive-include src *.py *.svg *.kbd *.mo
 include COPYING
 include INSTALL
 include README
 include src/key-mon
-include man/key-mon.1
-include icons/key-mon.desktop
-include icons/key-mon.xpm
+include man/*.1
+include icons/*.desktop
+include icons/*.xpm

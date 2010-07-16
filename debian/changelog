@@ -1,3 +1,9 @@
+key-mon (1.2.5-1) unstable; urgency=low
+
+  * Added some support for internationalization.
+
+ -- Scott Kirkwood <scott@forusers.com>  Thu, 15 Jul 2010 23:13:09 +0300
+
 keymon (1.2.4-1) unstable; urgency=low
 
   * Added missing librsvg2-common to Debian package.

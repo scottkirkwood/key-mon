@@ -1,6 +1,10 @@
 [Desktop Entry]
+Version=1.0
 Name=KeyMon
-Comment=Keyboard and Mouse Monitor for Screencasts
+GenericName=Keyboard and Mouse Monitor
+GenericName[pt_BR]=Monitor para mouse e teclado
+Comment=Keyboard and Mouse Monitor for screencasts
+Comment[pt_BR]=Monitor para mouse e teclado, util para screencasts
 Exec=key-mon
 Icon=/usr/share/pixmaps/key-mon.xpm
 Terminal=false

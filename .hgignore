@@ -8,3 +8,6 @@ syntax: regexp
 ^man/.*\.1$
 ^debian-.*/
 .ropeproject
+^.aspell.en.prepl$
+^tmp/
+\.mo$
