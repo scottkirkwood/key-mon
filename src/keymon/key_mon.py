@@ -20,7 +20,7 @@ Shows their status graphically.
 """
 
 __author__ = 'Scott Kirkwood (scott+keymon@forusers.com)'
-__version__ = '1.2.4'
+__version__ = '1.2.5'
 
 import logging
 import pygtk
@@ -45,7 +45,7 @@ import two_state_image
 
 from ConfigParser import SafeConfigParser
 
-gettext.install('key_mon', 'locale')
+gettext.install('key-mon', 'locale')
 
 def fix_svg_key_closure(fname, from_tos):
   """Create a closure to modify the key.
@@ -356,7 +356,6 @@ class KeyMon:
     try:
       self.handle_event(event)
     except KeyboardInterrupt:
-      print 'Quit from OnIdle()'
       self.quit_program()
       return False
     return True  # continue calling
@@ -391,7 +390,7 @@ class KeyMon:
     code, medium_name, short_name = self.modmap.get_and_check(scan_code,
                                                             xlib_name)
     if not code:
-      print 'No mapping for scan_code %s' % scan_code
+      logging.info('No mapping for scan_code %s', scan_code)
       return
     if self.scale < 1.0 and short_name:
       medium_name = short_name
@@ -442,7 +441,7 @@ class KeyMon:
   def handle_mouse_button(self, code, value):
     """Handle the mouse button event."""
     if self.enabled['MOUSE']:
-      if self.emulate_middle and ((self.mouse_image.current == 'BTN_LEFT' 
+      if self.emulate_middle and ((self.mouse_image.current == 'BTN_LEFT'
           and code == 'BTN_RIGHT') or
           (self.mouse_image.current == 'BTN_RIGHT' and code == 'BTN_LEFT')):
         code = 'BTN_MIDDLE'
@@ -499,19 +498,19 @@ class KeyMon:
     """Create a context menu on right click."""
     menu = gtk.Menu()
 
-    toggle_chrome = gtk.CheckMenuItem('Window _Chrome')
+    toggle_chrome = gtk.CheckMenuItem(_('Window _Chrome'))
     toggle_chrome.set_active(self.window.get_decorated())
     toggle_chrome.connect_object('activate', self.toggle_chrome,
        self.window.get_decorated())
     toggle_chrome.show()
     menu.append(toggle_chrome)
 
-    settings_click = gtk.MenuItem('_Settings...')
+    settings_click = gtk.MenuItem(_('_Settings...'))
     settings_click.connect_object('activate', self.show_settings_dlg, None)
     settings_click.show()
     menu.append(settings_click)
 
-    quitcmd = gtk.MenuItem('_Quit\tCtrl-Q')
+    quitcmd = gtk.MenuItem(_('_Quit\tCtrl-Q'))
     quitcmd.connect_object('activate', self.destroy, None)
     quitcmd.show()
 
@@ -562,83 +561,83 @@ class KeyMon:
 
 def show_version():
   """Show the version number and author, used by help2man."""
-  print 'Keymon version %s.' % __version__
-  print 'Written by %s' % __author__
+  print _('Keymon version %s.') % __version__
+  print _('Written by %s') % __author__
 
 def main():
   """Run the program."""
   import optparse
   parser = optparse.OptionParser()
   parser.add_option('-s', '--smaller', dest='smaller', default=False, action='store_true',
-                    help='Make the dialog 25% smaller than normal.')
+                    help=_('Make the dialog 25% smaller than normal.'))
   parser.add_option('-l', '--larger', dest='larger', default=False, action='store_true',
-                    help='Make the dialog 25% larger than normal.')
+                    help=_('Make the dialog 25% larger than normal.'))
   parser.add_option('-m', '--meta', dest='meta', action='store_true',
                     default=config.get('buttons', 'meta', bool),
-                    help='Show the meta (windows) key.')
+                    help=_('Show the meta (windows) key.'))
   parser.add_option('--nometa', dest='meta', action='store_false',
-                    help='Don\'t show the meta (windows) key.')
+                    help=_('Don\'t show the meta (windows) key.'))
   parser.add_option('--mouse', dest='nomouse', action='store_false',
                     default=not config.get('buttons', 'mouse', bool),
-                    help='Show the mouse.')
+                    help=_('Show the mouse.'))
   parser.add_option('--nomouse', dest='nomouse', action='store_true',
-                    help='Hide the mouse.')
+                    help=_('Hide the mouse.'))
   parser.add_option('--shift', dest='noshift', action='store_false',
                     default=not config.get('buttons', 'shift', bool),
-                    help='Show shift key.')
+                    help=_('Show shift key.'))
   parser.add_option('--noshift', dest='noshift', action='store_true',
-                    help='Don\'t show the shift key.')
+                    help=_('Don\'t show the shift key.'))
   parser.add_option('--ctrl', dest='noctrl', action='store_false',
                     default=not config.get('buttons', 'ctrl', bool),
-                    help='Show the ctrl key.')
+                    help=_('Show the ctrl key.'))
   parser.add_option('--noctrl', dest='noctrl', action='store_true',
-                    help='Hide the ctrl key.')
+                    help=_('Hide the ctrl key.'))
   parser.add_option('--alt', dest='noalt', action='store_false',
                     default=not config.get('buttons', 'alt', bool),
-                    help='Show the alt key.')
+                    help=_('Show the alt key.'))
   parser.add_option('--noalt', dest='noalt', action='store_true',
-                    help='Hide the alt key.')
+                    help=_('Hide the alt key.'))
   parser.add_option('--scale', dest='scale',
                     default=config.get('ui', 'scale', float),
                     type='float',
-                    help='Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is '
-                         'half the size. Defaults to %default')
+                    help=_('Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is '
+                           'half the size. Defaults to %default'))
   parser.add_option('--decorated', dest='decorated', action='store_true',
                     default=config.get('ui', 'decorated', bool),
-                    help='Show decoration')
+                    help=_('Show decoration'))
   parser.add_option('--notdecorated', dest='decorated', action='store_false',
-                    help='No decoration')
+                    help=_('No decoration'))
   parser.add_option('--visible_click', dest='visible_click', action='store_true',
                     default=config.get('ui', 'visible-click', bool),
-                    help='Show where you clicked')
+                    help=_('Show where you clicked'))
   parser.add_option('--novisible_click', dest='visible_click', action='store_false',
-                    help='Turn off the visible button clicks.')
+                    help=_('Turn off the visible button clicks.'))
   parser.add_option('--kbdfile', dest='kbd_file',
                     default=config.get('devices', 'map'),
-                    help='Use this kbd filename instead running xmodmap.')
+                    help=_('Use this kbd filename instead running xmodmap.'))
   parser.add_option('--swap', dest='swap_buttons', action='store_true',
-                    help='Swap the mouse buttons.')
+                    help=_('Swap the mouse buttons.'))
   parser.add_option('--emulate-middle', dest='emulate_middle', action='store_true',
-                    help=('When you press the left, and right mouse buttons at the same time, '
-                          'it displays as a middle mouse button click. '))
+                    help=_('When you press the left, and right mouse buttons at the same time, '
+                           'it displays as a middle mouse button click. '))
   parser.add_option('-v', '--version', dest='version', action='store_true',
-                    help='Show version information and exit.')
+                    help=_('Show version information and exit.'))
   parser.add_option('-t', '--theme', dest='theme',
                     default=config.get('ui', 'theme'),
-                    help='The theme to use when drawing status images (ex. "-t apple").')
+                    help=_('The theme to use when drawing status images (ex. "-t apple").'))
   parser.add_option('--list-themes', dest='list_themes', action='store_true',
-                    help='List available themes')
+                    help=_('List available themes'))
   parser.add_option('--old-keys', dest='old_keys', type='int',
-                    help='How many historical keypresses to show (defaults to %default)',
+                    help=_('How many historical keypresses to show (defaults to %default)'),
                     default=config.get('buttons', 'old-keys', int))
 
-  group = optparse.OptionGroup(parser, 'Developer Options',
-                    'These options are for developers.')
+  group = optparse.OptionGroup(parser, _('Developer Options'),
+                    _('These options are for developers.'))
   group.add_option('-d', '--debug', dest='debug', action='store_true',
-                    help='Output debugging information.')
+                    help=_('Output debugging information.'))
   group.add_option('--screenshot', dest='screenshot',
-                    help='Create a "screenshot.png" and exit. '
-                    'Pass a comma separated list of keys to simulate (ex. "KEY_A,KEY_LEFTCTRL").')
+                    help=_('Create a "screenshot.png" and exit. '
+                    'Pass a comma separated list of keys to simulate (ex. "KEY_A,KEY_LEFTCTRL").'))
   parser.add_option_group(group)
 
   (options, unused_args) = parser.parse_args()
@@ -655,7 +654,7 @@ def main():
   elif options.larger:
     options.scale = 1.25
   if options.list_themes:
-    print 'Available themes:'
+    print _('Available themes:')
     for entry in sorted(os.listdir('themes')):
       try:
         parser = SafeConfigParser()
@@ -689,7 +688,6 @@ def main():
   try:
     gtk.main()
   except KeyboardInterrupt:
-    print 'Quit from gtk.main()'
     keymon.quit_program()
 
 if __name__ == '__main__':

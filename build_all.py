@@ -65,9 +65,8 @@ def main():
   parser = optparse.OptionParser()
   parser.add_option('--png', dest='png', action='store_true',
                     help='Only build png files')
-  pybdist.add_standard_options(parser)
+  pybdist.add_standard_options(parser, setup)
   (options, unused_args) = parser.parse_args()
-  pybdist.get_and_verify_versions(setup)
 
   if options.png:
     build_screen_shots()

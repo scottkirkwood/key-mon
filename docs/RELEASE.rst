@@ -1,5 +1,9 @@
 Release Notes
 =============
+July 15th, 2010 v 1.2.5
+-----------------------
+* Added some support for internationalization.
+
 July 7th, 2010 v 1.2.4
 ----------------------
 * Added missing librsvg2-common to Debian package.

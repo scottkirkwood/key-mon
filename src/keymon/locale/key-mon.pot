@@ -1,0 +1,205 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2010-07-15 23:09+BRT\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: src/keymon/key_mon.py:233
+msgid "Keyboard Status Monitor"
+msgstr ""
+
+#: src/keymon/key_mon.py:501
+msgid "Window _Chrome"
+msgstr ""
+
+#: src/keymon/key_mon.py:508
+msgid "_Settings..."
+msgstr ""
+
+#: src/keymon/key_mon.py:513
+msgid "_Quit\tCtrl-Q"
+msgstr ""
+
+#: src/keymon/key_mon.py:564
+msgid "Keymon version %s."
+msgstr ""
+
+#: src/keymon/key_mon.py:565
+msgid "Written by %s"
+msgstr ""
+
+#: src/keymon/key_mon.py:572
+msgid "Make the dialog 25% smaller than normal."
+msgstr ""
+
+#: src/keymon/key_mon.py:574
+msgid "Make the dialog 25% larger than normal."
+msgstr ""
+
+#: src/keymon/key_mon.py:577
+msgid "Show the meta (windows) key."
+msgstr ""
+
+#: src/keymon/key_mon.py:579
+msgid "Don't show the meta (windows) key."
+msgstr ""
+
+#: src/keymon/key_mon.py:582
+msgid "Show the mouse."
+msgstr ""
+
+#: src/keymon/key_mon.py:584
+msgid "Hide the mouse."
+msgstr ""
+
+#: src/keymon/key_mon.py:587
+msgid "Show shift key."
+msgstr ""
+
+#: src/keymon/key_mon.py:589
+msgid "Don't show the shift key."
+msgstr ""
+
+#: src/keymon/key_mon.py:592
+msgid "Show the ctrl key."
+msgstr ""
+
+#: src/keymon/key_mon.py:594
+msgid "Hide the ctrl key."
+msgstr ""
+
+#: src/keymon/key_mon.py:597
+msgid "Show the alt key."
+msgstr ""
+
+#: src/keymon/key_mon.py:599
+msgid "Hide the alt key."
+msgstr ""
+
+#: src/keymon/key_mon.py:603
+msgid "Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is half the size. Defaults to %default"
+msgstr ""
+
+#: src/keymon/key_mon.py:607
+msgid "Show decoration"
+msgstr ""
+
+#: src/keymon/key_mon.py:609
+msgid "No decoration"
+msgstr ""
+
+#: src/keymon/key_mon.py:612
+msgid "Show where you clicked"
+msgstr ""
+
+#: src/keymon/key_mon.py:614
+msgid "Turn off the visible button clicks."
+msgstr ""
+
+#: src/keymon/key_mon.py:617
+msgid "Use this kbd filename instead running xmodmap."
+msgstr ""
+
+#: src/keymon/key_mon.py:619
+msgid "Swap the mouse buttons."
+msgstr ""
+
+#: src/keymon/key_mon.py:621
+msgid "When you press the left, and right mouse buttons at the same time, it displays as a middle mouse button click. "
+msgstr ""
+
+#: src/keymon/key_mon.py:624
+msgid "Show version information and exit."
+msgstr ""
+
+#: src/keymon/key_mon.py:627
+msgid "The theme to use when drawing status images (ex. \"-t apple\")."
+msgstr ""
+
+#: src/keymon/key_mon.py:629
+msgid "List available themes"
+msgstr ""
+
+#: src/keymon/key_mon.py:631
+msgid "How many historical keypresses to show (defaults to %default)"
+msgstr ""
+
+#: src/keymon/key_mon.py:634
+msgid "Developer Options"
+msgstr ""
+
+#: src/keymon/key_mon.py:635
+msgid "These options are for developers."
+msgstr ""
+
+#: src/keymon/key_mon.py:637
+msgid "Output debugging information."
+msgstr ""
+
+#: src/keymon/key_mon.py:639
+msgid "Create a \"screenshot.png\" and exit. Pass a comma separated list of keys to simulate (ex. \"KEY_A,KEY_LEFTCTRL\")."
+msgstr ""
+
+#: src/keymon/key_mon.py:657
+msgid "Available themes:"
+msgstr ""
+
+#: src/keymon/settings.py:48
+msgid "Buttons"
+msgstr ""
+
+#: src/keymon/settings.py:51
+msgid "Misc"
+msgstr ""
+
+#: src/keymon/settings.py:140
+msgid "Swap left-right mouse buttons"
+msgstr ""
+
+#: src/keymon/settings.py:141
+msgid "Left+right buttons emulates middle mouse button"
+msgstr ""
+
+#: src/keymon/settings.py:143
+msgid "Highly visible click"
+msgstr ""
+
+#: src/keymon/settings.py:144
+msgid "Window decoration"
+msgstr ""
+
+#: src/keymon/settings.py:157
+msgid "_Mouse"
+msgstr ""
+
+#: src/keymon/settings.py:158
+msgid "_Shift"
+msgstr ""
+
+#: src/keymon/settings.py:159
+msgid "_Ctrl"
+msgstr ""
+
+#: src/keymon/settings.py:160
+msgid "Meta (_windows keys)"
+msgstr ""
+
+#: src/keymon/settings.py:161
+msgid "_Alt"
+msgstr ""
+
+#: src/keymon/settings.py:162
+msgid "Old Keys:"
+msgstr ""
+
