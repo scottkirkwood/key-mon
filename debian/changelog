@@ -1,3 +1,10 @@
+key-mon (1.2.6-1) unstable; urgency=low
+
+  * Renamed build_all.py to build.py.
+  * Completed Portuguese translations.
+
+ -- Scott Kirkwood <scott@forusers.com>  Sun, 18 Jul 2010 23:15:23 +0300
+
 key-mon (1.2.5-1) unstable; urgency=low
 
   * Added some support for internationalization.

@@ -1,5 +1,11 @@
 Release Notes
 =============
+
+July 18th, 2010 v 1.2.6
+-----------------------
+* Renamed build_all.py to build.py.
+* Completed Portuguese translations.
+
 July 15th, 2010 v 1.2.5
 -----------------------
 * Added some support for internationalization.

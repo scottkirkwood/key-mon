@@ -15,14 +15,17 @@
 # limitations under the License.
 
 from distutils.core import setup
-import re
+import gettext
+
 
 NAME = 'key-mon'
-VER = '1.2.5'
 DIR = 'src/keymon'
+gettext.install(NAME, DIR + '/locale')
+VER = '1.2.6'
 PY_NAME = 'key_mon'
 DEB_NAME = NAME.replace('-', '')
 RELEASE_FILE = 'docs/RELEASE.rst'
+VCS = 'http://%s.code.google.com/hg' % NAME
 
 PY_SRC = '%s.py' % PY_NAME
 DEPENDS = ['python-xlib', 'python-gtk2']
@@ -58,11 +61,11 @@ SETUP = dict(
   keywords=' '.join(KEYWORDS),
   url='http://code.google.com/p/%s' % NAME,
   download_url='http://%s.googlecode.com/files/%s-%s.zip' % (NAME, NAME, VER),
-  description='A screencast utility that displays your keyboard and mouse status',
-  long_description="""Key-mon is useful for teaching since it shows the current status of your
+  description=_('A screencast utility that displays your keyboard and mouse status'),
+  long_description=_("""Key-mon is useful for teaching since it shows the current status of your
   keyboard and mouse and you use them in another application.  No longer do you need to say
   'Now I'm pressing the Ctrl-D key', your students can just see the keystroke for themselves.
-  """,
+  """),
   classifiers=[
       'Development Status :: 5 - Production/Stable',
       'Environment :: X11 Applications',
