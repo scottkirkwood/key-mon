@@ -1,4 +1,4 @@
-personal_ws-1.1 en 20 
+personal_ws-1.1 en 21 
 Ctrl
 keymap
 http
@@ -15,6 +15,7 @@ Capslock
 XLib
 py
 gksudo
+README
 th
 resize
 sudo

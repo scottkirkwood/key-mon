@@ -17,14 +17,13 @@
 from distutils.core import setup
 import gettext
 
-
 NAME = 'key-mon'
 DIR = 'src/keymon'
 gettext.install(NAME, DIR + '/locale')
 VER = '1.2.6'
 PY_NAME = 'key_mon'
 DEB_NAME = NAME.replace('-', '')
-RELEASE_FILE = 'docs/RELEASE.rst'
+RELEASE_FILE = 'CHANGELOG.rst'
 VCS = 'http://%s.code.google.com/hg' % NAME
 
 PY_SRC = '%s.py' % PY_NAME
@@ -35,7 +34,6 @@ MENU_SUBSECTION = 'Graphics'
 AUTHOR_NAME = 'Scott Kirkwood'
 COPYRIGHT_NAME = 'Google Inc.'
 GOOGLE_CODE_EMAIL = 'scott@forusers.com'
-KEYWORDS = ['keyboard', 'status', 'monitor', 'education']
 MAN_FILE = 'man/%s.1' % NAME
 DESKTOP_FILE = 'icons/%s.desktop' % NAME
 ICON = 'icons/%s.xpm' % NAME
@@ -58,7 +56,7 @@ SETUP = dict(
   author_email='scott+keymon@forusers.com',
   platforms=['POSIX'],
   license='Apache 2.0',
-  keywords=' '.join(KEYWORDS),
+  keywords=['keyboard', 'status', 'monitor', 'education'],
   url='http://code.google.com/p/%s' % NAME,
   download_url='http://%s.googlecode.com/files/%s-%s.zip' % (NAME, NAME, VER),
   description=_('A screencast utility that displays your keyboard and mouse status'),

@@ -5,6 +5,7 @@ July 18th, 2010 v 1.2.6
 -----------------------
 * Renamed build_all.py to build.py.
 * Completed Portuguese translations.
+* Created License file and README in Portuguese via pybdist.
 
 July 15th, 2010 v 1.2.5
 -----------------------
