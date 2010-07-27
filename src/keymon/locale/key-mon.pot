@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-07-18 23:05+BRT\n"
+"POT-Creation-Date: 2010-07-20 21:33+BRT\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,11 +15,11 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: setup.py:64
+#: setup.py:62
 msgid "A screencast utility that displays your keyboard and mouse status"
 msgstr ""
 
-#: setup.py:65
+#: setup.py:63
 msgid ""
 "Key-mon is useful for teaching since it shows the current status of your\n"
 "  keyboard and mouse and you use them in another application.  No longer do you need to say\n"
