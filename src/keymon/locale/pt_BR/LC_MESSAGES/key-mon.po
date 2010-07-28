@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Key-Mon\n"
-"POT-Creation-Date: 2010-07-18 23:05+BRT\n"
+"POT-Creation-Date: 2010-07-20 21:33+BRT\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Scott Kirkwood <scott@forusers.com>\n"
 "Language-Team:  <scott@forusers.com>\n"
@@ -12,17 +12,22 @@ msgstr ""
 "X-Poedit-Country: BRAZIL\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: setup.py:64
+#: setup.py:62
 msgid "A screencast utility that displays your keyboard and mouse status"
 msgstr "Um ferramento que mostra as teclas e botões pressionados. "
 
-#: setup.py:65
+#: setup.py:63
 msgid ""
 "Key-mon is useful for teaching since it shows the current status of your\n"
-"  keyboard and mouse and you use them in another application.  No longer do you need to say\n"
-"  'Now I'm pressing the Ctrl-D key', your students can just see the keystroke for themselves.\n"
+"  keyboard and mouse and you use them in another application.  No longer do "
+"you need to say\n"
+"  'Now I'm pressing the Ctrl-D key', your students can just see the "
+"keystroke for themselves.\n"
 "  "
-msgstr "Key-mon é útil para ensinar uma curso no computador porque mostra o estado dos teclas e os botões do mouse.  Não preciso mais falar  'agora eu esto pressionando a tecla Ctrl-D', os alunos veja eles mesmos."
+msgstr ""
+"Key-mon é útil para ensinar uma curso no computador porque mostra o estado "
+"dos teclas e os botões do mouse.  Não preciso mais falar  'agora eu esto "
+"pressionando a tecla Ctrl-D', os alunos veja eles mesmos."
 
 #: src/keymon/key_mon.py:501
 msgid "Window _Chrome"
@@ -93,8 +98,11 @@ msgid "Hide the alt key."
 msgstr "Esconde a tecla alt."
 
 #: src/keymon/key_mon.py:603
-msgid "Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is half the size. Defaults to %default"
-msgstr "Aumenta a janela, ex. 2.0 é dois vezes maior, 0.5 é metade do tamanho. "
+msgid ""
+"Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is half the size. Defaults "
+"to %default"
+msgstr ""
+"Aumenta a janela, ex. 2.0 é dois vezes maior, 0.5 é metade do tamanho. "
 
 #: src/keymon/key_mon.py:607
 msgid "Show decoration"
@@ -121,8 +129,12 @@ msgid "Swap the mouse buttons."
 msgstr "Trocar os botões do mouse."
 
 #: src/keymon/key_mon.py:621
-msgid "When you press the left, and right mouse buttons at the same time, it displays as a middle mouse button click. "
-msgstr "Quando você aperta o botão esquerda e direita no mesmo tempo, mostra como o botão do meio."
+msgid ""
+"When you press the left, and right mouse buttons at the same time, it "
+"displays as a middle mouse button click. "
+msgstr ""
+"Quando você aperta o botão esquerda e direita no mesmo tempo, mostra como o "
+"botão do meio."
 
 #: src/keymon/key_mon.py:624
 msgid "Show version information and exit."
@@ -153,8 +165,12 @@ msgid "Output debugging information."
 msgstr "Imprime resultados versão debug."
 
 #: src/keymon/key_mon.py:639
-msgid "Create a \"screenshot.png\" and exit. Pass a comma separated list of keys to simulate (ex. \"KEY_A,KEY_LEFTCTRL\")."
-msgstr "Escreve o arquivo \"screenshot.png\" e sair.  Coloque uma lista separada pelo virgulas para simular tocar teclas (ex. \"KEY_A,KEY_LEFTCTRL\")."
+msgid ""
+"Create a \"screenshot.png\" and exit. Pass a comma separated list of keys to "
+"simulate (ex. \"KEY_A,KEY_LEFTCTRL\")."
+msgstr ""
+"Escreve o arquivo \"screenshot.png\" e sair.  Coloque uma lista separada "
+"pelo virgulas para simular tocar teclas (ex. \"KEY_A,KEY_LEFTCTRL\")."
 
 #: src/keymon/key_mon.py:657
 msgid "Available themes:"
@@ -210,4 +226,3 @@ msgstr "Teclas antigos:"
 
 #~ msgid "Keyboard Status Monitor"
 #~ msgstr "Monitor de Status do Teclado"
-
