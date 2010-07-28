@@ -169,10 +169,10 @@ def get(section, name, cast=lambda x: x):
 
     return value
 
-def set(section, name, value):
+def set_config(section, name, value):
     """
         Set a configuration value. Section and name define what you want
-        to set; see the defaults dict above for valid values. The value will be
+        to set_config; see the defaults dict above for valid values. The value will be
         coerced to a string for storage in the file. Remember that when getting
         the value you must cast it back to what you need.
 

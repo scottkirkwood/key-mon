@@ -24,7 +24,7 @@ gettext.install(NAME, DIR + '/locale')
 VER = '1.2.6'
 PY_NAME = 'key_mon'
 DEB_NAME = NAME.replace('-', '')
-RELEASE_FILE = 'docs/RELEASE.rst'
+RELEASE_FILE = 'RELEASE.rst'
 VCS = 'http://%s.code.google.com/hg' % NAME
 
 PY_SRC = '%s.py' % PY_NAME

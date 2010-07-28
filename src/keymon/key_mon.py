@@ -347,8 +347,8 @@ class KeyMon:
     """The window has moved position, save it."""
     x, y = widget.get_position()
     logging.info('Moved window to %d, %d' % (x, y))
-    config.set('position', 'x', x)
-    config.set('position', 'y', y)
+    config.set_config('position', 'x', x)
+    config.set_config('position', 'y', y)
 
   def on_idle(self):
     """Check for events on idle."""
@@ -520,7 +520,7 @@ class KeyMon:
   def toggle_chrome(self, current):
     """Toggle whether the window has chrome or not."""
     self.window.set_decorated(not current)
-    config.set('ui', 'decorated', not current)
+    config.set_config('ui', 'decorated', not current)
 
   def show_settings_dlg(self, unused_arg):
     """Show the settings dialog."""
@@ -665,24 +665,24 @@ def main():
         pass
     raise SystemExit()
 
-  config.set('ui', 'scale', options.scale)
-  config.set('ui', 'theme', options.theme)
+  config.set_config('ui', 'scale', options.scale)
+  config.set_config('ui', 'theme', options.theme)
 
   if options.nomouse is not None:
-    config.set('buttons', 'mouse', not options.nomouse)
+    config.set_config('buttons', 'mouse', not options.nomouse)
   if options.noshift is not None:
-    config.set('buttons', 'shift', not options.noshift)
+    config.set_config('buttons', 'shift', not options.noshift)
   if options.noctrl is not None:
-    config.set('buttons', 'ctrl', not options.noctrl)
+    config.set_config('buttons', 'ctrl', not options.noctrl)
   if options.noalt is not None:
-    config.set('buttons', 'alt', not options.noalt)
+    config.set_config('buttons', 'alt', not options.noalt)
   if options.meta is not None:
-    config.set('buttons', 'meta', options.meta)
-  config.set('buttons', 'old-keys', options.old_keys)
+    config.set_config('buttons', 'meta', options.meta)
+  config.set_config('buttons', 'old-keys', options.old_keys)
 
-  config.set('devices', 'map', options.kbd_file)
-  config.set('devices', 'emulate_middle', bool(options.emulate_middle))
-  config.set('devices', 'swap_buttons', bool(options.swap_buttons))
+  config.set_config('devices', 'map', options.kbd_file)
+  config.set_config('devices', 'emulate_middle', bool(options.emulate_middle))
+  config.set_config('devices', 'swap_buttons', bool(options.swap_buttons))
 
   keymon = KeyMon(options)
   try:

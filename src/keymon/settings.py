@@ -123,11 +123,11 @@ class CommonFrame(gtk.Frame):
 
   def _update_option(self, option, sub_option, val):
     """Update an option."""
-    config.set(option, sub_option, val)
+    config.set_config(option, sub_option, val)
     config.write()
     config.cleanup()
     LOG.info('Set option %s/%s to %s' % (option, sub_option, val))
-    self.settings.SettingsChanged()
+    self.settings.settings_changed()
 
 class MiscFrame(CommonFrame):
   """The miscellaneous frame."""
