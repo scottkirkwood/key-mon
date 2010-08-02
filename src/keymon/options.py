@@ -301,35 +301,46 @@ if __name__ == '__main__':
                default=False,
                help='Show the meta (windows) key.')
   o.add_option(opt_long='--mouse', dest='mouse', type='bool', default=True,
+               ini_group='buttons', ini_name='mouse',
                help='Show the mouse.')
   o.add_option(opt_long='--shift', dest='shift', type='bool', default=True,
+               ini_group='buttons', ini_name='shift',
                help='Show shift key.')
   o.add_option(opt_long='--ctrl', dest='ctrl', type='bool', default=True,
+               ini_group='buttons', ini_name='ctrl',
                help='Show the ctrl key.')
   o.add_option(opt_long='--alt', dest='alt', type='bool', default=True,
+               ini_group='buttons', ini_name='alt',
                help='Show the alt key.')
   o.add_option(opt_long='--scale', dest='scale', type='float', default=1.0,
+               ini_group='buttons', ini_name='scale',
                help='Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is '
                     'half the size. Defaults to %default')
   o.add_option(opt_long='--decorated', dest='decorated', type='bool',
+               ini_group='ui', ini_name='decorated',
                default=True,
                help='Show decoration')
   o.add_option(opt_long='--visible_click', dest='visible_click', type='bool',
+               ini_group='ui', ini_name='visible_click',
                default=False,
                help='Show where you clicked')
   o.add_option(opt_long='--kbdfile', dest='kbd_file',
+               ini_group='devices', ini_name='map',
                default='us.kbd',
                help='Use this kbd filename instead running xmodmap.')
   o.add_option(opt_long='--swap', dest='swap_buttons', type='bool',
                default=False,
+               ini_group='devices', ini_name='swap_buttons',
                help='Swap the mouse buttons.')
   o.add_option(opt_long='--emulate-middle', dest='emulate_middle', type='bool',
                default=False,
+               ini_group='devices', ini_name='emulate_middle',
                help='When you press the left, and right mouse buttons at the same time, '
                     'it displays as a middle mouse button click. ')
   o.add_option(opt_short='-v', opt_long='--version', dest='version', type='bool',
                help='Show version information and exit.')
   o.add_option(opt_short='-t', opt_long='--theme', dest='theme', type='str',
+               ini_group='ui', ini_name='theme',
                help='The theme to use when drawing status images (ex. "-t apple").')
   o.add_option(opt_long='--list-themes', dest='list_themes', type='bool',
                help='List available themes')
