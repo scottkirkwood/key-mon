@@ -16,7 +16,6 @@
 
 import unittest
 import options
-import optparse
 import StringIO
 
 class TestOptionItem(unittest.TestCase):
@@ -123,6 +122,7 @@ class TestOptions(unittest.TestCase):
     lines.append('false = 1')
     io = StringIO.StringIO('\n'.join(lines))
     self.options.parse_ini(io)
+    self.options.parse_args([])
 
     o = self.options
     self.assertFalse(o.x)

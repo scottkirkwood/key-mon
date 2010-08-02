@@ -120,7 +120,8 @@ class OptionItem(object):
     if not self._opt_short and not self._opt_long:
       return
     if hasattr(opts, self._dest):
-      self._set_value(getattr(opts, self._dest))
+      if getattr(opts, self._dest) != self._default:
+        self._set_value(getattr(opts, self._dest))
 
   @property
   def value(self):

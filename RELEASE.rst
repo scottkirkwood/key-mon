@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+August 2nd, 2010 v 1.2.7
+------------------------
+* Fixed some missing keys Issue 49.
+* Complete refactoring how options are handled.
+
 July 18th, 2010 v 1.2.6
 -----------------------
 * Renamed build_all.py to build.py.
