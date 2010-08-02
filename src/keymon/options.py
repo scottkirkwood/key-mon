@@ -26,12 +26,15 @@ It uses ConfigParser to save the variables to disk in ini format.
 """
 __author__ = 'Scott Kirkwood (scott+keymon@forusers.com)'
 
-import logging
-import os
 import ConfigParser
+import gettext
+import logging
 import optparse
+import os
 
 LOG = logging.getLogger('options')
+
+gettext.install('key-mon', 'locale')
 
 class OptionException(Exception):
   pass
@@ -104,8 +107,10 @@ class OptionItem(object):
     parser.add_option(*args, action='store_true', default=self._default,
       dest=self._dest, help=self._help)
 
-    parser.add_option('--no' + self._opt_long.lstrip('-'), action='store_false',
-      dest=self._dest)
+    if self._ini_group:
+      # Only need the --no version if it could be saved to ini file.
+      parser.add_option('--no' + self._opt_long.lstrip('-'), action='store_false',
+        dest=self._dest, help=_('Opposite of %s') % self._opt_long)
 
   def set_from_optparse(self, opts):
     """Try and set an option from optparse.
@@ -333,54 +338,24 @@ class Options(object):
     self.write_ini(fo)
     fo.close()
 
+
 if __name__ == '__main__':
   o = Options()
-  o.add_option(opt_short='-s', opt_long='--smaller', dest='smaller', default=False,
-               type='bool',
-               help='Make the dialog 25% smaller than normal.')
   o.add_option(opt_short='-l', opt_long='--larger', dest='larger', default=False,
                type='bool',
                help='Make the dialog 25% larger than normal.')
   o.add_option(opt_short='-m', opt_long='--meta', dest='meta', type='bool',
+               ini_group='buttons', ini_name='meta',
                default=False,
                help='Show the meta (windows) key.')
-  o.add_option(opt_long='--mouse', dest='mouse', type='bool', default=True,
-               ini_group='buttons', ini_name='mouse',
-               help='Show the mouse.')
-  o.add_option(opt_long='--shift', dest='shift', type='bool', default=True,
-               ini_group='buttons', ini_name='shift',
-               help='Show shift key.')
-  o.add_option(opt_long='--ctrl', dest='ctrl', type='bool', default=True,
-               ini_group='buttons', ini_name='ctrl',
-               help='Show the ctrl key.')
-  o.add_option(opt_long='--alt', dest='alt', type='bool', default=True,
-               ini_group='buttons', ini_name='alt',
-               help='Show the alt key.')
   o.add_option(opt_long='--scale', dest='scale', type='float', default=1.0,
-               ini_group='buttons', ini_name='scale',
+               ini_group='ui', ini_name='scale',
                help='Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is '
                     'half the size. Defaults to %default')
-  o.add_option(opt_long='--decorated', dest='decorated', type='bool',
-               ini_group='ui', ini_name='decorated',
-               default=False,
-               help='Show decoration')
-  o.add_option(opt_long='--visible_click', dest='visible_click', type='bool',
-               ini_group='ui', ini_name='visible_click',
-               default=False,
-               help='Show where you clicked')
   o.add_option(opt_long='--kbdfile', dest='kbd_file',
                ini_group='devices', ini_name='map',
                default='us.kbd',
                help='Use this kbd filename instead running xmodmap.')
-  o.add_option(opt_long='--swap', dest='swap_buttons', type='bool',
-               default=False,
-               ini_group='devices', ini_name='swap_buttons',
-               help='Swap the mouse buttons.')
-  o.add_option(opt_long='--emulate-middle', dest='emulate_middle', type='bool',
-               default=False,
-               ini_group='devices', ini_name='emulate_middle',
-               help='When you press the left, and right mouse buttons at the same time, '
-                    'it displays as a middle mouse button click. ')
   o.add_option(opt_short='-v', opt_long='--version', dest='version', type='bool',
                help='Show version information and exit.')
   o.add_option(opt_short='-t', opt_long='--theme', dest='theme', type='str',
@@ -389,38 +364,27 @@ if __name__ == '__main__':
   o.add_option(opt_long='--list-themes', dest='list_themes', type='bool',
                help='List available themes')
   o.add_option(opt_long='--old-keys', dest='old_keys', type='int',
+               ini_group='buttons', ini_name='old-keys',
                help='How many historical keypresses to show (defaults to %default)',
                default=0)
-
+  o.add_option(opt_short=None, opt_long=None, type='int',
+               dest='x_pos', default=-1, help='Last X Position',
+               ini_group='position', ini_name='x')
   o.add_option_group('Developer Options', 'Don\'t use')
   o.add_option(opt_short='-d',
                opt_long='--debug', dest='debug', type='bool',
                help='Output debugging information.')
-  o.add_option(opt_long='--screenshot', dest='screenshot', type='bool', default=False,
-               help='Create a "screenshot.png" and exit. '
-                    'Pass a comma separated list of keys to simulate (ex. "KEY_A,KEY_LEFTCTRL").')
-
   lines = []
   lines.append('[ui]')
-  lines.append('decorated = 0')
-  lines.append('opacity = 0.9')
   lines.append('scale = 1.0')
   lines.append('theme = classic')
-  lines.append('visible-click = 0')
   lines.append('[buttons]')
-  lines.append('mouse = 1')
-  lines.append('shift = 1')
-  lines.append('ctrl = 1')
-  lines.append('alt = 1')
   lines.append('meta = 0')
   lines.append('old-keys = 0')
   lines.append('[devices]')
   lines.append('map = us.kbd')
-  lines.append('emulate_middle = 0')
-  lines.append('swap_buttons = 0')
   lines.append('[position]')
   lines.append('x = -1')
-  lines.append('y = -1')
   import StringIO
   io = StringIO.StringIO('\n'.join(lines))
   o.parse_ini(io)
