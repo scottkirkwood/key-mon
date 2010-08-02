@@ -161,12 +161,12 @@ class ButtonsFrame(CommonFrame):
     self._add_dropdown(vbox, _('Old Keys:'), [0, 1, 2, 3, 4], 'old_keys')
     self.add(vbox)
 
-def _test_settings_changed(widget):
+def _test_settings_changed(unused_widget):
   """Help to test if the settings change message is received."""
   print 'Settings changed'
 
 
-def test_dialog():
+def manually_run_dialog():
   """Test the dialog without starting keymon."""
   import key_mon
 
@@ -184,4 +184,4 @@ def test_dialog():
   return 0
 
 if __name__ == '__main__':
-  test_dialog()
+  manually_run_dialog()
