@@ -288,6 +288,16 @@ class Options(object):
         config.set(opt.ini_group, opt.ini_name, opt.ini_value)
     config.write(fp)
 
+  def write_ini_file(self, fname):
+    if not os.path.exists(fname):
+      dirname = os.path.dirname(fname)
+      if not os.path.exists(dirname):
+        LOG.info('Creating directory %r', dirname)
+        os.makedirs(dirname)
+    fo = file(fname, 'w')
+    LOG.info('Writing config file %r', fname)
+    write_ini(fo)
+    fo.close()
 
 if __name__ == '__main__':
   o = Options()
