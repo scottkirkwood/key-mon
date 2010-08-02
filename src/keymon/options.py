@@ -210,17 +210,27 @@ class OptionItem(object):
 class Options(object):
   """Store the options in memory, also saves to dist and creates opt_parser."""
   def __init__(self):
-    self.opt_group = None
-    self.options_order = []
-    self.options = {}
+    self._options = {}
+    self._ini_filename = None
+    self._opt_group = None
+    self._opt_group_desc = {}
+    self._options_order = []
 
   def __getattr__(self, name):
-    if name not in self.options:
-      raise OptionException('Invalidate `dest` name: %r' % name)
-    return self.options[name].value
+    if name not in self.__dict__['_options']:
+      raise AttributeError('Invalid attribute name: %r' % name)
+    return self._options[name].value
+
+  def __setattr__(self, name, value):
+    if name == '_options' or name not in self.__dict__['_options']:
+      object.__setattr__(self, name, value)
+    else:
+      LOG.info('Setting %r = %r', name, value)
+      self.__dict__['_options'][name].value = value
 
   def add_option_group(self, group, desc):
-    self.opt_group = group
+    self._opt_group = group
+    self._opt_group_desc[group] = desc
 
   def add_option(self, dest, type='str', default=None, name=None, help=None,
       opt_short=None, opt_long=None,
@@ -238,13 +248,13 @@ class Options(object):
       ini_group: the name of the group in the ini file.
       ini_name: the name of the name in the ini file
     """
-    if dest in self.options:
+    if dest in self._options:
       raise OptionException('Options %s already added' % dest)
 
-    self.options_order.append(dest)
-    self.options[dest] = OptionItem(dest, type, default,
+    self._options_order.append(dest)
+    self._options[dest] = OptionItem(dest, type, default,
         name, help,
-        opt_group=self.opt_group, opt_short=opt_short, opt_long=opt_long,
+        opt_group=self._opt_group, opt_short=opt_short, opt_long=opt_long,
         ini_group=ini_group, ini_name=ini_name)
 
   def parse_args(self, args=None):
@@ -253,32 +263,40 @@ class Options(object):
       args: Args for testing or sys.args[1:] otherwise
     """
     parser = optparse.OptionParser()
-    for dest in self.options_order:
-      opt = self.options[dest]
+    for dest in self._options_order:
+      opt = self._options[dest]
       opt.add_to_parser(parser)
 
-    self.opt_ret, self.other_args = parser.parse_args(args)
-    for opt in self.options.values():
-      opt.set_from_optparse(self.opt_ret)
+    self._opt_ret, self._other_args = parser.parse_args(args)
+    for opt in self._options.values():
+      opt.set_from_optparse(self._opt_ret)
 
   def parse_ini(self, fp):
     """Parser an ini file from fp, which is file-like class."""
 
     config = ConfigParser.SafeConfigParser()
     config.readfp(fp)
-    for opt in self.options.values():
+    checker = {}
+    for opt in self._options.values():
       if opt.ini_group:
+        checker[opt.ini_group + '-' + opt.ini_name] = True
         if (config.has_section(opt.ini_group) and
             config.has_option(opt.ini_group, opt.ini_name)):
           opt.value = config.get(opt.ini_group, opt.ini_name)
           LOG.info('From ini getting %s.%s = %s', opt.ini_group, opt.ini_name,
               opt.value)
+    for section in config.sections():
+      for name, value in config.items(section):
+        combined_name = section + '-' + name
+        if not combined_name in checker:
+          LOG.info('Unknown option %r in section [%s]', name, section)
+          raise OptionException('Unknown option %r in section [%s]' % (name, section))
 
   def write_ini(self, fp):
     """Parser an ini file from fp, which is file-like class."""
 
     config = ConfigParser.SafeConfigParser()
-    for opt in self.options.values():
+    for opt in self._options.values():
       if not opt.ini_group:
         continue
       if not config.has_section(opt.ini_group):
@@ -288,15 +306,31 @@ class Options(object):
         config.set(opt.ini_group, opt.ini_name, opt.ini_value)
     config.write(fp)
 
-  def write_ini_file(self, fname):
+  def read_ini_file(self, fname):
+    self._ini_filename = os.path.expanduser(fname)
+    LOG.info('Reading from %r', self._ini_filename)
+    if os.path.exists(self._ini_filename) and os.path.isfile(self._ini_filename):
+      fi = open(self._ini_filename)
+      self.parse_ini(fi)
+      fi.close()
+    else:
+      LOG.info('%r does not exist', self._ini_filename)
+
+  def save(self):
+    self._write_ini_file(self._ini_filename)
+
+  def _make_dirs(self, fname):
     if not os.path.exists(fname):
       dirname = os.path.dirname(fname)
       if not os.path.exists(dirname):
         LOG.info('Creating directory %r', dirname)
         os.makedirs(dirname)
-    fo = file(fname, 'w')
+
+  def _write_ini_file(self, fname):
+    self._make_dirs(fname)
     LOG.info('Writing config file %r', fname)
-    write_ini(fo)
+    fo = open(fname, 'w')
+    self.write_ini(fo)
     fo.close()
 
 if __name__ == '__main__':
@@ -328,7 +362,7 @@ if __name__ == '__main__':
                     'half the size. Defaults to %default')
   o.add_option(opt_long='--decorated', dest='decorated', type='bool',
                ini_group='ui', ini_name='decorated',
-               default=True,
+               default=False,
                help='Show decoration')
   o.add_option(opt_long='--visible_click', dest='visible_click', type='bool',
                ini_group='ui', ini_name='visible_click',
