@@ -51,6 +51,12 @@ class LazyPixbufCreator(object):
     self.resize = resize
     self.name_fnames = name_fnames
 
+  def reset_all(self, names_fnames, resize):
+    """Resets the name to filenames and size."""
+    self.pixbufs = {}
+    self.name_fnames = names_fnames
+    self.resize = resize
+
   def get(self, name):
     """Get the pixbuf with this name."""
     if name not in self.pixbufs:
