@@ -37,7 +37,8 @@ class SettingsDialog(gtk.Dialog):
 
   def __init__(self, view, options):
     gtk.Dialog.__init__(self, title='Preferences', parent=view,
-        flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+        flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT |
+        gtk.WIN_POS_CENTER,
         buttons=(gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE))
     self.options = options
     self.set_default_size(350, 350)
@@ -132,9 +133,10 @@ class CommonFrame(gtk.Frame):
     """Update an option."""
     if str_val.isdigit():
       setattr(self.settings.options, option, val)
+      LOG.info('Set option %s to %s' % (option, val))
     else:
       setattr(self.settings.options, option, str_val)
-    LOG.info('Set option %s to %s (%s)' % (option, val, str_val))
+      LOG.info('Set option %s to %s' % (option, str_val))
     self.settings.options.save()
     self.settings.settings_changed()
 

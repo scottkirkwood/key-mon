@@ -116,6 +116,8 @@ class KeyMon:
     self.devices = xlib.XEvents()
     self.devices.start()
 
+    self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames,
+                                                         self.scale)
     self.create_window()
 
   def do_screenshot(self):
@@ -247,6 +249,38 @@ class KeyMon:
     self.hbox = gtk.HBox(False, 0)
     self.event_box.add(self.hbox)
 
+    self.layout_boxes()
+    self.hbox.show()
+
+    self.add_events()
+
+    old_x = self.options.x_pos
+    old_y = self.options.y_pos
+    if old_x != -1 and old_y != -1 and old_x and old_y:
+      self.window.move(old_x, old_y)
+    self.window.show()
+
+  def create_images(self):
+    self.mouse_image = two_state_image.TwoStateImage(self.pixbufs, 'MOUSE')
+    self.shift_image = two_state_image.TwoStateImage(
+        self.pixbufs, 'SHIFT_EMPTY', self.enabled['SHIFT'])
+    self.ctrl_image = two_state_image.TwoStateImage(
+        self.pixbufs, 'CTRL_EMPTY')
+    self.meta_image = two_state_image.TwoStateImage(
+        self.pixbufs, 'META_EMPTY', self.enabled['META'])
+    self.alt_image = two_state_image.TwoStateImage(
+        self.pixbufs, 'ALT_EMPTY', self.enabled['ALT'])
+    self.buttons = [self.mouse_image, self.shift_image, self.ctrl_image,
+        self.meta_image, self.alt_image]
+    for _ in range(self.options.old_keys):
+      key_image = two_state_image.TwoStateImage(self.pixbufs, 'KEY_EMPTY')
+      self.buttons.append(key_image)
+    self.key_image = two_state_image.TwoStateImage(self.pixbufs, 'KEY_EMPTY')
+    self.buttons.append(self.key_image)
+
+  def layout_boxes(self):
+    for child in self.hbox.get_children():
+      self.hbox.remove(child)
     if not self.enabled['MOUSE']:
       self.mouse_image.hide()
     self.hbox.pack_start(self.mouse_image, False, False, 0)
@@ -282,35 +316,6 @@ class KeyMon:
 
     self.key_image.defer_to = prev_key_image
     self.hbox.pack_start(self.key_image, True, True, 0)
-
-    self.hbox.show()
-    self.add_events()
-
-    old_x = self.options.x_pos
-    old_y = self.options.y_pos
-    if old_x != -1 and old_y != -1 and old_x and old_y:
-      self.window.move(old_x, old_y)
-    self.window.show()
-
-  def create_images(self):
-    self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames,
-                                                         self.scale)
-    self.mouse_image = two_state_image.TwoStateImage(self.pixbufs, 'MOUSE')
-    self.shift_image = two_state_image.TwoStateImage(
-        self.pixbufs, 'SHIFT_EMPTY', self.enabled['SHIFT'])
-    self.ctrl_image = two_state_image.TwoStateImage(
-        self.pixbufs, 'CTRL_EMPTY')
-    self.meta_image = two_state_image.TwoStateImage(
-        self.pixbufs, 'META_EMPTY', self.enabled['META'])
-    self.alt_image = two_state_image.TwoStateImage(
-        self.pixbufs, 'ALT_EMPTY', self.enabled['ALT'])
-    self.buttons = [self.mouse_image, self.shift_image, self.ctrl_image,
-        self.meta_image, self.alt_image]
-    for _ in range(self.options.old_keys):
-      key_image = two_state_image.TwoStateImage(self.pixbufs, 'KEY_EMPTY')
-      self.buttons.append(key_image)
-    self.key_image = two_state_image.TwoStateImage(self.pixbufs, 'KEY_EMPTY')
-    self.buttons.append(self.key_image)
 
   def svg_name(self, fname):
     """Return an svg filename given the theme, system."""
@@ -548,9 +553,12 @@ class KeyMon:
         self.options.alt)
     if self.options.visible_click:
       self.mouse_indicator_win.fade_away()
+    print 'Self.options.theme = ', self.options.theme
     self.window.set_decorated(self.options.decorated)
     self.name_fnames = self.create_names_to_fnames()
-    self.create_images()
+    self.pixbufs.reset_all(self.name_fnames, self.scale)
+    for but in self.buttons:
+      but.reset_image()
 
   def _toggle_a_key(self, image, name, show):
     """Toggle show/hide a key."""

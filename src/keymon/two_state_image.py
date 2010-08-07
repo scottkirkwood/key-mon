@@ -43,6 +43,10 @@ class TwoStateImage(gtk.Image):
     self.timeout_secs = DEFAULT_TIMEOUT_SECS
     self.switch_to(self.normal)
 
+  def reset_image(self):
+    """Image from pixbufs has changed, reset."""
+    self._switch_to(self.normal)
+
   def switch_to(self, name):
     """Switch to image with this name."""
     if self.current != self.normal:
