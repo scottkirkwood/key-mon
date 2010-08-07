@@ -22,6 +22,7 @@ import gettext
 import gobject
 import gtk
 import logging
+import os
 
 LOG = logging.getLogger('settings')
 
@@ -101,7 +102,12 @@ class CommonFrame(gtk.Frame):
     for opt in opt_lst:
       combo.append_text(str(opt))
     val = getattr(self.settings.options, option)
-    combo.set_active(val)
+    try:
+      index = opt_lst.index(val)
+    except ValueError:
+      index = 0
+    combo.set_active(index)
+
     hbox.pack_start(combo, expand=False, fill=False, padding=10)
     logging.info('got option %s as %s', option, val)
     combo.connect('changed', self._combo_changed, option)
@@ -119,12 +125,16 @@ class CommonFrame(gtk.Frame):
   def _combo_changed(self, widget, option):
     """The combo box changed."""
     val = widget.get_active()
-    self._update_option(option, val)
+    str_val = widget.get_active_text()
+    self._update_option(option, val, str_val)
 
-  def _update_option(self, option, val):
+  def _update_option(self, option, val, str_val):
     """Update an option."""
-    setattr(self.settings.options, option, val)
-    LOG.info('Set option %s to %s' % (option, val))
+    if str_val.isdigit():
+      setattr(self.settings.options, option, val)
+    else:
+      setattr(self.settings.options, option, str_val)
+    LOG.info('Set option %s to %s (%s)' % (option, val, str_val))
     self.settings.options.save()
     self.settings.settings_changed()
 
@@ -141,6 +151,10 @@ class MiscFrame(CommonFrame):
        'emulate_middle')
     self._add_check(vbox, _('Highly visible click'), 'visible_click')
     self._add_check(vbox, _('Window decoration'), 'decorated')
+    self.themes = []
+    theme_dir = os.path.join(os.path.dirname(__file__), 'themes')
+    self.themes = os.listdir(theme_dir)
+    self._add_dropdown(vbox, _('Themes:'), self.themes, 'theme')
     self.add(vbox)
 
 class ButtonsFrame(CommonFrame):

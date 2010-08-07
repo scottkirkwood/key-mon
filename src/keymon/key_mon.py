@@ -113,8 +113,6 @@ class KeyMon:
     self.swap_buttons = self.options.swap_buttons
 
     self.name_fnames = self.create_names_to_fnames()
-    self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames,
-                                                         self.scale)
     self.devices = xlib.XEvents()
     self.devices.start()
 
@@ -244,58 +242,44 @@ class KeyMon:
     self.window.add(self.event_box)
     self.event_box.show()
 
+    self.create_images()
+
     self.hbox = gtk.HBox(False, 0)
     self.event_box.add(self.hbox)
 
-    self.mouse_image = two_state_image.TwoStateImage(self.pixbufs, 'MOUSE')
     if not self.enabled['MOUSE']:
       self.mouse_image.hide()
     self.hbox.pack_start(self.mouse_image, False, False, 0)
     if not self.enabled['MOUSE']:
       self.mouse_image.hide()
 
-    self.shift_image = two_state_image.TwoStateImage(
-        self.pixbufs, 'SHIFT_EMPTY', self.enabled['SHIFT'])
     if not self.enabled['SHIFT']:
       self.shift_image.hide()
     self.hbox.pack_start(self.shift_image, False, False, 0)
 
-    self.ctrl_image = two_state_image.TwoStateImage(
-        self.pixbufs, 'CTRL_EMPTY')
     if not self.enabled['CTRL']:
       self.ctrl_image.hide()
     self.hbox.pack_start(self.ctrl_image, False, False, 0)
 
-    self.meta_image = two_state_image.TwoStateImage(
-        self.pixbufs, 'META_EMPTY', self.enabled['META'])
     if not self.enabled['META']:
       self.meta_image.hide()
     self.hbox.pack_start(self.meta_image, False, False, 0)
 
-    self.alt_image = two_state_image.TwoStateImage(
-        self.pixbufs, 'ALT_EMPTY', self.enabled['ALT'])
     if not self.enabled['ALT']:
       self.alt_image.hide()
     self.hbox.pack_start(self.alt_image, False, False, 0)
 
-    self.buttons = [self.mouse_image, self.shift_image, self.ctrl_image,
-        self.meta_image, self.alt_image]
-
     prev_key_image = None
-    for _ in range(self.options.old_keys):
-      key_image = two_state_image.TwoStateImage(self.pixbufs, 'KEY_EMPTY')
+    for key_image in self.buttons[self.options.old_keys - 1:-2]:
       key_image.hide()
       key_image.timeout_secs = 0.5
       key_image.defer_to = prev_key_image
       self.hbox.pack_start(key_image, True, True, 0)
-      self.buttons.append(key_image)
       prev_key_image = key_image
 
     # This must be after the loop above.
-    self.key_image = two_state_image.TwoStateImage(self.pixbufs, 'KEY_EMPTY')
     self.key_image.timeout_secs = 0.5
 
-    self.buttons.append(self.key_image)
     self.key_image.defer_to = prev_key_image
     self.hbox.pack_start(self.key_image, True, True, 0)
 
@@ -307,6 +291,26 @@ class KeyMon:
     if old_x != -1 and old_y != -1 and old_x and old_y:
       self.window.move(old_x, old_y)
     self.window.show()
+
+  def create_images(self):
+    self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames,
+                                                         self.scale)
+    self.mouse_image = two_state_image.TwoStateImage(self.pixbufs, 'MOUSE')
+    self.shift_image = two_state_image.TwoStateImage(
+        self.pixbufs, 'SHIFT_EMPTY', self.enabled['SHIFT'])
+    self.ctrl_image = two_state_image.TwoStateImage(
+        self.pixbufs, 'CTRL_EMPTY')
+    self.meta_image = two_state_image.TwoStateImage(
+        self.pixbufs, 'META_EMPTY', self.enabled['META'])
+    self.alt_image = two_state_image.TwoStateImage(
+        self.pixbufs, 'ALT_EMPTY', self.enabled['ALT'])
+    self.buttons = [self.mouse_image, self.shift_image, self.ctrl_image,
+        self.meta_image, self.alt_image]
+    for _ in range(self.options.old_keys):
+      key_image = two_state_image.TwoStateImage(self.pixbufs, 'KEY_EMPTY')
+      self.buttons.append(key_image)
+    self.key_image = two_state_image.TwoStateImage(self.pixbufs, 'KEY_EMPTY')
+    self.buttons.append(self.key_image)
 
   def svg_name(self, fname):
     """Return an svg filename given the theme, system."""
@@ -545,6 +549,8 @@ class KeyMon:
     if self.options.visible_click:
       self.mouse_indicator_win.fade_away()
     self.window.set_decorated(self.options.decorated)
+    self.name_fnames = self.create_names_to_fnames()
+    self.create_images()
 
   def _toggle_a_key(self, image, name, show):
     """Toggle show/hide a key."""
@@ -666,10 +672,11 @@ def main():
     opts.scale = 1.25
   if opts.list_themes:
     print _('Available themes:')
-    for entry in sorted(os.listdir('themes')):
+    theme_dir = os.path.join(os.path.dirname(__file__), 'themes')
+    for entry in sorted(os.listdir(theme_dir)):
       try:
         parser = SafeConfigParser()
-        parser.read(os.path.join('themes', entry, 'config'))
+        parser.read(os.path.join(theme_dir, entry, 'config'))
         desc = parser.get('theme', 'description')
         print '%s: %s' % (entry, desc)
       except:
