@@ -99,6 +99,7 @@ class KeyMon:
     self.ctrl_image = None
     self.meta_image = None
     self.buttons = None
+    self.shifted = None
 
     self.enabled = {
         'MOUSE': self.options.mouse,
@@ -394,7 +395,7 @@ class KeyMon:
   def handle_key(self, scan_code, xlib_name, value):
     """Handle a keyboard event."""
     code, medium_name, short_name = self.modmap.get_and_check(scan_code,
-                                                            xlib_name)
+                                                              xlib_name)
     if not code:
       logging.info('No mapping for scan_code %s', scan_code)
       return
@@ -429,7 +430,7 @@ class KeyMon:
             fix_svg_key_closure(self.svg_name(template), [('&amp;', letter)])]
       self._handle_event(self.key_image, code, value)
       return
-    if code.startswith('KEY_'):
+    if code.startswith('KEY_') and (not self.options.only_combo or self.shifted):
       letter = medium_name
       if code not in self.name_fnames:
         logging.debug('code not in %s', code)
@@ -556,6 +557,11 @@ class KeyMon:
     for but in self.buttons:
       but.reset_image()
 
+    width, height = 30 * self.options.scale, 48 * self.options.scale
+    self.window.set_default_size(int(width), int(height))
+    self.window.resize_children()
+    self.window.check_resize()
+
   def _toggle_a_key(self, image, name, show):
     """Toggle show/hide a key."""
     if self.enabled[name] == show:
@@ -607,6 +613,10 @@ def create_options():
                   ini_group='ui', ini_name='decorated',
                   default=False,
                   help=_('Show decoration'))
+  opts.add_option(opt_long='--onlycombo', dest='only_combo', type='bool',
+                  ini_group='ui', ini_name='only_combo',
+                  default=False,
+                  help=_('Show only key combos (ex. Control-A'))
   opts.add_option(opt_long='--visible_click', dest='visible_click', type='bool',
                   ini_group='ui', ini_name='visible-click',
                   default=False,
