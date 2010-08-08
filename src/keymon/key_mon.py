@@ -83,8 +83,7 @@ class KeyMon:
     settings.SettingsDialog.register()
     self.options = options
     self.pathname = os.path.dirname(__file__)
-    self.scale = self.options.scale
-    if self.scale < 1.0:
+    if self.options.scale < 1.0:
       self.svg_size = '-small'
     else:
       self.svg_size = ''
@@ -108,16 +107,14 @@ class KeyMon:
         'META': self.options.meta,
         'ALT': self.options.alt,
     }
-    self.emulate_middle = self.options.emulate_middle
     self.modmap = mod_mapper.safely_read_mod_map(self.options.kbd_file)
-    self.swap_buttons = self.options.swap_buttons
 
     self.name_fnames = self.create_names_to_fnames()
     self.devices = xlib.XEvents()
     self.devices.start()
 
     self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames,
-                                                         self.scale)
+                                                         self.options.scale)
     self.create_window()
 
   def do_screenshot(self):
@@ -182,7 +179,7 @@ class KeyMon:
       'BTN_LEFTRIGHT': [
           self.svg_name('mouse'), self.svg_name('left-mouse'), self.svg_name('right-mouse')],
     }
-    if self.swap_buttons:
+    if self.options.swap_buttons:
       ftn.update({
         'BTN_RIGHT': [self.svg_name('mouse'), self.svg_name('left-mouse')],
         'BTN_LEFT': [self.svg_name('mouse'), self.svg_name('right-mouse')],
@@ -193,7 +190,7 @@ class KeyMon:
         'BTN_RIGHT': [self.svg_name('mouse'), self.svg_name('right-mouse')],
       })
 
-    if self.scale >= 1.0:
+    if self.options.scale >= 1.0:
       ftn.update({
         'KEY_SPACE': [
             fix_svg_key_closure(self.svg_name('two-line-wide'),
@@ -231,7 +228,7 @@ class KeyMon:
     self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
 
     self.window.set_title('Keyboard Status Monitor')
-    width, height = 30 * self.scale, 48 * self.scale
+    width, height = 30 * self.options.scale, 48 * self.options.scale
     self.window.set_default_size(int(width), int(height))
     self.window.set_decorated(self.options.decorated)
 
@@ -401,7 +398,7 @@ class KeyMon:
     if not code:
       logging.info('No mapping for scan_code %s', scan_code)
       return
-    if self.scale < 1.0 and short_name:
+    if self.options.scale < 1.0 and short_name:
       medium_name = short_name
     logging.debug('Scan code %s, Key %s pressed = %r', scan_code,
                                                        code, medium_name)
@@ -450,7 +447,7 @@ class KeyMon:
   def handle_mouse_button(self, code, value):
     """Handle the mouse button event."""
     if self.enabled['MOUSE']:
-      if self.emulate_middle and ((self.mouse_image.current == 'BTN_LEFT'
+      if self.options.emulate_middle and ((self.mouse_image.current == 'BTN_LEFT'
           and code == 'BTN_RIGHT') or
           (self.mouse_image.current == 'BTN_RIGHT' and code == 'BTN_LEFT')):
         code = 'BTN_MIDDLE'
@@ -553,10 +550,9 @@ class KeyMon:
         self.options.alt)
     if self.options.visible_click:
       self.mouse_indicator_win.fade_away()
-    print 'Self.options.theme = ', self.options.theme
     self.window.set_decorated(self.options.decorated)
     self.name_fnames = self.create_names_to_fnames()
-    self.pixbufs.reset_all(self.name_fnames, self.scale)
+    self.pixbufs.reset_all(self.name_fnames, self.options.scale)
     for but in self.buttons:
       but.reset_image()
 
@@ -675,9 +671,9 @@ def main():
         level=logging.DEBUG,
         format = '%(filename)s [%(lineno)d]: %(levelname)s %(message)s')
   if opts.smaller:
-    opts.scale = 0.75
+    opts.options.scale = 0.75
   elif opts.larger:
-    opts.scale = 1.25
+    opts.options.scale = 1.25
   if opts.list_themes:
     print _('Available themes:')
     theme_dir = os.path.join(os.path.dirname(__file__), 'themes')

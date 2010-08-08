@@ -36,9 +36,9 @@ class SettingsDialog(gtk.Dialog):
   }
 
   def __init__(self, view, options):
-    gtk.Dialog.__init__(self, title='Preferences', parent=view,
+    gtk.Dialog.__init__(self, title='Preferences', parent=None,
         flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT |
-        gtk.WIN_POS_CENTER,
+        gtk.WIN_POS_MOUSE,
         buttons=(gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE))
     self.options = options
     self.set_default_size(350, 350)
@@ -121,7 +121,7 @@ class CommonFrame(gtk.Frame):
       val = 1
     else:
       val = 0
-    self._update_option(option, val)
+    self._update_option(option, val, str(val))
 
   def _combo_changed(self, widget, option):
     """The combo box changed."""
