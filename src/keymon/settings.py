@@ -103,8 +103,12 @@ class CommonFrame(gtk.Frame):
     for opt in opt_lst:
       combo.append_text(str(opt))
     val = getattr(self.settings.options, option)
+    if isinstance(val, float):
+      str_val = '%0.3g' % val
+    else:
+      str_val = val
     try:
-      index = opt_lst.index(val)
+      index = opt_lst.index(str_val)
     except ValueError:
       index = 0
     combo.set_active(index)
@@ -153,6 +157,10 @@ class MiscFrame(CommonFrame):
        'emulate_middle')
     self._add_check(vbox, _('Highly visible click'), 'visible_click')
     self._add_check(vbox, _('Window decoration'), 'decorated')
+
+    sizes = ['0.5', '0.75', '0.8', '1.0', '1.25', '1.5', '1.75', '2.5', '3.0']
+    self._add_dropdown(vbox, _('Scale:'), sizes, 'scale')
+
     self.themes = []
     theme_dir = os.path.join(os.path.dirname(__file__), 'themes')
     self.themes = os.listdir(theme_dir)
