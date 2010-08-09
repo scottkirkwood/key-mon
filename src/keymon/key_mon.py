@@ -335,6 +335,9 @@ class KeyMon:
     accelgroup = gtk.AccelGroup()
     key, modifier = gtk.accelerator_parse('<Control>q')
     accelgroup.connect_group(key, modifier, gtk.ACCEL_VISIBLE, self.quit_program)
+
+    key, modifier = gtk.accelerator_parse('<Control>s')
+    accelgroup.connect_group(key, modifier, gtk.ACCEL_VISIBLE, self.show_settings_dlg)
     self.window.add_accel_group(accelgroup)
 
     if self.options.screenshot:
@@ -512,7 +515,7 @@ class KeyMon:
     toggle_chrome.show()
     menu.append(toggle_chrome)
 
-    settings_click = gtk.MenuItem(_('_Settings...'))
+    settings_click = gtk.MenuItem(_('_Settings...\tCtrl-S'))
     settings_click.connect_object('activate', self.show_settings_dlg, None)
     settings_click.show()
     menu.append(settings_click)
@@ -529,7 +532,7 @@ class KeyMon:
     self.window.set_decorated(not current)
     self.options.decorated = not self.options.decorated
 
-  def show_settings_dlg(self, unused_arg):
+  def show_settings_dlg(self, *unused_args):
     """Show the settings dialog."""
     dlg = settings.SettingsDialog(self.window, self.options)
     dlg.connect('settings-changed', self.settings_changed)
@@ -557,10 +560,11 @@ class KeyMon:
     for but in self.buttons:
       but.reset_image()
 
-    width, height = 30 * self.options.scale, 48 * self.options.scale
-    self.window.set_default_size(int(width), int(height))
+    # all this to get it to resize smaller
+    x, y = self.window.get_position()
     self.window.resize_children()
-    self.window.check_resize()
+    self.window.reshow_with_initial_size()
+    self.window.move(x, y)
 
   def _toggle_a_key(self, image, name, show):
     """Toggle show/hide a key."""
