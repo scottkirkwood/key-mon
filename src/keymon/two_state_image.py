@@ -47,6 +47,9 @@ class TwoStateImage(gtk.Image):
     """Image from pixbufs has changed, reset."""
     self._switch_to(self.normal)
 
+  def is_pressed(self):
+    return self.current != self.normal
+
   def switch_to(self, name):
     """Switch to image with this name."""
     if self.current != self.normal:
