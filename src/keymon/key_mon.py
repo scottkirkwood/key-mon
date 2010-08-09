@@ -99,7 +99,6 @@ class KeyMon:
     self.ctrl_image = None
     self.meta_image = None
     self.buttons = None
-    self.shifted = None
 
     self.enabled = {
         'MOUSE': self.options.mouse,
@@ -433,7 +432,13 @@ class KeyMon:
             fix_svg_key_closure(self.svg_name(template), [('&amp;', letter)])]
       self._handle_event(self.key_image, code, value)
       return
-    if code.startswith('KEY_') and (not self.options.only_combo or self.shifted):
+
+    if (self.alt_image.is_pressed() or self.shift_image.is_pressed() or 
+        self.ctrl_image.is_pressed() or self.meta_image.is_pressed()):
+      shifted = True
+    else:
+      shifted = False
+    if code.startswith('KEY_') and (not self.options.only_combo or shifted):
       letter = medium_name
       if code not in self.name_fnames:
         logging.debug('code not in %s', code)
