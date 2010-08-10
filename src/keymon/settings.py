@@ -81,7 +81,7 @@ class CommonFrame(gtk.Frame):
     """Do nothing."""
     pass
 
-  def _add_check(self, vbox, title, option):
+  def _add_check(self, vbox, title, tooltip, option):
     """Add a check button."""
     check_button = gtk.CheckButton(label=title)
     val = getattr(self.settings.options, option)
@@ -91,12 +91,14 @@ class CommonFrame(gtk.Frame):
     else:
       check_button.set_active(False)
     check_button.connect('toggled', self._toggled, option)
+    check_button.set_tooltip_text(tooltip)
     vbox.pack_start(check_button, False, False)
 
-  def _add_dropdown(self, vbox, title, opt_lst, option):
+  def _add_dropdown(self, vbox, title, tooltip, opt_lst, option):
     """Add a dropdown box."""
     hbox = gtk.HBox()
     label = gtk.Label(title)
+    label.set_tooltip_text(tooltip)
     hbox.pack_start(label, expand=False, fill=False)
 
     combo = gtk.combo_box_new_text()
@@ -113,6 +115,7 @@ class CommonFrame(gtk.Frame):
       index = 0
     combo.set_active(index)
 
+    combo.set_tooltip_text(tooltip)
     hbox.pack_start(combo, expand=False, fill=False, padding=10)
     logging.info('got option %s as %s', option, val)
     combo.connect('changed', self._combo_changed, option)
@@ -152,19 +155,43 @@ class MiscFrame(CommonFrame):
   def create_layout(self):
     """Create the box's layout."""
     vbox = gtk.VBox()
-    self._add_check(vbox, _('Swap left-right mouse buttons'), 'swap_buttons')
-    self._add_check(vbox, _('Left+right buttons emulates middle mouse button'),
+    self._add_check(
+        vbox, 
+        _('Swap left-right mouse buttons'),
+        _('Swap the left and the right mouse buttons'),
+        'swap_buttons')
+    self._add_check(
+        vbox,
+        _('Left+right buttons emulates middle mouse button'),
+        _('Clicking both mouse buttons emulates the middle mouse button.'),
        'emulate_middle')
-    self._add_check(vbox, _('Highly visible click'), 'visible_click')
-    self._add_check(vbox, _('Window decoration'), 'decorated')
+    self._add_check(
+        vbox,
+        _('Highly visible click'),
+        _('Show a circle when the users clicks.'),
+        'visible_click')
+    self._add_check(
+        vbox,
+        _('Window decoration'),
+        _('Show the normal windows borders'),
+        'decorated')
 
-    sizes = ['0.5', '0.75', '0.8', '1.0', '1.25', '1.5', '1.75', '2.5', '3.0']
-    self._add_dropdown(vbox, _('Scale:'), sizes, 'scale')
+    sizes = ['1.0', '0.5', '0.75', '0.8', '1.25', '1.5', '1.75', '2.5', '3.0']
+    self._add_dropdown(
+        vbox,
+        _('Scale:'),
+        _('How much larger or smaller than normal to make key-mon. '
+          'Where 1.0 is normal sized.'),
+        sizes, 'scale')
 
     self.themes = []
     theme_dir = os.path.join(os.path.dirname(__file__), 'themes')
     self.themes = os.listdir(theme_dir)
-    self._add_dropdown(vbox, _('Themes:'), self.themes, 'theme')
+    self._add_dropdown(
+        vbox,
+        _('Themes:'),
+        _('Which theme of buttons to show (ex. Apple)'),
+        self.themes, 'theme')
     self.add(vbox)
 
 class ButtonsFrame(CommonFrame):
@@ -177,12 +204,36 @@ class ButtonsFrame(CommonFrame):
     """Create the layout for buttons."""
     vbox = gtk.VBox()
 
-    self._add_check(vbox, _('_Mouse'), 'mouse')
-    self._add_check(vbox, _('_Shift'), 'shift')
-    self._add_check(vbox, _('_Ctrl'), 'ctrl')
-    self._add_check(vbox, _('Meta (_windows keys)'), 'meta')
-    self._add_check(vbox, _('_Alt'), 'alt')
-    self._add_dropdown(vbox, _('Old Keys:'), [0, 1, 2, 3, 4], 'old_keys')
+    self._add_check(
+        vbox,
+        _('_Mouse'),
+        _('Show the mouse.'),
+        'mouse')
+    self._add_check(
+        vbox,
+        _('_Shift'),
+        _('Show the shift key when pressed.'),
+        'shift')
+    self._add_check(
+        vbox,
+        _('_Ctrl'),
+        _('Show the Control key when pressed.'),
+        'ctrl')
+    self._add_check(
+        vbox,
+        _('Meta (_windows keys)'),
+        _('Show the Window\'s key (meta key) when pressed.'),
+        'meta')
+    self._add_check(
+        vbox,
+        _('_Alt'),
+        _('Show the Alt key when pressed.'),
+        'alt')
+    self._add_dropdown(
+        vbox,
+        _('Old Keys:'),
+        _('When typing fast show more than one key typed.'),
+        [0, 1, 2, 3, 4], 'old_keys')
     self.add(vbox)
 
 def _test_settings_changed(unused_widget):
