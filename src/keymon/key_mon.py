@@ -303,13 +303,13 @@ class KeyMon:
     prev_key_image = None
     for key_image in self.buttons[self.options.old_keys - 1:-2]:
       key_image.hide()
-      key_image.timeout_secs = 0.5
+      #key_image.timeout_secs = 0.5
       key_image.defer_to = prev_key_image
       self.hbox.pack_start(key_image, True, True, 0)
       prev_key_image = key_image
 
     # This must be after the loop above.
-    self.key_image.timeout_secs = 0.5
+    #self.key_image.timeout_secs = 0.5
 
     self.key_image.defer_to = prev_key_image
     self.hbox.pack_start(self.key_image, True, True, 0)
@@ -391,8 +391,17 @@ class KeyMon:
       logging.debug('Switch to %s, code %s' % (name, code))
       image.switch_to(name)
     else:
+      if not self.is_shift_code(name):
+        self.alt_image.reset_time_if_pressed()
+        self.shift_image.reset_time_if_pressed()
+        self.ctrl_image.reset_time_if_pressed()
+        self.meta_image.reset_time_if_pressed()
       image.switch_to_default()
 
+  def is_shift_code(self, code):
+    if code in ('SHIFT', 'ALT', 'CTRL', 'META'):
+      return True
+    return False
 
   def handle_key(self, scan_code, xlib_name, value):
     """Handle a keyboard event."""
@@ -433,12 +442,7 @@ class KeyMon:
       self._handle_event(self.key_image, code, value)
       return
 
-    if (self.alt_image.is_pressed() or self.shift_image.is_pressed() or 
-        self.ctrl_image.is_pressed() or self.meta_image.is_pressed()):
-      shifted = True
-    else:
-      shifted = False
-    if code.startswith('KEY_') and (not self.options.only_combo or shifted):
+    if code.startswith('KEY_'):
       letter = medium_name
       if code not in self.name_fnames:
         logging.debug('code not in %s', code)
