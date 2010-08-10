@@ -176,7 +176,7 @@ class MiscFrame(CommonFrame):
         _('Show the normal windows borders'),
         'decorated')
 
-    sizes = ['1.0', '0.5', '0.75', '0.8', '1.25', '1.5', '1.75', '2.5', '3.0']
+    sizes = ['1.0', '0.6', '0.8', '1.0', '1.2', '1.4', '1.6', '1.8']
     self._add_dropdown(
         vbox,
         _('Scale:'),
