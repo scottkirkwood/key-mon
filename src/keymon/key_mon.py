@@ -159,6 +159,10 @@ class KeyMon:
 
   def create_names_to_fnames(self):
     """Give a name to images."""
+    if self.options.scale < 1.0:
+      self.svg_size = '-small'
+    else:
+      self.svg_size = ''
     ftn = {
       'MOUSE': [self.svg_name('mouse'),],
       'BTN_MIDDLE': [self.svg_name('mouse'), self.svg_name('middle-mouse')],
@@ -571,8 +575,12 @@ class KeyMon:
 
     # all this to get it to resize smaller
     x, y = self.window.get_position()
+    self.hbox.resize_children()
     self.window.resize_children()
     self.window.reshow_with_initial_size()
+    self.hbox.resize_children()
+    self.event_box.resize_children()
+    self.window.resize_children()
     self.window.move(x, y)
 
   def _toggle_a_key(self, image, name, show):
