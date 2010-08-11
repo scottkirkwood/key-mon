@@ -1,6 +1,15 @@
 Release Notes
 =============
 
+August 10th, 2010 v 1.3
+-----------------------
+* Settings dialog supports changing the themes and scale.
+* Add option to show key only when pressed in combination of a modifier. Issue 27.
+* Issue 50 resolved, changing scale looks OK.
+* Updated README and install files.
+* Updated the Portuguese translations.
+* Added tooltips to the settings dialog.
+
 August 2nd, 2010 v 1.2.7
 ------------------------
 * Fixed some missing keys Issue 49.
