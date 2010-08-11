@@ -35,7 +35,7 @@ class SettingsDialog(gtk.Dialog):
           gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ())
   }
 
-  def __init__(self, view, options):
+  def __init__(self, unused_view, options):
     gtk.Dialog.__init__(self, title='Preferences', parent=None,
         flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT |
         gtk.WIN_POS_MOUSE,
@@ -95,7 +95,7 @@ class CommonFrame(gtk.Frame):
     vbox.pack_start(check_button, False, False)
 
   def _add_dropdown(self, vbox, title, tooltip, opt_lst, option):
-    """Add a dropdown box."""
+    """Add a drop down box."""
     hbox = gtk.HBox()
     label = gtk.Label(title)
     label.set_tooltip_text(tooltip)
@@ -175,6 +175,11 @@ class MiscFrame(CommonFrame):
         _('Window decoration'),
         _('Show the normal windows borders'),
         'decorated')
+    self._add_check(
+        vbox,
+        _('Only key combinations'),
+        _('Show a key only when used with a modifier key (like Control)'),
+        'only_combo')
 
     sizes = ['1.0', '0.6', '0.8', '1.0', '1.2', '1.4', '1.6', '1.8']
     self._add_dropdown(
