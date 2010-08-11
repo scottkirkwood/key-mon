@@ -388,18 +388,41 @@ class KeyMon:
           self.handle_mouse_button(event.code, event.value)
     elif event.type.startswith('EV_REL') and event.code == 'REL_WHEEL':
       self.handle_mouse_scroll(event.value, event.value)
+  def _show_down_key(self, name):
+    """Show the down key.
+    Normally True, unless combo is set.
+    Args:
+      name: name of the key being held down.
+    Returns:
+      True if the key should be shown
+    """
+    if not self.options.only_combo:
+      return True
+    if self.is_shift_code(name):
+      return True
+    if (self.alt_image.is_pressed() or self.shift_image.is_pressed()
+        or self.ctrl_image.is_pressed() or self.meta_image.is_pressed()):
+      return True
+    return False
 
   def _handle_event(self, image, name, code):
     """Handle an event given image and code."""
     if code == 1:
-      logging.debug('Switch to %s, code %s' % (name, code))
-      image.switch_to(name)
+      if self._show_down_key(name):
+        logging.debug('Switch to %s, code %s' % (name, code))
+        image.switch_to(name)
+      return
+
+    # on key up
+    if self.is_shift_code(name):
+      # shift up is always shown
+      image.switch_to_default()
+      return
     else:
-      if not self.is_shift_code(name):
-        self.alt_image.reset_time_if_pressed()
-        self.shift_image.reset_time_if_pressed()
-        self.ctrl_image.reset_time_if_pressed()
-        self.meta_image.reset_time_if_pressed()
+      self.alt_image.reset_time_if_pressed()
+      self.shift_image.reset_time_if_pressed()
+      self.ctrl_image.reset_time_if_pressed()
+      self.meta_image.reset_time_if_pressed()
       image.switch_to_default()
 
   def is_shift_code(self, code):
@@ -634,10 +657,10 @@ def create_options():
                   ini_group='ui', ini_name='decorated',
                   default=False,
                   help=_('Show decoration'))
-  opts.add_option(opt_long='--onlycombo', dest='only_combo', type='bool',
+  opts.add_option(opt_long='--only_combo', dest='only_combo', type='bool',
                   ini_group='ui', ini_name='only_combo',
                   default=False,
-                  help=_('Show only key combos (ex. Control-A'))
+                  help=_('Show only key combos (ex. Control-A)'))
   opts.add_option(opt_long='--visible_click', dest='visible_click', type='bool',
                   ini_group='ui', ini_name='visible-click',
                   default=False,

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-08-02 14:59+BRT\n"
+"POT-Creation-Date: 2010-08-10 22:37+BRT\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,123 +15,126 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: setup.py:64
+#: setup.py:65
 msgid "A screencast utility that displays your keyboard and mouse status"
 msgstr ""
 
-#: setup.py:65
+#: setup.py:66
 msgid ""
 "Key-mon is useful for teaching since it shows the current status of your\n"
 "  keyboard and mouse and you use them in another application.  No longer do you need to say\n"
-"  'Now I'm pressing the Ctrl-D key', your students can just see the keystroke for themselves.\n"
-"  "
+"  'Now I'm pressing the Ctrl-D key', your students can just see the keystroke for themselves."
 msgstr ""
 
-#: src/keymon/key_mon.py:501
+#: src/keymon/key_mon.py:547
 msgid "Window _Chrome"
 msgstr ""
 
-#: src/keymon/key_mon.py:508
-msgid "_Settings..."
+#: src/keymon/key_mon.py:554
+msgid "_Settings...\tCtrl-S"
 msgstr ""
 
-#: src/keymon/key_mon.py:513
+#: src/keymon/key_mon.py:559
 msgid "_Quit\tCtrl-Q"
 msgstr ""
 
-#: src/keymon/key_mon.py:564
+#: src/keymon/key_mon.py:624
 msgid "Keymon version %s."
 msgstr ""
 
-#: src/keymon/key_mon.py:565
+#: src/keymon/key_mon.py:625
 msgid "Written by %s"
 msgstr ""
 
-#: src/keymon/key_mon.py:572
+#: src/keymon/key_mon.py:632
 msgid "Make the dialog 25% smaller than normal."
 msgstr ""
 
-#: src/keymon/key_mon.py:575
+#: src/keymon/key_mon.py:635
 msgid "Make the dialog 25% larger than normal."
 msgstr ""
 
-#: src/keymon/key_mon.py:579
+#: src/keymon/key_mon.py:639
 msgid "Show the meta (windows) key."
 msgstr ""
 
-#: src/keymon/key_mon.py:582
+#: src/keymon/key_mon.py:642 src/keymon/settings.py:215
 msgid "Show the mouse."
 msgstr ""
 
-#: src/keymon/key_mon.py:585
+#: src/keymon/key_mon.py:645
 msgid "Show shift key."
 msgstr ""
 
-#: src/keymon/key_mon.py:588
+#: src/keymon/key_mon.py:648
 msgid "Show the ctrl key."
 msgstr ""
 
-#: src/keymon/key_mon.py:591
+#: src/keymon/key_mon.py:651
 msgid "Show the alt key."
 msgstr ""
 
-#: src/keymon/key_mon.py:594
+#: src/keymon/key_mon.py:654
 msgid "Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is half the size. Defaults to %default"
 msgstr ""
 
-#: src/keymon/key_mon.py:599
+#: src/keymon/key_mon.py:659
 msgid "Show decoration"
 msgstr ""
 
-#: src/keymon/key_mon.py:603
+#: src/keymon/key_mon.py:663
+msgid "Show only key combos (ex. Control-A)"
+msgstr ""
+
+#: src/keymon/key_mon.py:667
 msgid "Show where you clicked"
 msgstr ""
 
-#: src/keymon/key_mon.py:607
+#: src/keymon/key_mon.py:671
 msgid "Use this kbd filename instead running xmodmap."
 msgstr ""
 
-#: src/keymon/key_mon.py:611
+#: src/keymon/key_mon.py:675
 msgid "Swap the mouse buttons."
 msgstr ""
 
-#: src/keymon/key_mon.py:615
+#: src/keymon/key_mon.py:679
 msgid "When you press the left, and right mouse buttons at the same time, it displays as a middle mouse button click. "
 msgstr ""
 
-#: src/keymon/key_mon.py:618
+#: src/keymon/key_mon.py:682
 msgid "Show version information and exit."
 msgstr ""
 
-#: src/keymon/key_mon.py:621
+#: src/keymon/key_mon.py:685
 msgid "The theme to use when drawing status images (ex. \"-t apple\")."
 msgstr ""
 
-#: src/keymon/key_mon.py:623
+#: src/keymon/key_mon.py:687
 msgid "List available themes"
 msgstr ""
 
-#: src/keymon/key_mon.py:626
+#: src/keymon/key_mon.py:690
 msgid "How many historical keypresses to show (defaults to %default)"
 msgstr ""
 
-#: src/keymon/key_mon.py:639
+#: src/keymon/key_mon.py:703
 msgid "Developer Options"
 msgstr ""
 
-#: src/keymon/key_mon.py:639
+#: src/keymon/key_mon.py:703
 msgid "These options are for developers."
 msgstr ""
 
-#: src/keymon/key_mon.py:642
+#: src/keymon/key_mon.py:706
 msgid "Output debugging information."
 msgstr ""
 
-#: src/keymon/key_mon.py:644
+#: src/keymon/key_mon.py:708
 msgid "Create a \"screenshot.png\" and exit. Pass a comma separated list of keys to simulate(ex. \"KEY_A,KEY_LEFTCTRL\")."
 msgstr ""
 
-#: src/keymon/key_mon.py:668
+#: src/keymon/key_mon.py:732
 msgid "Available themes:"
 msgstr ""
 
@@ -139,51 +142,111 @@ msgstr ""
 msgid "Opposite of %s"
 msgstr ""
 
-#: src/keymon/settings.py:48
+#: src/keymon/settings.py:50
 msgid "Buttons"
 msgstr ""
 
-#: src/keymon/settings.py:51
+#: src/keymon/settings.py:53
 msgid "Misc"
 msgstr ""
 
-#: src/keymon/settings.py:139
+#: src/keymon/settings.py:160
 msgid "Swap left-right mouse buttons"
 msgstr ""
 
-#: src/keymon/settings.py:140
+#: src/keymon/settings.py:161
+msgid "Swap the left and the right mouse buttons"
+msgstr ""
+
+#: src/keymon/settings.py:165
 msgid "Left+right buttons emulates middle mouse button"
 msgstr ""
 
-#: src/keymon/settings.py:142
+#: src/keymon/settings.py:166
+msgid "Clicking both mouse buttons emulates the middle mouse button."
+msgstr ""
+
+#: src/keymon/settings.py:170
 msgid "Highly visible click"
 msgstr ""
 
-#: src/keymon/settings.py:143
+#: src/keymon/settings.py:171
+msgid "Show a circle when the users clicks."
+msgstr ""
+
+#: src/keymon/settings.py:175
 msgid "Window decoration"
 msgstr ""
 
-#: src/keymon/settings.py:156
+#: src/keymon/settings.py:176
+msgid "Show the normal windows borders"
+msgstr ""
+
+#: src/keymon/settings.py:180
+msgid "Only key combinations"
+msgstr ""
+
+#: src/keymon/settings.py:181
+msgid "Show a key only when used with a modifier key (like Control)"
+msgstr ""
+
+#: src/keymon/settings.py:187
+msgid "Scale:"
+msgstr ""
+
+#: src/keymon/settings.py:188
+msgid "How much larger or smaller than normal to make key-mon. Where 1.0 is normal sized."
+msgstr ""
+
+#: src/keymon/settings.py:197
+msgid "Themes:"
+msgstr ""
+
+#: src/keymon/settings.py:198
+msgid "Which theme of buttons to show (ex. Apple)"
+msgstr ""
+
+#: src/keymon/settings.py:214
 msgid "_Mouse"
 msgstr ""
 
-#: src/keymon/settings.py:157
+#: src/keymon/settings.py:219
 msgid "_Shift"
 msgstr ""
 
-#: src/keymon/settings.py:158
+#: src/keymon/settings.py:220
+msgid "Show the shift key when pressed."
+msgstr ""
+
+#: src/keymon/settings.py:224
 msgid "_Ctrl"
 msgstr ""
 
-#: src/keymon/settings.py:159
+#: src/keymon/settings.py:225
+msgid "Show the Control key when pressed."
+msgstr ""
+
+#: src/keymon/settings.py:229
 msgid "Meta (_windows keys)"
 msgstr ""
 
-#: src/keymon/settings.py:160
+#: src/keymon/settings.py:230
+msgid "Show the Window's key (meta key) when pressed."
+msgstr ""
+
+#: src/keymon/settings.py:234
 msgid "_Alt"
 msgstr ""
 
-#: src/keymon/settings.py:161
+#: src/keymon/settings.py:235
+msgid "Show the Alt key when pressed."
+msgstr ""
+
+#: src/keymon/settings.py:239
 msgid "Old Keys:"
+msgstr ""
+
+#: src/keymon/settings.py:240
+msgid "When typing fast show more than one key typed."
 msgstr ""
 

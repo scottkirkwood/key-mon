@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Key-Mon\n"
-"POT-Creation-Date: 2010-08-02 14:59+BRT\n"
+"POT-Creation-Date: 2010-08-10 22:37+BRT\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Scott Kirkwood <scott@forusers.com>\n"
 "Language-Team:  <scott@forusers.com>\n"
@@ -12,123 +12,144 @@ msgstr ""
 "X-Poedit-Country: BRAZIL\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: setup.py:64
+#: setup.py:65
 msgid "A screencast utility that displays your keyboard and mouse status"
 msgstr "Um ferramento que mostra as teclas e botões pressionados. "
 
-#: setup.py:65
+#: setup.py:66
+#, fuzzy
 msgid ""
 "Key-mon is useful for teaching since it shows the current status of your\n"
-"  keyboard and mouse and you use them in another application.  No longer do you need to say\n"
-"  'Now I'm pressing the Ctrl-D key', your students can just see the keystroke for themselves.\n"
-"  "
-msgstr "Key-mon é útil para ensinar uma curso no computador porque mostra o estado dos teclas e os botões do mouse.  Não preciso mais falar  'agora eu esto pressionando a tecla Ctrl-D', os alunos veja eles mesmos."
+"  keyboard and mouse and you use them in another application.  No longer do "
+"you need to say\n"
+"  'Now I'm pressing the Ctrl-D key', your students can just see the "
+"keystroke for themselves."
+msgstr ""
+"Key-mon é útil para ensinar uma curso no computador porque mostra o estado "
+"dos teclas e os botões do mouse.  Não preciso mais falar  'agora eu esto "
+"pressionando a tecla Ctrl-D', os alunos veja eles mesmos."
 
-#: src/keymon/key_mon.py:501
+#: src/keymon/key_mon.py:547
 msgid "Window _Chrome"
 msgstr "Borda da _Janela"
 
-#: src/keymon/key_mon.py:508
-msgid "_Settings..."
+#: src/keymon/key_mon.py:554
+#, fuzzy
+msgid "_Settings...\tCtrl-S"
 msgstr "_Configurações..."
 
-#: src/keymon/key_mon.py:513
+#: src/keymon/key_mon.py:559
 msgid "_Quit\tCtrl-Q"
 msgstr "_Sair\tCtrl-Q"
 
-#: src/keymon/key_mon.py:564
+#: src/keymon/key_mon.py:624
 msgid "Keymon version %s."
 msgstr "Keymon versão %s."
 
-#: src/keymon/key_mon.py:565
+#: src/keymon/key_mon.py:625
 msgid "Written by %s"
 msgstr "Escrito por %s"
 
-#: src/keymon/key_mon.py:572
+#: src/keymon/key_mon.py:632
 msgid "Make the dialog 25% smaller than normal."
 msgstr "Faça a janela 25% menor."
 
-#: src/keymon/key_mon.py:575
+#: src/keymon/key_mon.py:635
 msgid "Make the dialog 25% larger than normal."
 msgstr "Faça a janela 25% maior que normal."
 
-#: src/keymon/key_mon.py:579
+#: src/keymon/key_mon.py:639
 msgid "Show the meta (windows) key."
 msgstr "Mostra a tecla meta (Windows)."
 
-#: src/keymon/key_mon.py:582
+#: src/keymon/key_mon.py:642 src/keymon/settings.py:215
 msgid "Show the mouse."
 msgstr "Mostra o mouse."
 
-#: src/keymon/key_mon.py:585
+#: src/keymon/key_mon.py:645
 msgid "Show shift key."
 msgstr "Mostra a tecla Shift."
 
-#: src/keymon/key_mon.py:588
+#: src/keymon/key_mon.py:648
 msgid "Show the ctrl key."
 msgstr "Mostra a tecla ctrl."
 
-#: src/keymon/key_mon.py:591
+#: src/keymon/key_mon.py:651
 msgid "Show the alt key."
 msgstr "Mostra a tecla alt."
 
-#: src/keymon/key_mon.py:594
-msgid "Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is half the size. Defaults to %default"
-msgstr "Aumenta a janela, ex. 2.0 é dois vezes maior, 0.5 é metade do tamanho. "
+#: src/keymon/key_mon.py:654
+msgid ""
+"Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is half the size. Defaults "
+"to %default"
+msgstr ""
+"Aumenta a janela, ex. 2.0 é dois vezes maior, 0.5 é metade do tamanho. "
 
-#: src/keymon/key_mon.py:599
+#: src/keymon/key_mon.py:659
 msgid "Show decoration"
 msgstr "Mostra decoração da janela."
 
-#: src/keymon/key_mon.py:603
+#: src/keymon/key_mon.py:663
+msgid "Show only key combos (ex. Control-A)"
+msgstr ""
+
+#: src/keymon/key_mon.py:667
 msgid "Show where you clicked"
 msgstr "Mostra aonde você clicou."
 
-#: src/keymon/key_mon.py:607
+#: src/keymon/key_mon.py:671
 msgid "Use this kbd filename instead running xmodmap."
 msgstr "Utiliza esta arquivo kbd em lado de rodar xmodmap."
 
-#: src/keymon/key_mon.py:611
+#: src/keymon/key_mon.py:675
 msgid "Swap the mouse buttons."
 msgstr "Trocar os botões do mouse."
 
-#: src/keymon/key_mon.py:615
-msgid "When you press the left, and right mouse buttons at the same time, it displays as a middle mouse button click. "
-msgstr "Quando você aperta o botão esquerda e direita no mesmo tempo, mostra como o botão do meio."
+#: src/keymon/key_mon.py:679
+msgid ""
+"When you press the left, and right mouse buttons at the same time, it "
+"displays as a middle mouse button click. "
+msgstr ""
+"Quando você aperta o botão esquerda e direita no mesmo tempo, mostra como o "
+"botão do meio."
 
-#: src/keymon/key_mon.py:618
+#: src/keymon/key_mon.py:682
 msgid "Show version information and exit."
 msgstr "Mostra a versão da programa e sair."
 
-#: src/keymon/key_mon.py:621
+#: src/keymon/key_mon.py:685
 msgid "The theme to use when drawing status images (ex. \"-t apple\")."
 msgstr "A tema a utilizar (ex. \"-t apple\")."
 
-#: src/keymon/key_mon.py:623
+#: src/keymon/key_mon.py:687
 msgid "List available themes"
 msgstr "Mostra lista de temas"
 
-#: src/keymon/key_mon.py:626
+#: src/keymon/key_mon.py:690
 msgid "How many historical keypresses to show (defaults to %default)"
 msgstr "Quantos teclas antigas a mostras."
 
-#: src/keymon/key_mon.py:639
+#: src/keymon/key_mon.py:703
 msgid "Developer Options"
 msgstr "Opções para o desenvolvedor."
 
-#: src/keymon/key_mon.py:639
+#: src/keymon/key_mon.py:703
 msgid "These options are for developers."
 msgstr "Estes opções estão para desenvolvedores."
 
-#: src/keymon/key_mon.py:642
+#: src/keymon/key_mon.py:706
 msgid "Output debugging information."
 msgstr "Imprime resultados versão debug."
 
-#: src/keymon/key_mon.py:644
-msgid "Create a \"screenshot.png\" and exit. Pass a comma separated list of keys to simulate(ex. \"KEY_A,KEY_LEFTCTRL\")."
-msgstr "Escreve o arquivo \"screenshot.png\" e sair.  Coloque uma lista separada com virgulas para simular teclas tocado (ex. \"KEY_A,KEY_LEFTCTRL\")."
+#: src/keymon/key_mon.py:708
+msgid ""
+"Create a \"screenshot.png\" and exit. Pass a comma separated list of keys to "
+"simulate(ex. \"KEY_A,KEY_LEFTCTRL\")."
+msgstr ""
+"Escreve o arquivo \"screenshot.png\" e sair.  Coloque uma lista separada com "
+"virgulas para simular teclas tocado (ex. \"KEY_A,KEY_LEFTCTRL\")."
 
-#: src/keymon/key_mon.py:668
+#: src/keymon/key_mon.py:732
 msgid "Available themes:"
 msgstr "Temas disponíveis:"
 
@@ -136,68 +157,142 @@ msgstr "Temas disponíveis:"
 msgid "Opposite of %s"
 msgstr "Oposto de %s"
 
-#: src/keymon/settings.py:48
+#: src/keymon/settings.py:50
 msgid "Buttons"
 msgstr "Botões"
 
-#: src/keymon/settings.py:51
+#: src/keymon/settings.py:53
 msgid "Misc"
 msgstr "Misc"
 
-#: src/keymon/settings.py:139
+#: src/keymon/settings.py:160
 msgid "Swap left-right mouse buttons"
 msgstr "Troca as botões do mouse esquerda e direita"
 
-#: src/keymon/settings.py:140
+#: src/keymon/settings.py:161
+#, fuzzy
+msgid "Swap the left and the right mouse buttons"
+msgstr "Troca as botões do mouse esquerda e direita"
+
+#: src/keymon/settings.py:165
 msgid "Left+right buttons emulates middle mouse button"
 msgstr "Apertar os botões esquerda+direita simula o botão do meio"
 
-#: src/keymon/settings.py:142
+#: src/keymon/settings.py:166
+#, fuzzy
+msgid "Clicking both mouse buttons emulates the middle mouse button."
+msgstr "Apertar os botões esquerda+direita simula o botão do meio"
+
+#: src/keymon/settings.py:170
 msgid "Highly visible click"
 msgstr "Clique altamente visível."
 
-#: src/keymon/settings.py:143
+#: src/keymon/settings.py:171
+msgid "Show a circle when the users clicks."
+msgstr ""
+
+#: src/keymon/settings.py:175
 msgid "Window decoration"
 msgstr "Borda da janela"
 
-#: src/keymon/settings.py:156
+#: src/keymon/settings.py:176
+#, fuzzy
+msgid "Show the normal windows borders"
+msgstr "Mostra a tecla meta (Windows)."
+
+#: src/keymon/settings.py:180
+msgid "Only key combinations"
+msgstr ""
+
+#: src/keymon/settings.py:181
+msgid "Show a key only when used with a modifier key (like Control)"
+msgstr ""
+
+#: src/keymon/settings.py:187
+msgid "Scale:"
+msgstr ""
+
+#: src/keymon/settings.py:188
+msgid ""
+"How much larger or smaller than normal to make key-mon. Where 1.0 is normal "
+"sized."
+msgstr ""
+
+#: src/keymon/settings.py:197
+msgid "Themes:"
+msgstr ""
+
+#: src/keymon/settings.py:198
+msgid "Which theme of buttons to show (ex. Apple)"
+msgstr ""
+
+#: src/keymon/settings.py:214
 msgid "_Mouse"
 msgstr "_Mouse"
 
-#: src/keymon/settings.py:157
+#: src/keymon/settings.py:219
 msgid "_Shift"
 msgstr "_Shift"
 
-#: src/keymon/settings.py:158
+#: src/keymon/settings.py:220
+#, fuzzy
+msgid "Show the shift key when pressed."
+msgstr "Mostra a tecla Shift."
+
+#: src/keymon/settings.py:224
 msgid "_Ctrl"
 msgstr "_Ctrl"
 
-#: src/keymon/settings.py:159
+#: src/keymon/settings.py:225
+#, fuzzy
+msgid "Show the Control key when pressed."
+msgstr "Mostra a tecla ctrl."
+
+#: src/keymon/settings.py:229
 msgid "Meta (_windows keys)"
 msgstr "Meta (tecla _windows)"
 
-#: src/keymon/settings.py:160
+#: src/keymon/settings.py:230
+msgid "Show the Window's key (meta key) when pressed."
+msgstr ""
+
+#: src/keymon/settings.py:234
 msgid "_Alt"
 msgstr "_Alt"
 
-#: src/keymon/settings.py:161
+#: src/keymon/settings.py:235
+#, fuzzy
+msgid "Show the Alt key when pressed."
+msgstr "Mostra a tecla alt."
+
+#: src/keymon/settings.py:239
 msgid "Old Keys:"
 msgstr "Teclas antigos:"
 
+#: src/keymon/settings.py:240
+msgid "When typing fast show more than one key typed."
+msgstr ""
+
 #~ msgid "Don't show the meta (windows) key."
 #~ msgstr "Não mostra a tecla meta (Windows)."
+
 #~ msgid "Hide the mouse."
 #~ msgstr "Tira o mouse."
+
 #~ msgid "Don't show the shift key."
 #~ msgstr "Não mostra a tecla shift."
+
 #~ msgid "Hide the ctrl key."
 #~ msgstr "Esconde a tecla ctrl."
+
 #~ msgid "Hide the alt key."
 #~ msgstr "Esconde a tecla alt."
+
 #~ msgid "No decoration"
 #~ msgstr "Não mostra decoração."
+
 #~ msgid "Turn off the visible button clicks."
 #~ msgstr "Tira cliques do botão."
+
 #~ msgid "Keyboard Status Monitor"
 #~ msgstr "Monitor de Status do Teclado"
-
