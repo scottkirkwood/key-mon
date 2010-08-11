@@ -64,8 +64,8 @@ SETUP = dict(
   download_url='http://%s.googlecode.com/files/%s-%s.zip' % (NAME, NAME, VER),
   description=_('A screencast utility that displays your keyboard and mouse status'),
   long_description=_("""Key-mon is useful for teaching since it shows the current status of your
-  keyboard and mouse and you use them in another application.  No longer do you need to say
-  'Now I'm pressing the Ctrl-D key', your students can just see the keystroke for themselves."""),
+keyboard and mouse and you use them in another application.  No longer do you need to say
+'Now I'm pressing the Ctrl-D key', your students can just see the keystroke for themselves."""),
   classifiers=[
       'Development Status :: 5 - Production/Stable',
       'Environment :: X11 Applications',

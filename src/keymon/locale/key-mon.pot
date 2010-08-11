@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-08-10 22:37+BRT\n"
+"POT-Creation-Date: 2010-08-10 23:01+BRT\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,8 +22,8 @@ msgstr ""
 #: setup.py:66
 msgid ""
 "Key-mon is useful for teaching since it shows the current status of your\n"
-"  keyboard and mouse and you use them in another application.  No longer do you need to say\n"
-"  'Now I'm pressing the Ctrl-D key', your students can just see the keystroke for themselves."
+"keyboard and mouse and you use them in another application.  No longer do you need to say\n"
+"'Now I'm pressing the Ctrl-D key', your students can just see the keystroke for themselves."
 msgstr ""
 
 #: src/keymon/key_mon.py:547
