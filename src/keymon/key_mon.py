@@ -689,6 +689,9 @@ def create_options():
                   ini_group='buttons', ini_name='old-keys',
                   help=_('How many historical keypresses to show (defaults to %default)'),
                   default=0)
+  opts.add_option(opt_long='--reset', dest='reset', type='bool',
+                  help=_('Reset all options to their defaults.'),
+                  default=None)
 
   opts.add_option(opt_short=None, opt_long=None, type='float',
                   dest='opacity', default=1.0, help='Opacity of window',
@@ -725,9 +728,9 @@ def main():
         level=logging.DEBUG,
         format = '%(filename)s [%(lineno)d]: %(levelname)s %(message)s')
   if opts.smaller:
-    opts.options.scale = 0.75
+    opts.scale = 0.75
   elif opts.larger:
-    opts.options.scale = 1.25
+    opts.scale = 1.25
   if opts.list_themes:
     print _('Available themes:')
     theme_dir = os.path.join(os.path.dirname(__file__), 'themes')
@@ -741,6 +744,10 @@ def main():
         pass
     raise SystemExit()
 
+  if opts.reset:
+    print _('Resetting to defaults.')
+    opts.reset_to_defaults()
+    #opts.save()
   keymon = KeyMon(opts)
   try:
     gtk.main()
