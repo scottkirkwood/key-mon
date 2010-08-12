@@ -123,6 +123,10 @@ class OptionItem(object):
       if getattr(opts, self._dest) != self._default:
         self._set_value(getattr(opts, self._dest))
 
+  def reset_to_default(self):
+    """Reset to the default value."""
+    self._set_value(self._default)
+
   @property
   def value(self):
     """Return the value."""
@@ -339,6 +343,12 @@ class Options(object):
     self.write_ini(fo)
     fo.close()
 
+  def reset_to_defaults(self):
+    """Reset ini file to defaults."""
+    for opt in self._options.values():
+      if not opt.ini_group:
+        continue
+      opt.reset_to_default()
 
 if __name__ == '__main__':
   o = Options()
