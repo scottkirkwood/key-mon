@@ -20,7 +20,7 @@ Shows their status graphically.
 """
 
 __author__ = 'Scott Kirkwood (scott+keymon@forusers.com)'
-__version__ = '1.3'
+__version__ = '1.3.1'
 
 import logging
 import pygtk
@@ -747,7 +747,7 @@ def main():
   if opts.reset:
     print _('Resetting to defaults.')
     opts.reset_to_defaults()
-    #opts.save()
+    opts.save()
   keymon = KeyMon(opts)
   try:
     gtk.main()

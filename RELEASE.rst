@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+August 12th, 2010 v 1.3.1
+-------------------------
+* Fixed issue 51, -l and -s command lines not working.
+* Added --reset command line option to force everything back to defaults.
+
 August 10th, 2010 v 1.3
 -----------------------
 * Settings dialog supports changing the themes and scale.

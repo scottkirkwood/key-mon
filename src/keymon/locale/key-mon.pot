@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-08-10 23:01+BRT\n"
+"POT-Creation-Date: 2010-08-12 14:32+BRT\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -118,24 +118,32 @@ msgstr ""
 msgid "How many historical keypresses to show (defaults to %default)"
 msgstr ""
 
-#: src/keymon/key_mon.py:703
-msgid "Developer Options"
-msgstr ""
-
-#: src/keymon/key_mon.py:703
-msgid "These options are for developers."
+#: src/keymon/key_mon.py:693
+msgid "Reset all options to their defaults."
 msgstr ""
 
 #: src/keymon/key_mon.py:706
+msgid "Developer Options"
+msgstr ""
+
+#: src/keymon/key_mon.py:706
+msgid "These options are for developers."
+msgstr ""
+
+#: src/keymon/key_mon.py:709
 msgid "Output debugging information."
 msgstr ""
 
-#: src/keymon/key_mon.py:708
+#: src/keymon/key_mon.py:711
 msgid "Create a \"screenshot.png\" and exit. Pass a comma separated list of keys to simulate(ex. \"KEY_A,KEY_LEFTCTRL\")."
 msgstr ""
 
-#: src/keymon/key_mon.py:732
+#: src/keymon/key_mon.py:735
 msgid "Available themes:"
+msgstr ""
+
+#: src/keymon/key_mon.py:748
+msgid "Resetting to defaults."
 msgstr ""
 
 #: src/keymon/options.py:113
