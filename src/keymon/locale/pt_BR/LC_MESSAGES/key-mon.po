@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Key-Mon\n"
-"POT-Creation-Date: 2010-08-10 23:01+BRT\n"
+"POT-Creation-Date: 2010-09-19 16:33+BRT\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Scott Kirkwood <scott@forusers.com>\n"
 "Language-Team:  <scott@forusers.com>\n"
@@ -19,9 +19,14 @@ msgstr "Um ferramento que mostra as teclas e botões pressionados. "
 #: setup.py:66
 msgid ""
 "Key-mon is useful for teaching since it shows the current status of your\n"
-"keyboard and mouse and you use them in another application.  No longer do you need to say\n"
-"'Now I'm pressing the Ctrl-D key', your students can just see the keystroke for themselves."
-msgstr "Key-mon é útil para ensinar uma curso no computador porque mostra o estado dos teclas e os botões do mouse.  Não preciso mais falar  'agora eu esto pressionando a tecla Ctrl-D', os alunos veja eles mesmos."
+"keyboard and mouse and you use them in another application.  No longer do "
+"you need to say\n"
+"'Now I'm pressing the Ctrl-D key', your students can just see the keystroke "
+"for themselves."
+msgstr ""
+"Key-mon é útil para ensinar uma curso no computador porque mostra o estado "
+"dos teclas e os botões do mouse.  Não preciso mais falar  'agora eu esto "
+"pressionando a tecla Ctrl-D', os alunos veja eles mesmos."
 
 #: src/keymon/key_mon.py:547
 msgid "Window _Chrome"
@@ -55,8 +60,7 @@ msgstr "Faça a janela 25% maior que normal."
 msgid "Show the meta (windows) key."
 msgstr "Mostra a tecla meta (Windows)."
 
-#: src/keymon/key_mon.py:642
-#: src/keymon/settings.py:215
+#: src/keymon/key_mon.py:642 src/keymon/settings.py:215
 msgid "Show the mouse."
 msgstr "Mostra o mouse."
 
@@ -73,8 +77,11 @@ msgid "Show the alt key."
 msgstr "Mostra a tecla alt."
 
 #: src/keymon/key_mon.py:654
-msgid "Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is half the size. Defaults to %default"
-msgstr "Aumenta a janela, ex. 2.0 é dois vezes maior, 0.5 é metade do tamanho. "
+msgid ""
+"Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is half the size. Defaults "
+"to %default"
+msgstr ""
+"Aumenta a janela, ex. 2.0 é dois vezes maior, 0.5 é metade do tamanho. "
 
 #: src/keymon/key_mon.py:659
 msgid "Show decoration"
@@ -97,8 +104,12 @@ msgid "Swap the mouse buttons."
 msgstr "Trocar os botões do mouse."
 
 #: src/keymon/key_mon.py:679
-msgid "When you press the left, and right mouse buttons at the same time, it displays as a middle mouse button click. "
-msgstr "Quando você aperta o botão esquerda e direita no mesmo tempo, mostra como o botão do meio."
+msgid ""
+"When you press the left, and right mouse buttons at the same time, it "
+"displays as a middle mouse button click. "
+msgstr ""
+"Quando você aperta o botão esquerda e direita no mesmo tempo, mostra como o "
+"botão do meio."
 
 #: src/keymon/key_mon.py:682
 msgid "Show version information and exit."
@@ -129,8 +140,12 @@ msgid "Output debugging information."
 msgstr "Imprime resultados versão debug."
 
 #: src/keymon/key_mon.py:708
-msgid "Create a \"screenshot.png\" and exit. Pass a comma separated list of keys to simulate(ex. \"KEY_A,KEY_LEFTCTRL\")."
-msgstr "Escreve o arquivo \"screenshot.png\" e sair.  Coloque uma lista separada com virgulas para simular teclas tocado (ex. \"KEY_A,KEY_LEFTCTRL\")."
+msgid ""
+"Create a \"screenshot.png\" and exit. Pass a comma separated list of keys to "
+"simulate(ex. \"KEY_A,KEY_LEFTCTRL\")."
+msgstr ""
+"Escreve o arquivo \"screenshot.png\" e sair.  Coloque uma lista separada com "
+"virgulas para simular teclas tocado (ex. \"KEY_A,KEY_LEFTCTRL\")."
 
 #: src/keymon/key_mon.py:732
 msgid "Available themes:"
@@ -193,7 +208,9 @@ msgid "Scale:"
 msgstr "Escala:"
 
 #: src/keymon/settings.py:188
-msgid "How much larger or smaller than normal to make key-mon. Where 1.0 is normal sized."
+msgid ""
+"How much larger or smaller than normal to make key-mon. Where 1.0 is normal "
+"sized."
 msgstr "Magnitude de tamanho para mostrar key-mon. 1.0 é o tamanho normal."
 
 #: src/keymon/settings.py:197
@@ -250,18 +267,24 @@ msgstr "Quando teclando rápido, mostra mais que uma tecla."
 
 #~ msgid "Don't show the meta (windows) key."
 #~ msgstr "Não mostra a tecla meta (Windows)."
+
 #~ msgid "Hide the mouse."
 #~ msgstr "Tira o mouse."
+
 #~ msgid "Don't show the shift key."
 #~ msgstr "Não mostra a tecla shift."
+
 #~ msgid "Hide the ctrl key."
 #~ msgstr "Esconde a tecla ctrl."
+
 #~ msgid "Hide the alt key."
 #~ msgstr "Esconde a tecla alt."
+
 #~ msgid "No decoration"
 #~ msgstr "Não mostra decoração."
+
 #~ msgid "Turn off the visible button clicks."
 #~ msgstr "Tira cliques do botão."
+
 #~ msgid "Keyboard Status Monitor"
 #~ msgstr "Monitor de Status do Teclado"
-
