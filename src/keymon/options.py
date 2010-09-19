@@ -123,14 +123,9 @@ class OptionItem(object):
       if getattr(opts, self._dest) != self._default:
         self._set_value(getattr(opts, self._dest))
 
-  @property
-  def value(self):
+  def get_value(self):
     """Return the value."""
     return self._value
-
-  @value.setter
-  def value(self, val):
-    self._set_value(val)
 
   def _set_value(self, val):
     old_val = self._value
@@ -153,6 +148,8 @@ class OptionItem(object):
     else:
       self._value = val
     self._dirty = old_val != self._value
+
+  value = property(get_value, _set_value, doc="Value")
 
   @property
   def dest(self):

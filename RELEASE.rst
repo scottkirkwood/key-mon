@@ -1,5 +1,9 @@
 Release Notes
 =============
+September 18th, 2010 v 1.4
+--------------------------
+* Removed a Python 2.6 only feature so that it remains compatible
+  with Python 2.5
 
 August 10th, 2010 v 1.3
 -----------------------

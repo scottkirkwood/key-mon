@@ -1,3 +1,10 @@
+key-mon (1.4-1) unstable; urgency=low
+
+  * Removed a Python 2.6 only feature so that it remains compatible
+    with Python 2.5
+
+ -- Scott Kirkwood <scott@forusers.com>  Sun, 19 Sep 2010 16:25:19 +0300
+
 key-mon (1.3-1) unstable; urgency=low
 
   * Settings dialog supports changing the themes and scale.

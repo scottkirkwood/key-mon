@@ -11,6 +11,9 @@ mixImport = 0
 # all unused class data members
 membersUsed = 0
 
+# max args
+maxArgs = 11
+
 # ignore warnings from the list of modules
 blacklist = ['ConfigParser', 'ssl', 'threading', 'optparse', 'wx', 'Tkinter', 'wxPython', 'gtk', 'GTK', 'GDK']
 
