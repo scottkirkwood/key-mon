@@ -1,0 +1,10 @@
+recursive-include docs *.rst
+recursive-include src *.py *.svg *.kbd *.mo
+include COPYING*
+include INSTALL*
+include README*
+include CHANGELOG*
+include src/key-mon
+include man/*.1
+include icons/*.desktop
+include icons/*.xpm

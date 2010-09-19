@@ -1,0 +1,11 @@
+Thanks for downloding key-mon
+-----------------------------
+
+To install it, make sure you have Python 2.4 or greater installed. Then run
+this from the command prompt:
+
+  python setup.py install
+
+In addition you will need:
+
+  python-xlib, python-gtk2

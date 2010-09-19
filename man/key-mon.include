@@ -1,0 +1,28 @@
+[NAME]
+Keymon \- Keyboard and mouse monitor window for GTK.
+
+[SYNOPSIS]
+.B key-mon [options]
+
+[DESCRIPTON]
+.B Keymon
+is a program to help in teaching or podcasting by showing the current status of the
+mouse buttons and keyboard.
+.PP
+.B Keymon
+creates a small, borderless window which always stays topmost and monitors the keystrokes
+and mouse buttons used at any time in any program.
+
+Configuration files are saved in ~/.config/key-mon/.
+
+[SEE ALSO]
+Full documentation for
+.B keymon
+is available at
+.IP
+.B http://code.google.com/p/key-mon
+.PP
+Send bugs to
+.IP
+.B http://code.google.com/p/key-mon/issues/list
+.PP

@@ -1,0 +1,57 @@
+key-mon (1.4-1) unstable; urgency=low
+
+  * Removed a Python 2.6 only feature so that it remains compatible
+    with Python 2.5
+
+ -- Scott Kirkwood <scott@forusers.com>  Sun, 19 Sep 2010 16:25:19 +0300
+
+key-mon (1.3-1) unstable; urgency=low
+
+  * Settings dialog supports changing the themes and scale.
+  * Add option to show key only when pressed in combination of a modifier. Issue 27.
+  * Issue 50 resolved, changing scale looks OK.
+  * Updated README and install files.
+  * Updated the Portuguese translations.
+  * Added tooltips to the settings dialog.
+
+ -- Scott Kirkwood <scott@forusers.com>  Tue, 10 Aug 2010 23:13:00 +0300
+
+key-mon (1.2.7-1) unstable; urgency=low
+
+  * Fixed some missing keys Issue 49.
+  * Complete refactoring how options are handled.
+
+ -- Scott Kirkwood <scott@forusers.com>  Mon, 02 Aug 2010 19:20:35 +0300
+
+key-mon (1.2.6-1) unstable; urgency=low
+
+  * Renamed build_all.py to build.py.
+  * Completed Portuguese translations.
+
+ -- Scott Kirkwood <scott@forusers.com>  Sun, 18 Jul 2010 23:15:23 +0300
+
+key-mon (1.2.5-1) unstable; urgency=low
+
+  * Added some support for internationalization.
+
+ -- Scott Kirkwood <scott@forusers.com>  Thu, 15 Jul 2010 23:13:09 +0300
+
+keymon (1.2.4-1) unstable; urgency=low
+
+  * Added missing librsvg2-common to Debian package.
+
+ -- Scott Kirkwood <scott@forusers.com>  Wed, 07 Jul 2010 22:09:00 -0300
+
+keymon (1.2.3-1) unstable; urgency=low
+
+  * Changed the style to be more PEP 8 compatible.
+  * Fixed a few small bugs.
+  * Using new version of pybdist.
+
+ -- Scott Kirkwood <scott@forusers.com>  Sun, 04 Jul 2010 22:24:00 -0300
+
+keymon (1.2.2-1) unstable; urgency=low
+
+  * Initial release.
+
+ -- Scott Kirkwood <scott@forusers.com>  Fri, 02 Jul 2010 21:55:19 -0300
