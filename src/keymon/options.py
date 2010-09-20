@@ -93,9 +93,8 @@ class OptionItem(object):
       args.append(self._opt_short)
     if self._opt_long:
       args.append(self._opt_long)
-    parser.add_option(*args,
-       dest=self._dest, type=self._type, default=self._default,
-       help=self._help)
+    parser.add_option(dest=self._dest, type=self._type, default=self._default,
+       help=self._help, *args)
 
   def _add_bool_to_parser(self, parser):
     """Booleans need special handling."""
@@ -267,12 +266,13 @@ class Options(object):
         opt_group=self._opt_group, opt_short=opt_short, opt_long=opt_long,
         ini_group=ini_group, ini_name=ini_name)
 
-  def parse_args(self, args=None):
+  def parse_args(self, desc, args=None):
     """Add the options to the optparse instance and parse command line
     Args:
+      desc: Description to use for the program.
       args: Args for testing or sys.args[1:] otherwise
     """
-    parser = optparse.OptionParser()
+    parser = optparse.OptionParser(desc)
     for dest in self._options_order:
       opt = self._options[dest]
       opt.add_to_parser(parser)
@@ -399,7 +399,7 @@ if __name__ == '__main__':
   import StringIO
   io = StringIO.StringIO('\n'.join(lines))
   o.parse_ini(io)
-  o.parse_args()
+  o.parse_args('%prog [options]')
   io = StringIO.StringIO()
   o.write_ini(io)
   print io.getvalue()
