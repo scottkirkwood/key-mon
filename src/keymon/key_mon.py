@@ -718,7 +718,8 @@ def main():
   """Run the program."""
   opts = create_options()
   opts.read_ini_file('~/.config/key-mon/config')
-  opts.parse_args()
+  desc = _('Usage: key-mon [Options...]')
+  opts.parse_args(desc)
 
   if opts.version:
     show_version()
