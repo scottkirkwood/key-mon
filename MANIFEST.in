@@ -1,5 +1,5 @@
 recursive-include docs *.rst
-recursive-include src *.py *.svg *.kbd *.mo
+recursive-include src *.py *.svg *.kbd *.mo config
 include COPYING*
 include INSTALL*
 include README*

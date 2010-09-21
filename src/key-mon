@@ -1,2 +1,3 @@
-#!/bin/bash
-python -c 'import keymon.key_mon as km;km.main()' $* | grep -v Xlib.protocol
+#!/usr/bin/python
+import keymon.key_mon as km
+km.main()

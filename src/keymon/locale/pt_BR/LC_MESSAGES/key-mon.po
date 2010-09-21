@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Key-Mon\n"
-"POT-Creation-Date: 2010-08-12 14:32+BRT\n"
+"POT-Creation-Date: 2010-09-20 23:10+BRT\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Scott Kirkwood <scott@forusers.com>\n"
 "Language-Team:  <scott@forusers.com>\n"
@@ -136,15 +136,23 @@ msgstr "Imprime resultados versão debug."
 msgid "Create a \"screenshot.png\" and exit. Pass a comma separated list of keys to simulate(ex. \"KEY_A,KEY_LEFTCTRL\")."
 msgstr "Escreve o arquivo \"screenshot.png\" e sair.  Coloque uma lista separada com virgulas para simular teclas tocado (ex. \"KEY_A,KEY_LEFTCTRL\")."
 
-#: src/keymon/key_mon.py:735
+#: src/keymon/key_mon.py:721
+msgid "Usage: %prog [Options...]"
+msgstr "Usage: %prog [opções...]"
+
+#: src/keymon/key_mon.py:738
 msgid "Available themes:"
 msgstr "Temas disponíveis:"
 
-#: src/keymon/key_mon.py:748
+#: src/keymon/key_mon.py:757
+msgid "Theme %r does not exist"
+msgstr "Tema %r não existe."
+
+#: src/keymon/key_mon.py:760
 msgid "Resetting to defaults."
 msgstr "Colocando tudo para os padrões."
 
-#: src/keymon/options.py:113
+#: src/keymon/options.py:112
 msgid "Opposite of %s"
 msgstr "Oposto de %s"
 

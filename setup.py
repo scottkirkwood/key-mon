@@ -21,7 +21,7 @@ import gettext
 NAME = 'key-mon'
 DIR = 'src/keymon'
 gettext.install(NAME, DIR + '/locale')
-VER = '1.3.1'
+VER = '1.4.1'
 PY_NAME = 'key_mon'
 DEB_NAME = NAME.replace('-', '')
 RELEASE_FILE = 'RELEASE.rst'
@@ -51,7 +51,7 @@ SETUP = dict(
       'keymon': 'src/keymon'},
   package_data = {
       'keymon': [
-          'themes/apple/*', 'themes/classic/*', '*.kbd',
+          'themes/**/*', '*.kbd',
           'icons/key-mon.desktop', 'locale/**/*/*.mo'],
   },
   scripts=['src/key-mon'],
