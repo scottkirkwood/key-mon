@@ -1,14 +1,20 @@
 Release Notes
 =============
+
+September 20th, 2010 v 1.4.1
+----------------------------
+* Fixed issue 51, -l and -s command lines not working.
+* Fixed issue 52, fix python 2.5 compatibility.
+* Fixed issue 54, cannot list themes with --list-themes.
+* Fixed issue 55, not all themes installed.
+* Fixed issue 56, --theme=bob is not very tolerant.
+* Fixed issue 58, annoying error message caused by opt-parse.
+* Added --reset command line option to force everything back to defaults.
+
 September 18th, 2010 v 1.4
---------------------------
+----------------------------
 * Removed a Python 2.6 only feature so that it remains compatible
   with Python 2.5
-
-August 12th, 2010 v 1.3.1
--------------------------
-* Fixed issue 51, -l and -s command lines not working.
-* Added --reset command line option to force everything back to defaults.
 
 August 10th, 2010 v 1.3
 -----------------------

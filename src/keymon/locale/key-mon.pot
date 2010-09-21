@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-08-12 14:32+BRT\n"
+"POT-Creation-Date: 2010-09-20 23:10+BRT\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -138,15 +138,23 @@ msgstr ""
 msgid "Create a \"screenshot.png\" and exit. Pass a comma separated list of keys to simulate(ex. \"KEY_A,KEY_LEFTCTRL\")."
 msgstr ""
 
-#: src/keymon/key_mon.py:735
+#: src/keymon/key_mon.py:721
+msgid "Usage: %prog [Options...]"
+msgstr ""
+
+#: src/keymon/key_mon.py:738
 msgid "Available themes:"
 msgstr ""
 
-#: src/keymon/key_mon.py:748
+#: src/keymon/key_mon.py:757
+msgid "Theme %r does not exist"
+msgstr ""
+
+#: src/keymon/key_mon.py:760
 msgid "Resetting to defaults."
 msgstr ""
 
-#: src/keymon/options.py:113
+#: src/keymon/options.py:112
 msgid "Opposite of %s"
 msgstr ""
 

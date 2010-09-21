@@ -4,10 +4,9 @@ Key-mon
 
 Um ferramento que mostra as teclas e botões pressionados.
 
-Key-mon is useful for teaching since it shows the current status of your
-keyboard and mouse and you use them in another application.  No longer do you
-need to say 'Now I'm pressing the Ctrl-D key', your students can just see the
-keystroke for themselves.
+Key-mon é útil para ensinar uma curso no computador porque mostra o estado dos
+teclas e os botões do mouse.  Não preciso mais falar  'agora eu esto
+pressionando a tecla Ctrl-D', os alunos veja eles mesmos.
 
 Home Page
 ---------
