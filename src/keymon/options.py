@@ -104,8 +104,8 @@ class OptionItem(object):
       args.append(self._opt_short)
     if self._opt_long:
       args.append(self._opt_long)
-    parser.add_option(*args, action='store_true', default=self._default,
-      dest=self._dest, help=self._help)
+    parser.add_option(action='store_true', default=self._default,
+      dest=self._dest, help=self._help, *args)
 
     if self._ini_group:
       # Only need the --no version if it could be saved to ini file.
