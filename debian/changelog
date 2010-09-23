@@ -1,3 +1,12 @@
+key-mon (1.4.2-1) unstable; urgency=low
+
+  * Fixed issue 57, options from the command line are sticky which
+    isn't normal.
+  * Fixed issue 52 (again), There was an accidental regression in the code.
+  * Fixed a unit test.
+
+ -- Scott Kirkwood <scott@forusers.com>  Wed, 22 Sep 2010 21:57:56 +0300
+
 key-mon (1.4.1-1) unstable; urgency=low
 
   * Fixed issue 51, -l and -s command lines not working.
