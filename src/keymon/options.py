@@ -63,6 +63,7 @@ class OptionItem(object):
     """
     self._dirty = False
     self._value = None
+    self._temp_value = None
 
     self._dest = dest
     self._type = _type
@@ -119,8 +120,9 @@ class OptionItem(object):
     if not self._opt_short and not self._opt_long:
       return
     if hasattr(opts, self._dest):
-      if getattr(opts, self._dest) != self._default:
-        self._set_value(getattr(opts, self._dest))
+      opt_val = getattr(opts, self._dest)
+      if opt_val != self._default:
+        self._set_temp_value(opt_val)
 
   def reset_to_default(self):
     """Reset to the default value."""
@@ -128,29 +130,42 @@ class OptionItem(object):
 
   def get_value(self):
     """Return the value."""
+    if self._temp_value is not None:
+      return self._temp_value
     return self._value
 
-  def _set_value(self, val):
-    old_val = self._value
+  def _set_attr_value(self, attr, val):
+    """Set the value via attribute name.
+    Args:
+      attr: attribute name ('_value', or '_temp_value')
+      val: value to set
+    """
+    old_val = getattr(self, attr)
     if val is None:
-      self._value = val
+      setattr(self, attr, val)
     elif self._type == 'int':
-      self._value = int(val)
+      setattr(self, attr, int(val))
     elif self._type == 'float':
-      self._value = float(val)
+      setattr(self, attr, float(val))
     elif self._type == 'bool':
       if isinstance(val, basestring):
         if val.lower() in ('false', 'off', 'no', '0'):
-          self._value = False
+          setattr(self, attr, False)
         elif val.lower() in ('true', 'on', 'yes', '1'):
-          self._value = True
+          setattr(self, attr, True)
         else:
           raise OptionException('Unable to convert %s to bool' % val)
       else:
-        self._value = bool(val)
+        setattr(self, attr, bool(val))
     else:
-      self._value = val
-    self._dirty = old_val != self._value
+      setattr(self, attr, val)
+    self._dirty = old_val != getattr(self, attr)
+
+  def _set_value(self, val):
+    self._set_attr_value('_value', val)
+
+  def _set_temp_value(self, val):
+    self._set_attr_value('_temp_value', val)
 
   value = property(get_value, _set_value, doc="Value")
 
