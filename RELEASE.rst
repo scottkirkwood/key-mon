@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+September 22nd, 2010 v 1.4.2
+----------------------------
+* Fixed issue 57, options from the command line are sticky which
+  isn't normal.
+* Fixed issue 52 (again), There was an accidental regression in the code.
+* Fixed a unit test.
+
 September 20th, 2010 v 1.4.1
 ----------------------------
 * Fixed issue 51, -l and -s command lines not working.
