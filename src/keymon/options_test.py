@@ -102,7 +102,7 @@ class TestOptions(unittest.TestCase):
 
   def test_optparse(self):
     args = ['-x', '--true', '--num', '123']
-    self.options.parse_args(args)
+    self.options.parse_args("Usage:", args)
     o = self.options
     self.assertTrue(o.x)
     self.assertTrue(o.tr)
@@ -122,7 +122,7 @@ class TestOptions(unittest.TestCase):
     lines.append('false = 1')
     io = StringIO.StringIO('\n'.join(lines))
     self.options.parse_ini(io)
-    self.options.parse_args([])
+    self.options.parse_args("Usage", [])
 
     o = self.options
     self.assertFalse(o.x)
