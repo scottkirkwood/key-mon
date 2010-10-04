@@ -1,3 +1,10 @@
+key-mon (1.4.3-1) unstable; urgency=low
+
+  * Fixed issue 52 a third time.  The bad merge affected more code than
+    I realized.
+
+ -- Scott Kirkwood <scott@forusers.com>  Fri, 24 Sep 2010 11:07:48 +0300
+
 key-mon (1.4.2-1) unstable; urgency=low
 
   * Fixed issue 57, options from the command line are sticky which

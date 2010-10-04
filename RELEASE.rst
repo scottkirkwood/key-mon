@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+September 24th, 2010 v 1.4.3
+----------------------------
+* Fixed issue 52 a third time.  The bad merge affected more code than
+  I realized.
+
 September 22nd, 2010 v 1.4.2
 ----------------------------
 * Fixed issue 57, options from the command line are sticky which
