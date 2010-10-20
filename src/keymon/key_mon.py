@@ -30,6 +30,7 @@ import gobject
 import gtk
 import os
 import sys
+import time
 try:
   import xlib
 except ImportError:
@@ -119,7 +120,6 @@ class KeyMon:
 
   def do_screenshot(self):
     """Create a screenshot showing some keys."""
-    import time
     for key in self.options.screenshot.split(','):
       try:
         if key == 'KEY_EMPTY':
@@ -368,6 +368,7 @@ class KeyMon:
     event = self.devices.next_event()
     try:
       self.handle_event(event)
+      time.sleep(0.001)
     except KeyboardInterrupt:
       self.quit_program()
       return False
@@ -388,6 +389,7 @@ class KeyMon:
           self.handle_mouse_button(event.code, event.value)
     elif event.type.startswith('EV_REL') and event.code == 'REL_WHEEL':
       self.handle_mouse_scroll(event.value, event.value)
+
   def _show_down_key(self, name):
     """Show the down key.
     Normally True, unless combo is set.
@@ -767,4 +769,6 @@ def main():
     keymon.quit_program()
 
 if __name__ == '__main__':
+  #import cProfile
+  #cProfile.run('main()', 'keymonprof')
   main()
