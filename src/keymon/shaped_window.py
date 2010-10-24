@@ -31,6 +31,7 @@ class ShapedWindow(gtk.Window):
     self.set_decorated(False)
     self.set_keep_above(True)
     self.scale = scale
+    self.is_shown = False
     self.name_fnames = {
       'mouse' : [fname],
     }
@@ -55,6 +56,23 @@ class ShapedWindow(gtk.Window):
       print 'Unable to fade the window'
     else:
       win.set_opacity(0.5)
+
+  def center_on_cursor(self):
+    root = gtk.gdk.screen_get_default().get_root_window()
+    x, y, _ = root.get_pointer()
+    w, h = self.get_size()
+    new_x, new_y = x - w/2, y - h/2
+    pos = self.get_position()
+    if pos[0] != new_x or pos[1] != new_y:
+      self.move(new_x, new_y)
+
+  def show(self):
+    self.is_shown = True
+    self.present()
+
+  def hide(self):
+    self.is_shown = False
+    gtk.Window.hide(self)
 
   def fade_away(self):
     """Make the window fade in a little bit."""
