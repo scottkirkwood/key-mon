@@ -20,7 +20,7 @@ Shows their status graphically.
 """
 
 __author__ = 'Scott Kirkwood (scott+keymon@forusers.com)'
-__version__ = '1.4.4'
+__version__ = '1.5'
 
 import logging
 import pygtk
