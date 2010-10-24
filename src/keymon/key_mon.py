@@ -236,7 +236,8 @@ class KeyMon:
     self.window.set_default_size(int(width), int(height))
     self.window.set_decorated(self.options.decorated)
 
-    self.mouse_indicator_win = shaped_window.ShapedWindow(self.svg_name('mouse-indicator'))
+    self.mouse_indicator_win = shaped_window.ShapedWindow(
+        self.svg_name('mouse-indicator'))
 
     #self.window.set_opacity(1.0)
     self.window.set_keep_above(True)
@@ -376,6 +377,9 @@ class KeyMon:
 
   def handle_event(self, event):
     """Handle an X event."""
+    if self.mouse_indicator_win.is_shown:
+      self.mouse_indicator_win.center_on_cursor()
+
     if not event:
       for button in self.buttons:
         button.empty_event()
@@ -504,12 +508,12 @@ class KeyMon:
           code = 'BTN_LEFT'
       self._handle_event(self.mouse_image, code, value)
 
-    root = gtk.gdk.screen_get_default().get_root_window()
-    x, y, _ = root.get_pointer()
-    w, h = self.mouse_indicator_win.get_size()
-    self.mouse_indicator_win.move(x - w/2, y - h/2)
-    if value == 0 and self.options.visible_click:
-      self.mouse_indicator_win.fade_away()
+    if self.options.visible_click:
+      if value == 1:
+        self.mouse_indicator_win.center_on_cursor()
+        self.mouse_indicator_win.show()
+      else:
+        self.mouse_indicator_win.fade_away()
     return True
 
   def handle_mouse_scroll(self, direction, unused_value):
