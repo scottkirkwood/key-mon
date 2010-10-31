@@ -244,10 +244,16 @@ class ModMapper(object):
     return None
 
   def __getitem__(self, key):
-    return self.map[key]
+    try:
+      return self.map[key]
+    except:
+      raise IndexError
 
   def __contains__(self, key):
     return key in self.map
+
+  def __len__(self):
+    return len(self.map)
 
 def parse_modmap(lines):
   """Parse a modmap file."""
@@ -304,7 +310,7 @@ def create_my_kdb(fname, codes):
   fout.write('# This is a space separated file with UTF-8 encoding\n')
   fout.write('# Short name is optional, will default to the medium-name\n')
   fout.write('# Scancode Map-Name Medium-Name Short-Name\n')
-  for code, (key, medium_name, short_name) in codes.items():
+  for code, (key, medium_name, short_name) in codes.map.items():
     if short_name:
       fout.write('%d %s %s %s\n' % (code, key, medium_name, short_name))
     else:
@@ -326,7 +332,7 @@ def read_mod_map():
   """Read a mod_map by runing xmodmap."""
   xmodmap = parse_modmap(run_cmd(mod_map_args()))
   ret = ModMapper()
-  for code in xmodmap:
+  for code in xmodmap.map:
     key = xmodmap[code][0]
     key_name = xmodmap[code][1]
     if key_name in MEDIUM_NAME:
