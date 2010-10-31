@@ -1,3 +1,17 @@
+key-mon (1.5-1) unstable; urgency=low
+
+  * With 'highly visible click' now stays down while clicked and dragged around.
+    Feature request (Issue) 44.
+
+ -- Scott Kirkwood <scott@forusers.com>  Sun, 24 Oct 2010 17:04:36 +0300
+
+key-mon (1.4.4-1) unstable; urgency=low
+
+  * Fixed issue 61, key-mon was taking 100% of the CPU in the on idle event.
+    Added a small amount of sleep so that it gets called less often.
+
+ -- Scott Kirkwood <scott@forusers.com>  Tue, 19 Oct 2010 22:40:10 +0300
+
 key-mon (1.4.3-1) unstable; urgency=low
 
   * Fixed issue 52 a third time.  The bad merge affected more code than

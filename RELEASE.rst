@@ -1,6 +1,16 @@
 Release Notes
 =============
 
+October 24th, 2010 v 1.5
+------------------------
+* With 'highly visible click' now stays down while clicked and dragged around.
+  Feature request (Issue) 44.
+
+October 19th, 2010 v 1.4.4
+----------------------------
+* Fixed issue 61, key-mon was taking 100% of the CPU in the on idle event.
+  Added a small amount of sleep so that it gets called less often.
+
 September 24th, 2010 v 1.4.3
 ----------------------------
 * Fixed issue 52 a third time.  The bad merge affected more code than
