@@ -72,6 +72,8 @@ class XEvents(threading.Thread):
 
   def __init__(self):
     threading.Thread.__init__(self)
+    self.setDaemon(True)
+    self.setName('Xlib-thread')
     self._listening = False
     self.record_display = display.Display()
     self.local_display = display.Display()
