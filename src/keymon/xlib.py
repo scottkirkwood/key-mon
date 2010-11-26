@@ -73,7 +73,7 @@ class XEvents(threading.Thread):
   def __init__(self):
     threading.Thread.__init__(self)
     self._listening = False
-    self.display = display.Display()
+    self.record_display = display.Display()
     self.local_display = display.Display()
     self.ctx = None
     self.keycode_to_symbol = collections.defaultdict(lambda: 'KEY_DUNNO')
@@ -105,11 +105,11 @@ class XEvents(threading.Thread):
 
   def start_listening(self):
     """Start listening to RECORD extension and queuing events."""
-    if not self.display.has_extension("RECORD"):
+    if not self.record_display.has_extension("RECORD"):
       print "RECORD extension not found"
       sys.exit(1)
     self._listening = True
-    self.ctx = self.display.record_create_context(
+    self.ctx = self.record_display.record_create_context(
         0,
         [record.AllClients],
         [{
@@ -124,10 +124,11 @@ class XEvents(threading.Thread):
             'client_died': False,
         }])
 
-    self.display.record_enable_context(self.ctx, self._handler)
+    self.record_display.record_enable_context(self.ctx, self._handler)
 
     # Don't understand this, how can we free the context yet still use it in Stop?
-    self.display.record_free_context(self.ctx)
+    self.record_display.record_free_context(self.ctx)
+    self.record_display.close()
 
   def stop_listening(self):
     """Stop listening to events."""
@@ -135,8 +136,9 @@ class XEvents(threading.Thread):
       return
     self.local_display.record_disable_context(self.ctx)
     self.local_display.flush()
-    self.join(0.05)
+    self.local_display.close()
     self._listening = False
+    self.join(0.05)
 
   def listening(self):
     """Are you listening?"""
@@ -144,10 +146,14 @@ class XEvents(threading.Thread):
 
   def _handler(self, reply):
     """Handle an event."""
+    if reply.category != record.FromServer:
+      return
+    if reply.client_swapped:
+      return
     data = reply.data
     while len(data):
       event, data = rq.EventField(None).parse_binary_value(
-          data, self.display.display, None, None)
+          data, self.record_display.display, None, None)
       if event.type == X.ButtonPress:
         self._handle_mouse(event, 1)
       elif event.type == X.ButtonRelease:
