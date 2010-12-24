@@ -1,3 +1,10 @@
+key-mon (1.5.1-1) unstable; urgency=low
+
+  * Applied patch for Issue 63 (thanks stefantalpalaru) which affects
+    Python 2.6.6.
+
+ -- Scott Kirkwood <scott@forusers.com>  Sun, 31 Oct 2010 18:31:13 +0300
+
 key-mon (1.5-1) unstable; urgency=low
 
   * With 'highly visible click' now stays down while clicked and dragged around.
