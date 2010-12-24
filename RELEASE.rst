@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+October 31st, 2010 v 1.5.1
+--------------------------
+* Applied patch for Issue 63 (thanks stefantalpalaru) which affects
+  Python 2.6.6.
+
 October 24th, 2010 v 1.5
 ------------------------
 * With 'highly visible click' now stays down while clicked and dragged around.
