@@ -1,3 +1,11 @@
+key-mon (1.6-1) unstable; urgency=low
+
+  * Applied patch for Issue 69 (thanks Doug) which allows combinations of
+    mouse button clicks to be displayed (ex. left and right buttons clicked
+    at the same time).
+
+ -- Scott Kirkwood <scott@forusers.com>  Sun, 23 Jan 2011 12:01:17 +0500
+
 key-mon (1.5.1-1) unstable; urgency=low
 
   * Applied patch for Issue 63 (thanks stefantalpalaru) which affects
