@@ -82,6 +82,9 @@ class KeyMon:
       theme: Name of the theme to use to draw keys
     """
     settings.SettingsDialog.register()
+    self.btns = ['MOUSE', 'BTN_RIGHT', 'BTN_MIDDLE', 'BTN_MIDDLERIGHT',
+                 'BTN_LEFT', 'BTN_LEFTRIGHT', 'BTN_LEFTMIDDLE',
+                 'BTN_LEFTMIDDLERIGHT']
     self.options = options
     self.pathname = os.path.dirname(__file__)
     if self.options.scale < 1.0:
@@ -181,18 +184,32 @@ class KeyMon:
           fix_svg_key_closure(self.svg_name('one-char-template'), [('&amp;', '')]),
               self.svg_name('whiteout-48')],
       'BTN_LEFTRIGHT': [
-          self.svg_name('mouse'), self.svg_name('left-mouse'), self.svg_name('right-mouse')],
+          self.svg_name('mouse'), self.svg_name('left-mouse'),
+          self.svg_name('right-mouse')],
+      'BTN_LEFTMIDDLERIGHT': [
+          self.svg_name('mouse'), self.svg_name('left-mouse'),
+          self.svg_name('middle-mouse'), self.svg_name('right-mouse')],
     }
     if self.options.swap_buttons:
-      ftn.update({
-        'BTN_RIGHT': [self.svg_name('mouse'), self.svg_name('left-mouse')],
-        'BTN_LEFT': [self.svg_name('mouse'), self.svg_name('right-mouse')],
-      })
+      # swap the meaning of left and right
+      left_str = 'right'
+      right_str = 'left'
     else:
-      ftn.update({
-        'BTN_LEFT': [self.svg_name('mouse'), self.svg_name('left-mouse')],
-        'BTN_RIGHT': [self.svg_name('mouse'), self.svg_name('right-mouse')],
-      })
+      left_str = 'left'
+      right_str = 'right'
+
+    ftn.update({
+      'BTN_RIGHT': [self.svg_name('mouse'),
+        self.svg_name('%s-mouse' % right_str)],
+      'BTN_LEFT': [self.svg_name('mouse'),
+        self.svg_name('%s-mouse' % left_str)],
+      'BTN_LEFTMIDDLE': [
+          self.svg_name('mouse'), self.svg_name('%s-mouse' % left_str),
+          self.svg_name('middle-mouse')],
+      'BTN_MIDDLERIGHT': [
+          self.svg_name('mouse'), self.svg_name('middle-mouse'),
+          self.svg_name('%s-mouse' % right_str)],
+    })
 
     if self.options.scale >= 1.0:
       ftn.update({
@@ -493,21 +510,22 @@ class KeyMon:
   def handle_mouse_button(self, code, value):
     """Handle the mouse button event."""
     if self.enabled['MOUSE']:
+      n_image = 0
+      n_code = 0
+      for i, btn in enumerate(self.btns):
+        if btn == code:
+          n_code = i
+        if btn == self.mouse_image.current:
+          n_image = i
       if self.options.emulate_middle and ((self.mouse_image.current == 'BTN_LEFT'
           and code == 'BTN_RIGHT') or
           (self.mouse_image.current == 'BTN_RIGHT' and code == 'BTN_LEFT')):
         code = 'BTN_MIDDLE'
-      elif value == 1 and ((self.mouse_image.current == 'BTN_LEFT' and code == 'BTN_RIGHT') or
-          (self.mouse_image.current == 'BTN_RIGHT' and code == 'BTN_LEFT')):
-        code = 'BTN_LEFTRIGHT'
-      elif value == 0 and self.mouse_image.current == 'BTN_LEFTRIGHT':
-        value = 1  # Pretend it was clicked.
-        if code == 'BTN_LEFT':
-          code = 'BTN_RIGHT'
-        elif code == 'BTN_RIGHT':
-          code = 'BTN_LEFT'
+      elif value == 0 and n_code != n_image:
+        code = self.btns[n_image - n_code]
+      elif value == 1 and n_image:
+        code = self.btns[n_image | n_code]
       self._handle_event(self.mouse_image, code, value)
-
     if self.options.visible_click:
       if value == 1:
         self.mouse_indicator_win.center_on_cursor()

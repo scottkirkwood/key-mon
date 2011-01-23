@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Jan 23rd, 2011 v 1.6
+--------------------
+* Applied patch for Issue 69 (thanks Doug) which allows combinations of
+  mouse button clicks to be displayed (ex. left and right buttons clicked
+  at the same time).
+
 October 31st, 2010 v 1.5.1
 --------------------------
 * Applied patch for Issue 63 (thanks stefantalpalaru) which affects
