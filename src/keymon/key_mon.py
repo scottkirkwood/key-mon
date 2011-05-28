@@ -279,6 +279,8 @@ class KeyMon:
       self.buttons.append(key_image)
     self.key_image = two_state_image.TwoStateImage(self.pixbufs, 'KEY_EMPTY')
     self.buttons.append(self.key_image)
+    for but in self.buttons:
+      but.timeout_secs = self.options.fade_timeout
 
   def layout_boxes(self):
     for child in self.hbox.get_children():
@@ -601,6 +603,7 @@ class KeyMon:
     self.pixbufs.reset_all(self.name_fnames, self.options.scale)
     for but in self.buttons:
       but.reset_image()
+      but.timeout_secs = self.options.fade_timeout
 
     # all this to get it to resize smaller
     x, y = self.window.get_position()
@@ -659,6 +662,11 @@ def create_options():
                   ini_group='ui', ini_name='scale',
                   help=_('Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is '
                          'half the size. Defaults to %default'))
+  opts.add_option(opt_long='--fade-timeout', dest='fade_timeout',
+                  type='float', default=0.5,
+                  ini_group='ui', ini_name='fade_timeout',
+                  help=_('Timeout before activated buttons fadeout. '
+                         'Defaults to %default'))
   opts.add_option(opt_long='--decorated', dest='decorated', type='bool',
                   ini_group='ui', ini_name='decorated',
                   default=False,
