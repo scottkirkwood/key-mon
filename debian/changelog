@@ -1,3 +1,9 @@
+key-mon (1.5.2-1) unstable; urgency=low
+
+  * Applied donated patch which allows longer/shorter delays on the keys shown.
+
+ -- Scott Kirkwood <scott@forusers.com>  Sun, 29 May 2011 19:38:05 +0500
+
 key-mon (1.5.1-1) unstable; urgency=low
 
   * Applied patch for Issue 63 (thanks stefantalpalaru) which affects
