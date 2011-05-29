@@ -1,6 +1,10 @@
 Release Notes
 =============
 
+May 29th, 2011 v1.5.2
+---------------------
+* Applied donated patch which allows longer/shorter delays on the keys shown.
+
 October 31st, 2010 v 1.5.1
 --------------------------
 * Applied patch for Issue 63 (thanks stefantalpalaru) which affects
