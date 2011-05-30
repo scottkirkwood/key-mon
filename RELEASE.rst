@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+May 29th, 2011 v 1.6.2
+----------------------
+* Applied donated patch which fixes issues with old keys and does a better job
+  when changing settings in the settings dialog.
+
 May 29th, 2011 v 1.6.1
 ----------------------
 * Applied donated patch which allows longer/shorter delays on the keys shown.

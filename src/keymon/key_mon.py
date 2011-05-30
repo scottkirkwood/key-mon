@@ -20,7 +20,7 @@ Shows their status graphically.
 """
 
 __author__ = 'Scott Kirkwood (scott+keymon@forusers.com)'
-__version__ = '1.6.1'
+__version__ = '1.6.2'
 
 import logging
 import pygtk
@@ -289,6 +289,9 @@ class KeyMon:
         self.pixbufs, 'META_EMPTY', self.enabled['META'])
     self.alt_image = two_state_image.TwoStateImage(
         self.pixbufs, 'ALT_EMPTY', self.enabled['ALT'])
+    self.create_buttons()
+
+  def create_buttons(self):
     self.buttons = [self.mouse_image, self.shift_image, self.ctrl_image,
         self.meta_image, self.alt_image]
     for _ in range(self.options.old_keys):
@@ -325,7 +328,7 @@ class KeyMon:
     self.hbox.pack_start(self.alt_image, False, False, 0)
 
     prev_key_image = None
-    for key_image in self.buttons[self.options.old_keys - 1:-2]:
+    for key_image in self.buttons[-(self.options.old_keys + 1):-1]:
       key_image.hide()
       #key_image.timeout_secs = 0.5
       key_image.defer_to = prev_key_image
@@ -615,6 +618,8 @@ class KeyMon:
         self.options.ctrl)
     self._toggle_a_key(self.alt_image, 'ALT',
         self.options.alt)
+    self.create_buttons()
+    self.layout_boxes()
     if self.options.visible_click:
       self.mouse_indicator_win.fade_away()
     self.window.set_decorated(self.options.decorated)

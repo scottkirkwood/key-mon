@@ -1,3 +1,10 @@
+key-mon (1.6.2-1) unstable; urgency=low
+
+  * Applied donated patch which fixes issues with old keys and does a better job
+    when changing settings in the settings dialog.
+
+ -- Scott Kirkwood <scott@forusers.com>  Sun, 29 May 2011 20:27:55 +0500
+
 key-mon (1.6.1-1) unstable; urgency=low
 
   * Applied donated patch which allows longer/shorter delays on the keys shown.
