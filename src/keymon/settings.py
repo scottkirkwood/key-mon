@@ -249,7 +249,7 @@ class ButtonsFrame(CommonFrame):
         vbox,
         _('Old Keys:'),
         _('When typing fast show more than one key typed.'),
-        [0, 1, 2, 3, 4], 'old_keys', 2)
+        [0, 1, 2, 3, 4], 'old_keys')
     self.add(vbox)
 
 def _test_settings_changed(unused_widget):
