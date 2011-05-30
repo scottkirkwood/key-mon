@@ -82,6 +82,9 @@ class KeyMon:
       theme: Name of the theme to use to draw keys
     """
     settings.SettingsDialog.register()
+    self.btns = ['MOUSE', 'BTN_RIGHT', 'BTN_MIDDLE', 'BTN_MIDDLERIGHT',
+                 'BTN_LEFT', 'BTN_LEFTRIGHT', 'BTN_LEFTMIDDLE',
+                 'BTN_LEFTMIDDLERIGHT']
     self.options = options
     self.pathname = os.path.dirname(__file__)
     if self.options.scale < 1.0:
