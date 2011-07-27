@@ -620,8 +620,7 @@ class KeyMon:
         self.options.alt)
     self.create_buttons()
     self.layout_boxes()
-    if self.options.visible_click:
-      self.mouse_indicator_win.fade_away()
+    self.mouse_indicator_win.hide()
     self.window.set_decorated(self.options.decorated)
     self.name_fnames = self.create_names_to_fnames()
     self.pixbufs.reset_all(self.name_fnames, self.options.scale)
