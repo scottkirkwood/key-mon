@@ -120,7 +120,7 @@ class XEvents(threading.Thread):
             'ext_requests': (0, 0, 0, 0),
             'ext_replies': (0, 0, 0, 0),
             'delivered_events': (0, 0),
-            'device_events': (X.KeyPress, X.ButtonRelease),  # why only two, it's a range?
+            'device_events': (X.KeyPress, X.MotionNotify),  # why only two, it's a range?
             'errors': (0, 0),
             'client_started': False,
             'client_died': False,
@@ -164,6 +164,8 @@ class XEvents(threading.Thread):
         self._handle_key(event, 1)
       elif event.type == X.KeyRelease:
         self._handle_key(event, 0)
+      elif event.type == X.MotionNotify:
+        self._handle_mouse(event, 2)
       else:
         print event
 
@@ -171,9 +173,12 @@ class XEvents(threading.Thread):
     """Add a mouse event to events.
     Params:
       event: the event info
-      value: 1=down, 0=up
+      value: 2=motion, 1=down, 0=up
     """
-    if event.detail in [4, 5]:
+    if value == 2:
+      self.events.append(XEvent('EV_MOV',
+          0, 0, (event.root_x, event.root_y)))
+    elif event.detail in [4, 5]:
       if event.detail == 5:
         value = -1
       else:

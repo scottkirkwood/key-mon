@@ -390,7 +390,11 @@ class KeyMon:
     """Check for events on idle."""
     event = self.devices.next_event()
     try:
-      self.handle_event(event)
+      if event:
+        self.handle_event(event)
+      else:
+        for button in self.buttons:
+          button.empty_event()
       time.sleep(0.001)
     except KeyboardInterrupt:
       self.quit_program()
@@ -399,14 +403,9 @@ class KeyMon:
 
   def handle_event(self, event):
     """Handle an X event."""
-    if self.mouse_indicator_win.is_shown:
-      self.mouse_indicator_win.center_on_cursor()
-
-    if not event:
-      for button in self.buttons:
-        button.empty_event()
-      return
-    if event.type == 'EV_KEY' and event.value in (0, 1):
+    if event.type == 'EV_MOV' and self.mouse_indicator_win.is_shown:
+      self.mouse_indicator_win.center_on_cursor(*event.value)
+    elif event.type == 'EV_KEY' and event.value in (0, 1):
       if type(event.code) == str:
         if event.code.startswith('KEY'):
           code_num = event.scancode
