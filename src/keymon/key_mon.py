@@ -273,11 +273,49 @@ class KeyMon:
 
     self.add_events()
 
+    self.window.show()
     old_x = self.options.x_pos
     old_y = self.options.y_pos
     if old_x != -1 and old_y != -1 and old_x and old_y:
       self.window.move(old_x, old_y)
-    self.window.show()
+    self.update_shape_mask()
+
+  def update_shape_mask(self):
+    _, _, width, height = self.window.get_allocation()
+    mask = self.pixbufs.get(self.key_image.current).render_pixmap_and_mask()[1]
+    shape_mask = gtk.gdk.Pixmap(None,
+        width, height,
+        mask.get_depth(),
+        )
+    
+    gc = gtk.gdk.GC(shape_mask)
+    color = gtk.gdk.Color() if self.options.backgroundless else gtk.gdk.Color(255, 255, 255)
+    gc.set_foreground(color)
+    shape_mask.draw_rectangle(gc, True, 0, 0, width, height)
+
+    if not self.options.backgroundless:
+      # Backgroundless is not enabled
+      return
+
+    masks = [self.pixbufs.get(name).render_pixmap_and_mask()[1] \
+        for name in ('MOUSE', 'SHIFT', 'CTRL', 'META', 'ALT') \
+        if self.enabled[name]
+        ] + [mask]
+
+    xdest = 0
+    for idx, mask in enumerate(masks):
+      if idx == len(masks) - 1 and width - xdest > mask.get_size()[0]:
+        xdest += (width - xdest - mask.get_size()[0]) / 2
+      shape_mask.draw_drawable(
+          gc,
+          mask,
+          0, 0,
+          xdest, 0,
+          *mask.get_size()
+          )
+      xdest += mask.get_size()[0]
+
+    self.window.shape_combine_mask(shape_mask, 0, 0)
 
   def create_images(self):
     self.mouse_image = two_state_image.TwoStateImage(self.pixbufs, 'MOUSE')
@@ -393,8 +431,8 @@ class KeyMon:
       if event:
         self.handle_event(event)
       else:
-        for button in self.buttons:
-          button.empty_event()
+        if filter(lambda button: button.empty_event(), self.buttons):
+          self.update_shape_mask()
       time.sleep(0.001)
     except KeyboardInterrupt:
       self.quit_program()
@@ -438,12 +476,14 @@ class KeyMon:
       if self._show_down_key(name):
         logging.debug('Switch to %s, code %s' % (name, code))
         image.switch_to(name)
+        self.update_shape_mask()
       return
 
     # on key up
     if self.is_shift_code(name):
       # shift up is always shown
       image.switch_to_default()
+      self.update_shape_mask()
       return
     else:
       self.alt_image.reset_time_if_pressed()
@@ -451,6 +491,7 @@ class KeyMon:
       self.ctrl_image.reset_time_if_pressed()
       self.meta_image.reset_time_if_pressed()
       image.switch_to_default()
+      self.update_shape_mask()
 
   def is_shift_code(self, code):
     if code in ('SHIFT', 'ALT', 'CTRL', 'META'):
@@ -636,6 +677,7 @@ class KeyMon:
     self.event_box.resize_children()
     self.window.resize_children()
     self.window.move(x, y)
+    self.update_shape_mask()
 
   def _toggle_a_key(self, image, name, show):
     """Toggle show/hide a key."""
@@ -693,6 +735,10 @@ def create_options():
                   ini_group='ui', ini_name='decorated',
                   default=False,
                   help=_('Show decoration'))
+  opts.add_option(opt_long='--backgroundless', dest='backgroundless', type='bool',
+                  ini_group='ui', ini_name='backgroundless',
+                  default=False,
+                  help=_('Show only buttons'))
   opts.add_option(opt_long='--only_combo', dest='only_combo', type='bool',
                   ini_group='ui', ini_name='only_combo',
                   default=False,
