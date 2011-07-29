@@ -179,6 +179,11 @@ class MiscFrame(CommonFrame):
         'decorated')
     self._add_check(
         vbox,
+        _('Window backgroundless'),
+        _('Show only the buttons'),
+        'backgroundless')
+    self._add_check(
+        vbox,
         _('Only key combinations'),
         _('Show a key only when used with a modifier key (like Control)'),
         'only_combo')
