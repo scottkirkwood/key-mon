@@ -1,8 +1,9 @@
 key-mon (1.7-1) unstable; urgency=low
 
-  * Applied patches from Yu-Jie Lin to, have a backgroundless window and some additional bug fixes.
+  * Applied patches from Yu-Jie Lin to, have a background-less window and some
+    additional bug fixes.
 
- -- Scott Kirkwood <scott@forusers.com>  Thu, 04 Aug 2011 17:39:05 +0500
+ -- Scott Kirkwood <scott@forusers.com>  Thu, 04 Aug 2011 17:44:42 +0500
 
 key-mon (1.6.2-1) unstable; urgency=low
 
