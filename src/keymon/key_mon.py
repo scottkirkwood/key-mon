@@ -20,7 +20,7 @@ Shows their status graphically.
 """
 
 __author__ = 'Scott Kirkwood (scott+keymon@forusers.com)'
-__version__ = '1.6.2'
+__version__ = '1.7'
 
 import logging
 import pygtk
@@ -287,7 +287,7 @@ class KeyMon:
         width, height,
         mask.get_depth(),
         )
-    
+
     gc = gtk.gdk.GC(shape_mask)
     color = gtk.gdk.Color() if self.options.backgroundless else gtk.gdk.Color(255, 255, 255)
     gc.set_foreground(color)

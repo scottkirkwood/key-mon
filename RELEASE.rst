@@ -1,6 +1,10 @@
 Release Notes
 =============
 
+August 4th, 2011 v 1.7
+----------------------
+* Applied patches from Yu-Jie Lin to, have a background-less window and some additional bug fixes.
+
 May 29th, 2011 v 1.6.2
 ----------------------
 * Applied donated patch which fixes issues with old keys and does a better job
