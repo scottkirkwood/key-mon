@@ -94,14 +94,15 @@ class CommonFrame(gtk.Frame):
     check_button.set_tooltip_text(tooltip)
     vbox.pack_start(check_button, False, False)
 
-  def _add_dropdown(self, vbox, title, tooltip, opt_lst, option):
+  def _add_dropdown(self, vbox, title, tooltip, opt_lst, option, width_char=-1):
     """Add a drop down box."""
     hbox = gtk.HBox()
     label = gtk.Label(title)
     label.set_tooltip_text(tooltip)
     hbox.pack_start(label, expand=False, fill=False)
 
-    combo = gtk.combo_box_new_text()
+    combo = gtk.combo_box_entry_new_text()
+    combo.child.set_width_chars(width_char)
     for opt in opt_lst:
       combo.append_text(str(opt))
     val = getattr(self.settings.options, option)
@@ -121,6 +122,7 @@ class CommonFrame(gtk.Frame):
     combo.connect('changed', self._combo_changed, option)
 
     vbox.pack_start(hbox, expand=False, fill=False)
+    return combo
 
   def _toggled(self, widget, option):
     """The checkbox was toggled."""
@@ -177,6 +179,11 @@ class MiscFrame(CommonFrame):
         'decorated')
     self._add_check(
         vbox,
+        _('Window backgroundless'),
+        _('Show only the buttons'),
+        'backgroundless')
+    self._add_check(
+        vbox,
         _('Only key combinations'),
         _('Show a key only when used with a modifier key (like Control)'),
         'only_combo')
@@ -187,7 +194,16 @@ class MiscFrame(CommonFrame):
         _('Scale:'),
         _('How much larger or smaller than normal to make key-mon. '
           'Where 1.0 is normal sized.'),
-        sizes, 'scale')
+        sizes, 'scale', 4)
+
+    timeouts = ['0.2', '0.4', '0.5', '0.6', '0.8', '1.0', '1.2',
+            '1.4', '1.6', '1.8', '2.0', '2.5', '3.0', '3.5', '4.0']
+    self._add_dropdown(
+        vbox,
+        _('Timeout:'),
+        _('How long before activated buttons fadeout. '
+          'Default is 0.5'),
+        timeouts, 'fade_timeout', 4)
 
     self.themes = []
     theme_dir = os.path.join(os.path.dirname(__file__), 'themes')

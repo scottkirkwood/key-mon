@@ -73,13 +73,17 @@ class TwoStateImage(gtk.Image):
     self.count_down = time.time()
 
   def empty_event(self):
-    """Sort of a idle event."""
+    """Sort of a idle event.
+    
+    Returns True if image has been changed.
+    """
     if self.count_down is None:
       return
     delta = time.time() - self.count_down
     if delta > self.timeout_secs:
       self.count_down = None
       self._switch_to(self.normal)
+      return True
 
   def _defer_to(self, old_name):
     """If possible the button is passed on."""

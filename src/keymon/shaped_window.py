@@ -57,13 +57,15 @@ class ShapedWindow(gtk.Window):
     else:
       win.set_opacity(0.5)
 
-  def center_on_cursor(self):
-    root = gtk.gdk.screen_get_default().get_root_window()
-    x, y, _ = root.get_pointer()
+  def center_on_cursor(self, x=None, y=None):
+    if x is None or y is None:
+      root = gtk.gdk.screen_get_default().get_root_window()
+      x, y, _ = root.get_pointer()
     w, h = self.get_size()
     new_x, new_y = x - w/2, y - h/2
     pos = self.get_position()
     if pos[0] != new_x or pos[1] != new_y:
+      self.show()
       self.move(new_x, new_y)
 
   def show(self):
