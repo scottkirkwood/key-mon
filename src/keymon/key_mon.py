@@ -20,7 +20,7 @@ Shows their status graphically.
 """
 
 __author__ = 'Scott Kirkwood (scott+keymon@forusers.com)'
-__version__ = '1.6'
+__version__ = '1.7'
 
 import logging
 import pygtk
@@ -247,6 +247,7 @@ class KeyMon:
   def create_window(self):
     """Create the main window."""
     self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+    self.window.set_resizable(False)
 
     self.window.set_title('Keyboard Status Monitor')
     width, height = 30 * self.options.scale, 48 * self.options.scale
@@ -273,11 +274,49 @@ class KeyMon:
 
     self.add_events()
 
+    self.window.show()
     old_x = self.options.x_pos
     old_y = self.options.y_pos
     if old_x != -1 and old_y != -1 and old_x and old_y:
       self.window.move(old_x, old_y)
-    self.window.show()
+    self.update_shape_mask()
+
+  def update_shape_mask(self):
+    _, _, width, height = self.window.get_allocation()
+    mask = self.pixbufs.get(self.key_image.current).render_pixmap_and_mask()[1]
+    shape_mask = gtk.gdk.Pixmap(None,
+        width, height,
+        mask.get_depth(),
+        )
+
+    gc = gtk.gdk.GC(shape_mask)
+    color = gtk.gdk.Color() if self.options.backgroundless else gtk.gdk.Color(255, 255, 255)
+    gc.set_foreground(color)
+    shape_mask.draw_rectangle(gc, True, 0, 0, width, height)
+
+    if not self.options.backgroundless:
+      # Backgroundless is not enabled
+      return
+
+    masks = [self.pixbufs.get(name).render_pixmap_and_mask()[1] \
+        for name in ('MOUSE', 'SHIFT', 'CTRL', 'META', 'ALT') \
+        if self.enabled[name]
+        ] + [mask]
+
+    xdest = 0
+    for idx, mask in enumerate(masks):
+      if idx == len(masks) - 1 and width - xdest > mask.get_size()[0]:
+        xdest += (width - xdest - mask.get_size()[0]) / 2
+      shape_mask.draw_drawable(
+          gc,
+          mask,
+          0, 0,
+          xdest, 0,
+          *mask.get_size()
+          )
+      xdest += mask.get_size()[0]
+
+    self.window.shape_combine_mask(shape_mask, 0, 0)
 
   def create_images(self):
     self.mouse_image = two_state_image.TwoStateImage(self.pixbufs, 'MOUSE')
@@ -289,6 +328,9 @@ class KeyMon:
         self.pixbufs, 'META_EMPTY', self.enabled['META'])
     self.alt_image = two_state_image.TwoStateImage(
         self.pixbufs, 'ALT_EMPTY', self.enabled['ALT'])
+    self.create_buttons()
+
+  def create_buttons(self):
     self.buttons = [self.mouse_image, self.shift_image, self.ctrl_image,
         self.meta_image, self.alt_image]
     for _ in range(self.options.old_keys):
@@ -296,6 +338,8 @@ class KeyMon:
       self.buttons.append(key_image)
     self.key_image = two_state_image.TwoStateImage(self.pixbufs, 'KEY_EMPTY')
     self.buttons.append(self.key_image)
+    for but in self.buttons:
+      but.timeout_secs = self.options.fade_timeout
 
   def layout_boxes(self):
     for child in self.hbox.get_children():
@@ -323,7 +367,7 @@ class KeyMon:
     self.hbox.pack_start(self.alt_image, False, False, 0)
 
     prev_key_image = None
-    for key_image in self.buttons[self.options.old_keys - 1:-2]:
+    for key_image in self.buttons[-(self.options.old_keys + 1):-1]:
       key_image.hide()
       #key_image.timeout_secs = 0.5
       key_image.defer_to = prev_key_image
@@ -385,7 +429,11 @@ class KeyMon:
     """Check for events on idle."""
     event = self.devices.next_event()
     try:
-      self.handle_event(event)
+      if event:
+        self.handle_event(event)
+      else:
+        if filter(lambda button: button.empty_event(), self.buttons):
+          self.update_shape_mask()
       time.sleep(0.001)
     except KeyboardInterrupt:
       self.quit_program()
@@ -394,14 +442,9 @@ class KeyMon:
 
   def handle_event(self, event):
     """Handle an X event."""
-    if self.mouse_indicator_win.is_shown:
-      self.mouse_indicator_win.center_on_cursor()
-
-    if not event:
-      for button in self.buttons:
-        button.empty_event()
-      return
-    if event.type == 'EV_KEY' and event.value in (0, 1):
+    if event.type == 'EV_MOV' and self.mouse_indicator_win.is_shown:
+      self.mouse_indicator_win.center_on_cursor(*event.value)
+    elif event.type == 'EV_KEY' and event.value in (0, 1):
       if type(event.code) == str:
         if event.code.startswith('KEY'):
           code_num = event.scancode
@@ -434,12 +477,14 @@ class KeyMon:
       if self._show_down_key(name):
         logging.debug('Switch to %s, code %s' % (name, code))
         image.switch_to(name)
+        self.update_shape_mask()
       return
 
     # on key up
     if self.is_shift_code(name):
       # shift up is always shown
       image.switch_to_default()
+      self.update_shape_mask()
       return
     else:
       self.alt_image.reset_time_if_pressed()
@@ -447,6 +492,7 @@ class KeyMon:
       self.ctrl_image.reset_time_if_pressed()
       self.meta_image.reset_time_if_pressed()
       image.switch_to_default()
+      self.update_shape_mask()
 
   def is_shift_code(self, code):
     if code in ('SHIFT', 'ALT', 'CTRL', 'META'):
@@ -526,6 +572,7 @@ class KeyMon:
       elif value == 1 and n_image:
         code = self.btns[n_image | n_code]
       self._handle_event(self.mouse_image, code, value)
+
     if self.options.visible_click:
       if value == 1:
         self.mouse_indicator_win.center_on_cursor()
@@ -612,13 +659,15 @@ class KeyMon:
         self.options.ctrl)
     self._toggle_a_key(self.alt_image, 'ALT',
         self.options.alt)
-    if self.options.visible_click:
-      self.mouse_indicator_win.fade_away()
+    self.create_buttons()
+    self.layout_boxes()
+    self.mouse_indicator_win.hide()
     self.window.set_decorated(self.options.decorated)
     self.name_fnames = self.create_names_to_fnames()
     self.pixbufs.reset_all(self.name_fnames, self.options.scale)
     for but in self.buttons:
       but.reset_image()
+      but.timeout_secs = self.options.fade_timeout
 
     # all this to get it to resize smaller
     x, y = self.window.get_position()
@@ -629,6 +678,7 @@ class KeyMon:
     self.event_box.resize_children()
     self.window.resize_children()
     self.window.move(x, y)
+    self.update_shape_mask()
 
   def _toggle_a_key(self, image, name, show):
     """Toggle show/hide a key."""
@@ -677,10 +727,19 @@ def create_options():
                   ini_group='ui', ini_name='scale',
                   help=_('Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is '
                          'half the size. Defaults to %default'))
+  opts.add_option(opt_long='--fade-timeout', dest='fade_timeout',
+                  type='float', default=0.5,
+                  ini_group='ui', ini_name='fade_timeout',
+                  help=_('Timeout before activated buttons fadeout. '
+                         'Defaults to %default'))
   opts.add_option(opt_long='--decorated', dest='decorated', type='bool',
                   ini_group='ui', ini_name='decorated',
                   default=False,
                   help=_('Show decoration'))
+  opts.add_option(opt_long='--backgroundless', dest='backgroundless', type='bool',
+                  ini_group='ui', ini_name='backgroundless',
+                  default=False,
+                  help=_('Show only buttons'))
   opts.add_option(opt_long='--only_combo', dest='only_combo', type='bool',
                   ini_group='ui', ini_name='only_combo',
                   default=False,

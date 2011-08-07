@@ -1,6 +1,20 @@
 Release Notes
 =============
 
+August 4th, 2011 v 1.7
+----------------------
+* Applied patches from Yu-Jie Lin to, have a background-less window and some
+  additional bug fixes.
+
+May 29th, 2011 v 1.6.2
+----------------------
+* Applied donated patch which fixes issues with old keys and does a better job
+  when changing settings in the settings dialog.
+
+May 29th, 2011 v 1.6.1
+----------------------
+* Applied donated patch which allows longer/shorter delays on the keys shown.
+
 Jan 23rd, 2011 v 1.6
 --------------------
 * Applied patch for Issue 69 (thanks Doug) which allows combinations of
@@ -52,7 +66,8 @@ September 18th, 2010 v 1.4
 August 10th, 2010 v 1.3
 -----------------------
 * Settings dialog supports changing the themes and scale.
-* Add option to show key only when pressed in combination of a modifier. Issue 27.
+* Add option to show key only when pressed in combination of a modifier.
+  Issue 27.
 * Issue 50 resolved, changing scale looks OK.
 * Updated README and install files.
 * Updated the Portuguese translations.
@@ -104,12 +119,15 @@ Jun. 17th, 2010 v 1.1
 
 Jun. 13th, 2010 v 1.0
 ----------------------
-* Switched from DBUS to XLib, now it should work in user-land and may work with Wacom.
+* Switched from DBUS to XLib, now it should work in user-land and may work
+  with Wacom.
 * Moved the key images up one 'pixel' and the mouse left one 'pixel'.
 * Preferences dialog.
-* Fixed Issue 5, Clicking two mouse buttons at the same time shows only the last one.
+* Fixed Issue 5, Clicking two mouse buttons at the same time shows only the
+  last one.
 * Fixed Issue 20, Typo in help
-* Fixed Issue 29. Highlight mouse cursor and mouse click points.  Still needs some loving though.
+* Fixed Issue 29. Highlight mouse cursor and mouse click points.  Still needs
+  some loving though.
 * Fixed Issue 31, Problem with mouse highlighting.
 
 Apr. 18th, 2009 v 0.16
@@ -169,7 +187,8 @@ Nov. 28, 2009 v 0.9
 Nov. 28, 2009 v 0.9 Features Added Bugs Fixed
 ---------------------------------------------
 * Different types of keyboards are supported
-* You can force key-mon to use your keymap names, more flexible and you can internationalize.
+* You can force key-mon to use your keymap names, more flexible and you can
+  internationalize.
 
 Nov. 25 Features Added
 ----------------------
