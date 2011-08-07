@@ -1,18 +1,11 @@
 Release Notes
 =============
 
-May 29th, 2011 v 1.6.2
-----------------------
-* Applied donated patch which fixes issues with old keys and does a better job
-  when changing settings in the settings dialog.
-
-May 29th, 2011 v 1.6.1
-----------------------
-* Applied donated patch which allows longer/shorter delays on the keys shown.
-
 Jan 23rd, 2011 v 1.6
 --------------------
-* Patch to support clicking both left, middle and right mouse buttons at the same time.
+* Applied patch for Issue 69 (thanks Doug) which allows combinations of
+  mouse button clicks to be displayed (ex. left and right buttons clicked
+  at the same time).
 
 October 31st, 2010 v 1.5.1
 --------------------------
