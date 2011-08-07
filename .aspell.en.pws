@@ -1,4 +1,4 @@
-personal_ws-1.1 en 24 
+personal_ws-1.1 en 26 
 Ctrl
 keymap
 http
@@ -12,8 +12,10 @@ screenshots
 librsvg
 refactoring
 keycodes
+Yu
 Capslock
 XLib
+Jie
 py
 gksudo
 README
