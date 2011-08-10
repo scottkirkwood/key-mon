@@ -666,7 +666,10 @@ class KeyMon:
     self.name_fnames = self.create_names_to_fnames()
     self.pixbufs.reset_all(self.name_fnames, self.options.scale)
     for but in self.buttons:
-      but.reset_image()
+      if but.normal != 'KEY_EMPTY':
+        but.reset_image(self.enabled[but.normal.replace('_EMPTY', '')])
+      else:
+        but.reset_image()
       but.timeout_secs = self.options.fade_timeout
 
     # all this to get it to resize smaller

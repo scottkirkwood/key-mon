@@ -43,9 +43,11 @@ class TwoStateImage(gtk.Image):
     self.timeout_secs = DEFAULT_TIMEOUT_SECS
     self.switch_to(self.normal)
 
-  def reset_image(self):
+  def reset_image(self, showit=True):
     """Image from pixbufs has changed, reset."""
+    self.showit = showit
     self._switch_to(self.normal)
+    self.showit = True
 
   def is_pressed(self):
     return self.current != self.normal
