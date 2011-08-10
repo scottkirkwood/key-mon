@@ -347,8 +347,6 @@ class KeyMon:
     if not self.enabled['MOUSE']:
       self.mouse_image.hide()
     self.hbox.pack_start(self.mouse_image, False, False, 0)
-    if not self.enabled['MOUSE']:
-      self.mouse_image.hide()
 
     if not self.enabled['SHIFT']:
       self.shift_image.hide()
@@ -583,6 +581,8 @@ class KeyMon:
 
   def handle_mouse_scroll(self, direction, unused_value):
     """Handle the mouse scroll button event."""
+    if not self.enabled['MOUSE']:
+      return
     if direction > 0:
       self._handle_event(self.mouse_image, 'SCROLL_UP', 1)
     elif direction < 0:
