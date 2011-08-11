@@ -27,6 +27,7 @@ from Xlib import X
 from Xlib import XK
 from Xlib.ext import record
 from Xlib.protocol import rq
+import locale
 import sys
 import threading
 import collections
@@ -88,10 +89,14 @@ class XEvents(threading.Thread):
 
   def _setup_lookup(self):
     """Setup the key lookups."""
+    # set locale to default C locale, see Issue 77.
+    OLD_CTYPE = locale.getlocale(locale.LC_CTYPE)
+    locale.setlocale(locale.LC_CTYPE, 'C')
     for name in dir(XK):
       if name[:3] == "XK_":
         code = getattr(XK, name)
         self.keycode_to_symbol[code] = 'KEY_' + name[3:].upper()
+    locale.setlocale(locale.LC_CTYPE, OLD_CTYPE)
     self.keycode_to_symbol[65027] = 'KEY_ISO_LEVEL3_SHIFT'
     self.keycode_to_symbol[269025062] = 'KEY_BACK'
     self.keycode_to_symbol[269025063] = 'KEY_FORWARD'
