@@ -42,6 +42,7 @@ class TwoStateImage(gtk.Image):
     self.defer_to = defer_to
     self.timeout_secs = DEFAULT_TIMEOUT_SECS
     self.switch_to(self.normal)
+    self._really_pressed = False
 
   def reset_image(self, showit=True):
     """Image from pixbufs has changed, reset."""
@@ -51,6 +52,21 @@ class TwoStateImage(gtk.Image):
 
   def is_pressed(self):
     return self.current != self.normal
+
+  @property
+  def really_pressed(self):
+    "Get the pressing state if a key is physically pressed."
+    return self._really_pressed
+
+  @really_pressed.setter
+  def really_pressed(self, value):
+    """Set if a key is physically pressed.
+
+    This is different than is_pressed(), which is the pressing state of
+    indicator, not reflect the real key pressing state. Should be set when key
+    event comes in.
+    """
+    self._really_pressed = value
 
   def reset_time_if_pressed(self):
     """Start the countdown now."""
@@ -67,6 +83,7 @@ class TwoStateImage(gtk.Image):
     """Internal, switch to image with this name even if same."""
     self.set_from_pixbuf(self.pixbufs.get(name))
     self.current = name
+    self.count_down = None
     if self.showit:
       self.show()
 
@@ -83,6 +100,9 @@ class TwoStateImage(gtk.Image):
       return
     delta = time.time() - self.count_down
     if delta > self.timeout_secs:
+      if self.normal.replace('_EMPTY', '') in ('SHIFT', 'ALT', 'CTRL', 'META') and \
+          self.really_pressed:
+        return
       self.count_down = None
       self._switch_to(self.normal)
       return True

@@ -471,6 +471,7 @@ class KeyMon:
 
   def _handle_event(self, image, name, code):
     """Handle an event given image and code."""
+    image.really_pressed = code == 1
     if code == 1:
       if self._show_down_key(name):
         logging.debug('Switch to %s, code %s' % (name, code))
