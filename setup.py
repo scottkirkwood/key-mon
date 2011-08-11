@@ -54,6 +54,9 @@ SETUP = dict(
           'themes/**/*', '*.kbd',
           'icons/key-mon.desktop', 'locale/**/*/*.mo'],
   },
+  data_files = [
+      ('share/pixmaps', [ICON]),
+  ],
   scripts=['src/key-mon'],
   author=AUTHOR_NAME,
   author_email='scott+keymon@forusers.com',
