@@ -627,6 +627,11 @@ class KeyMon:
     settings_click.show()
     menu.append(settings_click)
 
+    about_click = gtk.MenuItem(_('_About...'))
+    about_click.connect_object('activate', self.show_about_dlg, None)
+    about_click.show()
+    menu.append(about_click)
+
     quitcmd = gtk.MenuItem(_('_Quit\tCtrl-Q'))
     quitcmd.connect_object('activate', self.destroy, None)
     quitcmd.show()
@@ -695,6 +700,40 @@ class KeyMon:
       image.showit = False
       self.enabled[name] = False
       image.hide()
+
+  def show_about_dlg(self, *_):
+
+    dlg = gtk.AboutDialog()
+    # Find the logo file
+    logo_paths = (os.path.join(self.pathname, '../../icons'),)
+    logo_paths += tuple(logo_path + '/share/pixmaps' for logo_path in (
+            os.path.expanduser('~'),
+            '/usr', '/usr/local', '/opt/local',
+            ))
+    logo_paths = (logo_path + '/key-mon.xpm' for logo_path in logo_paths)
+    for logo_path in logo_paths:
+      if os.path.exists(logo_path):
+        dlg.set_logo(gtk.gdk.pixbuf_new_from_file(logo_path))
+        break
+
+    dlg.set_name('Keyboard Status Monitor')
+    dlg.set_program_name('key-mon')
+    dlg.set_website('http://code.google.com/p/key-mon/')
+    dlg.set_version(__version__)
+    dlg.set_authors([__author__])
+    dlg.set_license('''Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.''')
+    dlg.run()
+    dlg.destroy()
 
 def show_version():
   """Show the version number and author, used by help2man."""
