@@ -305,8 +305,6 @@ class KeyMon:
 
     xdest = 0
     for idx, mask in enumerate(masks):
-      if idx == len(masks) - 1 and width - xdest > mask.get_size()[0]:
-        xdest += (width - xdest - mask.get_size()[0]) / 2
       shape_mask.draw_drawable(
           gc,
           mask,
