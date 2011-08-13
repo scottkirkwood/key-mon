@@ -103,6 +103,9 @@ class KeyMon:
     self.ctrl_image = None
     self.meta_image = None
     self.buttons = None
+    
+    self.shape_mask_current = None
+    self.shape_mask_cache = {}
 
     self.enabled = {
         'MOUSE': self.options.mouse,
@@ -279,42 +282,46 @@ class KeyMon:
     old_y = self.options.y_pos
     if old_x != -1 and old_y != -1 and old_x and old_y:
       self.window.move(old_x, old_y)
-    self.update_shape_mask()
 
-  def update_shape_mask(self):
-    _, _, width, height = self.window.get_allocation()
-    mask = self.pixbufs.get(self.key_image.current).render_pixmap_and_mask()[1]
-    shape_mask = gtk.gdk.Pixmap(None,
-        width, height,
-        mask.get_depth(),
-        )
-
-    gc = gtk.gdk.GC(shape_mask)
-    color = gtk.gdk.Color() if self.options.backgroundless else gtk.gdk.Color(255, 255, 255)
-    gc.set_foreground(color)
-    shape_mask.draw_rectangle(gc, True, 0, 0, width, height)
-
+  def update_shape_mask(self, *args, **kwargs):
     if not self.options.backgroundless:
-      # Backgroundless is not enabled
+      return
+    force = kwargs.get('force', False)
+
+    btns = [btn for btn in self.buttons if btn.get_visible()]
+    # Generate id to see if current mask needs to be updated, which is a tuple
+    # of allocation of buttons.
+    cache_id = tuple(tuple(btn.get_allocation()) for btn in btns)
+    if cache_id == self.shape_mask_current and not force:
       return
 
-    masks = [self.pixbufs.get(name).render_pixmap_and_mask()[1] \
-        for name in ('MOUSE', 'SHIFT', 'CTRL', 'META', 'ALT') \
-        if self.enabled[name]
-        ] + [mask]
+    # Try to find existing mask in cache
+    # TODO limit number of cached masks
+    shape_mask = self.shape_mask_cache.get(cache_id, None)
+    if shape_mask and not force:
+      self.window.shape_combine_mask(shape_mask, 0, 0)
+      self.shape_mask_current = cache_id
+      return
 
-    xdest = 0
-    for idx, mask in enumerate(masks):
-      shape_mask.draw_drawable(
-          gc,
-          mask,
-          0, 0,
-          xdest, 0,
-          *mask.get_size()
-          )
-      xdest += mask.get_size()[0]
+    _, _, width, height = self.window.get_allocation()
+    masks = [self.pixbufs.get(btn.current).render_pixmap_and_mask()[1] \
+             for btn in btns]
+    shape_mask = gtk.gdk.Pixmap(None, width, height, masks[0].get_depth())
+
+    gc = gtk.gdk.GC(shape_mask)
+    # Initialize the mask just in case masks of buttons can't fill the window,
+    # if that happens, some artifacts will be seen usually at right edge.
+    gc.set_foreground(
+        gtk.gdk.Color() if self.options.backgroundless else \
+        gtk.gdk.Color(255, 255, 255))
+    shape_mask.draw_rectangle(gc, True, 0, 0, width, height)
+
+    for btn_allocation, mask in zip(cache_id, masks):
+      shape_mask.draw_drawable(gc, mask, 0, 0, *btn_allocation)
 
     self.window.shape_combine_mask(shape_mask, 0, 0)
+    self.shape_mask_current = cache_id
+    self.shape_mask_cache[cache_id] = shape_mask
 
   def create_images(self):
     self.mouse_image = two_state_image.TwoStateImage(self.pixbufs, 'MOUSE')
@@ -338,6 +345,7 @@ class KeyMon:
     self.buttons.append(self.key_image)
     for but in self.buttons:
       but.timeout_secs = self.options.fade_timeout
+      but.connect('size_allocate', self.update_shape_mask)
 
   def layout_boxes(self):
     for child in self.hbox.get_children():
@@ -364,7 +372,7 @@ class KeyMon:
 
     prev_key_image = None
     for key_image in self.buttons[-(self.options.old_keys + 1):-1]:
-      key_image.hide()
+#      key_image.hide()
       #key_image.timeout_secs = 0.5
       key_image.defer_to = prev_key_image
       self.hbox.pack_start(key_image, True, True, 0)
@@ -428,8 +436,8 @@ class KeyMon:
       if event:
         self.handle_event(event)
       else:
-        if filter(lambda button: button.empty_event(), self.buttons):
-          self.update_shape_mask()
+        for button in self.buttons:
+          button.empty_event()
       time.sleep(0.001)
     except KeyboardInterrupt:
       self.quit_program()
@@ -474,14 +482,12 @@ class KeyMon:
       if self._show_down_key(name):
         logging.debug('Switch to %s, code %s' % (name, code))
         image.switch_to(name)
-        self.update_shape_mask()
       return
 
     # on key up
     if self.is_shift_code(name):
       # shift up is always shown
       image.switch_to_default()
-      self.update_shape_mask()
       return
     else:
       self.alt_image.reset_time_if_pressed()
@@ -489,7 +495,6 @@ class KeyMon:
       self.ctrl_image.reset_time_if_pressed()
       self.meta_image.reset_time_if_pressed()
       image.switch_to_default()
-      self.update_shape_mask()
 
   def is_shift_code(self, code):
     if code in ('SHIFT', 'ALT', 'CTRL', 'META'):
@@ -685,7 +690,7 @@ class KeyMon:
     self.event_box.resize_children()
     self.window.resize_children()
     self.window.move(x, y)
-    self.update_shape_mask()
+    self.update_shape_mask(force=True)
 
   def _toggle_a_key(self, image, name, show):
     """Toggle show/hide a key."""
