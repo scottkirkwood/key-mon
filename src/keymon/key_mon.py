@@ -103,7 +103,8 @@ class KeyMon:
     self.ctrl_image = None
     self.meta_image = None
     self.buttons = None
-    
+
+    self.move_dragged = False
     self.shape_mask_current = None
     self.shape_mask_cache = {}
 
@@ -251,6 +252,9 @@ class KeyMon:
     """Create the main window."""
     self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
     self.window.set_resizable(False)
+    #self.window.realize()
+    #self.window.window.set_functions(gtk.gdk.FUNC_MOVE | gtk.gdk.FUNC_CLOSE)
+    #self.window.window.set_functions(gtk.gdk.FUNC_CLOSE)
 
     self.window.set_title('Keyboard Status Monitor')
     width, height = 30 * self.options.scale, 48 * self.options.scale
@@ -398,7 +402,7 @@ class KeyMon:
     """Add events for the window to listen to."""
     self.window.connect('destroy', self.destroy)
     self.window.connect('button-press-event', self.button_pressed)
-    self.window.connect('configure-event', self._window_moved)
+    self.window.connect('button-release-event', self.button_released)
     self.event_box.connect('button_release_event', self.right_click_handler)
 
     accelgroup = gtk.AccelGroup()
@@ -415,16 +419,28 @@ class KeyMon:
 
     gobject.idle_add(self.on_idle)
 
-  def button_pressed(self, widget, evt):
-    """A mouse button was pressed."""
-    if evt.button != 1:
-      return True
-    widget.begin_move_drag(evt.button, int(evt.x_root), int(evt.y_root), evt.time)
+  def button_released(self, widget, evt):
+    """A mouse button was released."""
+    if evt.button == 1:
+      self.move_dragged = None
     return True
 
-  def _window_moved(self, widget, unused_event):
+  def button_pressed(self, widget, evt):
+    """A mouse button was pressed."""
+    if evt.button == 1:
+      self.move_dragged = widget.get_pointer()
+    return True
+
+  def _window_moved(self):
     """The window has moved position, save it."""
-    x, y = widget.get_position()
+    if not self.move_dragged:
+      return
+    old_p = self.move_dragged
+    new_p = self.window.get_pointer()
+    x, y = self.window.get_position()
+    x, y = x + new_p[0] - old_p[0], y + new_p[1] - old_p[1]
+    self.window.move(x, y)
+
     logging.info('Moved window to %d, %d' % (x, y))
     self.options.x_pos = x
     self.options.y_pos = y
@@ -446,8 +462,11 @@ class KeyMon:
 
   def handle_event(self, event):
     """Handle an X event."""
-    if event.type == 'EV_MOV' and self.mouse_indicator_win.is_shown:
-      self.mouse_indicator_win.center_on_cursor(*event.value)
+    if event.type == 'EV_MOV':
+      if self.mouse_indicator_win.is_shown:
+        self.mouse_indicator_win.center_on_cursor(*event.value)
+      if self.move_dragged:
+        self._window_moved()
     elif event.type == 'EV_KEY' and event.value in (0, 1):
       if type(event.code) == str:
         if event.code.startswith('KEY'):
