@@ -183,6 +183,8 @@ class KeyMon:
       'META_EMPTY': [self.svg_name('meta'), self.svg_name('whiteout-58')],
       'ALT': [self.svg_name('alt')],
       'ALT_EMPTY': [self.svg_name('alt'), self.svg_name('whiteout-58')],
+      'ALTGR': [self.svg_name('altgr')],
+      'ALTGR_EMPTY': [self.svg_name('altgr'), self.svg_name('whiteout-58')],
       'KEY_EMPTY': [
           fix_svg_key_closure(self.svg_name('one-char-template'), [('&amp;', '')]),
               self.svg_name('whiteout-48')],
@@ -497,7 +499,7 @@ class KeyMon:
       image.switch_to_default()
 
   def is_shift_code(self, code):
-    if code in ('SHIFT', 'ALT', 'CTRL', 'META'):
+    if code in ('SHIFT', 'ALT', 'ALTGR', 'CTRL', 'META'):
       return True
     return False
 
@@ -519,10 +521,13 @@ class KeyMon:
       if self.enabled['SHIFT']:
         self._handle_event(self.shift_image, 'SHIFT', value)
       return
-    if code.startswith('KEY_ALT') or code == 'KEY_ISO_LEVEL3_SHIFT':
-      if self.enabled['ALT']:
+    if self.enabled['ALT']:
+      if code.startswith('KEY_ALT'):
         self._handle_event(self.alt_image, 'ALT', value)
-      return
+        return
+      if code == 'KEY_ISO_LEVEL3_SHIFT':
+        self._handle_event(self.alt_image, 'ALTGR', value)
+        return
     if code.startswith('KEY_CONTROL'):
       if self.enabled['CTRL']:
         self._handle_event(self.ctrl_image, 'CTRL', value)
