@@ -802,7 +802,9 @@ def create_options():
 def main():
   """Run the program."""
   opts = create_options()
-  opts.read_ini_file('~/.config/key-mon/config')
+  CONFIG_DIR = os.environ.get('XDG_CONFIG_HOME',
+                              os.path.expanduser('~/.config')) + '/key-mon'
+  opts.read_ini_file(os.path.join(CONFIG_DIR, 'config'))
   desc = _('Usage: %prog [Options...]')
   opts.parse_args(desc)
 
@@ -818,28 +820,48 @@ def main():
   elif opts.larger:
     opts.scale = 1.25
 
-  theme_dir = os.path.join(os.path.dirname(__file__), 'themes')
+  theme_dirs = [
+      os.path.join(CONFIG_DIR, 'themes'),
+      os.path.join(os.path.dirname(__file__), 'themes')]
   if opts.list_themes:
-    print _('Available themes:')
-    for entry in sorted(os.listdir(theme_dir)):
-      try:
-        parser = SafeConfigParser()
-        theme_config = os.path.join(theme_dir, entry, 'config')
-        parser.read(theme_config)
-        desc = parser.get('theme', 'description')
-        print '%s: %s' % (entry, desc)
-      except:
-        print 'Unable to read theme %r' % theme_config
-        pass
+    theme_names = []
+    for theme_dir in theme_dirs:
+      if not os.path.exists(theme_dir):
+        continue
+      print _('Available themes in %s:') % theme_dir
+      print
+      for entry in sorted(os.listdir(theme_dir)):
+        try:
+          parser = SafeConfigParser()
+          theme_config = os.path.join(theme_dir, entry, 'config')
+          parser.read(theme_config)
+          desc = parser.get('theme', 'description')
+          print ' - %-10s: %s' % (entry, desc),
+          if entry in theme_names:
+            print _("*Overridden by same name above*")
+          else:
+            theme_names.append(entry)
+            print
+        except:
+          print _('Unable to read theme %r in %s') % (theme_config, theme_dir)
+      print
     raise SystemExit()
   elif opts.theme:
     ok_theme = False
-    for entry in sorted(os.listdir(theme_dir)):
-      if opts.theme in entry:
+    for theme_dir in theme_dirs:
+      if not os.path.exists(theme_dir):
+        continue
+      if any(opts.theme == entry for entry in sorted(os.listdir(theme_dir))):
         ok_theme = True
         break
     if not ok_theme:
       print _('Theme %r does not exist') % opts.theme
+      print
+      print _('Please make sure %r can be found in '
+              'one of the following directories:') % opts.theme
+      print
+      for theme_dir in theme_dirs:
+        print ' - %s' % theme_dir
       sys.exit(-1)
   if opts.reset:
     print _('Resetting to defaults.')
