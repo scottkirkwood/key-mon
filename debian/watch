@@ -1,0 +1,3 @@
+version=3
+http://code.google.com/p/key-mon/downloads/list \
+  http://key-mon[.]googlecode[.]com/files/key-mon_([0-9.]+)[.]tar[.]gz
