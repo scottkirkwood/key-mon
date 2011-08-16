@@ -92,28 +92,21 @@ class KeyMon:
     else:
       self.svg_size = ''
     # Make lint happy by defining these.
-    self.mouse_image = None
-    self.alt_image = None
     self.hbox = None
     self.window = None
     self.event_box = None
     self.mouse_indicator_win = None
     self.key_image = None
-    self.shift_image = None
-    self.ctrl_image = None
-    self.meta_image = None
     self.buttons = None
     
     self.shape_mask_current = None
     self.shape_mask_cache = {}
 
-    self.enabled = {
-        'MOUSE': self.options.mouse,
-        'SHIFT': self.options.shift,
-        'CTRL': self.options.ctrl,
-        'META': self.options.meta,
-        'ALT': self.options.alt,
-    }
+    self.MODS = ['SHIFT', 'CTRL', 'META', 'ALT']
+    self.IMAGES = ['MOUSE'] + self.MODS
+    self.images = dict((img, None) for img in self.IMAGES)
+    self.enabled = dict((img, self.get_option(img.lower())) for img in self.IMAGES)
+
     self.modmap = mod_mapper.safely_read_mod_map(self.options.kbd_file)
 
     self.name_fnames = self.create_names_to_fnames()
@@ -123,6 +116,10 @@ class KeyMon:
     self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames,
                                                          self.options.scale)
     self.create_window()
+
+  def get_option(self, attr):
+    """Shorthand for getattr(self.options, attr)"""
+    return getattr(self.options, attr)
 
   def do_screenshot(self):
     """Create a screenshot showing some keys."""
@@ -324,20 +321,14 @@ class KeyMon:
     self.shape_mask_cache[cache_id] = shape_mask
 
   def create_images(self):
-    self.mouse_image = two_state_image.TwoStateImage(self.pixbufs, 'MOUSE')
-    self.shift_image = two_state_image.TwoStateImage(
-        self.pixbufs, 'SHIFT_EMPTY', self.enabled['SHIFT'])
-    self.ctrl_image = two_state_image.TwoStateImage(
-        self.pixbufs, 'CTRL_EMPTY')
-    self.meta_image = two_state_image.TwoStateImage(
-        self.pixbufs, 'META_EMPTY', self.enabled['META'])
-    self.alt_image = two_state_image.TwoStateImage(
-        self.pixbufs, 'ALT_EMPTY', self.enabled['ALT'])
+    self.images['MOUSE'] = two_state_image.TwoStateImage(self.pixbufs, 'MOUSE')
+    for img in self.IMAGES:
+      self.images[img] = two_state_image.TwoStateImage(
+          self.pixbufs, img + '_EMPTY', self.enabled[img])
     self.create_buttons()
 
   def create_buttons(self):
-    self.buttons = [self.mouse_image, self.shift_image, self.ctrl_image,
-        self.meta_image, self.alt_image]
+    self.buttons = list(self.images[img] for img in self.IMAGES)
     for _ in range(self.options.old_keys):
       key_image = two_state_image.TwoStateImage(self.pixbufs, 'KEY_EMPTY')
       self.buttons.append(key_image)
@@ -350,25 +341,10 @@ class KeyMon:
   def layout_boxes(self):
     for child in self.hbox.get_children():
       self.hbox.remove(child)
-    if not self.enabled['MOUSE']:
-      self.mouse_image.hide()
-    self.hbox.pack_start(self.mouse_image, False, False, 0)
-
-    if not self.enabled['SHIFT']:
-      self.shift_image.hide()
-    self.hbox.pack_start(self.shift_image, False, False, 0)
-
-    if not self.enabled['CTRL']:
-      self.ctrl_image.hide()
-    self.hbox.pack_start(self.ctrl_image, False, False, 0)
-
-    if not self.enabled['META']:
-      self.meta_image.hide()
-    self.hbox.pack_start(self.meta_image, False, False, 0)
-
-    if not self.enabled['ALT']:
-      self.alt_image.hide()
-    self.hbox.pack_start(self.alt_image, False, False, 0)
+    for img in self.IMAGES:
+      if not self.enabled[img]:
+        self.images[img].hide()
+      self.hbox.pack_start(self.images[img], False, False, 0)
 
     prev_key_image = None
     for key_image in self.buttons[-(self.options.old_keys + 1):-1]:
@@ -470,8 +446,7 @@ class KeyMon:
       return True
     if self.is_shift_code(name):
       return True
-    if (self.alt_image.is_pressed() or self.shift_image.is_pressed()
-        or self.ctrl_image.is_pressed() or self.meta_image.is_pressed()):
+    if (any(self.images[image].is_pressed() for img in self.MODS)):
       return True
     return False
 
@@ -490,10 +465,8 @@ class KeyMon:
       image.switch_to_default()
       return
     else:
-      self.alt_image.reset_time_if_pressed()
-      self.shift_image.reset_time_if_pressed()
-      self.ctrl_image.reset_time_if_pressed()
-      self.meta_image.reset_time_if_pressed()
+      for img in self.MODS:
+        self.images[img].reset_time_if_pressed()
       image.switch_to_default()
 
   def is_shift_code(self, code):
@@ -515,22 +488,13 @@ class KeyMon:
     if code in self.name_fnames:
       self._handle_event(self.key_image, code, value)
       return
-    if code.startswith('KEY_SHIFT'):
-      if self.enabled['SHIFT']:
-        self._handle_event(self.shift_image, 'SHIFT', value)
-      return
-    if code.startswith('KEY_ALT') or code == 'KEY_ISO_LEVEL3_SHIFT':
-      if self.enabled['ALT']:
-        self._handle_event(self.alt_image, 'ALT', value)
-      return
-    if code.startswith('KEY_CONTROL'):
-      if self.enabled['CTRL']:
-        self._handle_event(self.ctrl_image, 'CTRL', value)
-      return
-    if code.startswith('KEY_SUPER') or code == 'KEY_MULTI_KEY':
-      if self.enabled['META']:
-        self._handle_event(self.meta_image, 'META', value)
-      return
+    for keysym, img in (('KEY_SHIFT', 'SHIFT'), ('KEY_CONTROL', 'CTRL'),
+                        ('KEY_ALT', 'ALT'), ('KEY_ISO_LEVEL3_SHIFT', 'ALT'),
+                        ('KEY_SUPER', 'META'), ('KEY_MULTI_KEY', 'META')):
+      if code.startswith(keysym):
+        if self.enabled[img]:
+          self._handle_event(self.images[img], img, value)
+        return
     if code.startswith('KEY_KP'):
       letter = medium_name
       if code not in self.name_fnames:
@@ -563,17 +527,17 @@ class KeyMon:
       for i, btn in enumerate(self.btns):
         if btn == code:
           n_code = i
-        if btn == self.mouse_image.current:
+        if btn == self.images['MOUSE'].current:
           n_image = i
-      if self.options.emulate_middle and ((self.mouse_image.current == 'BTN_LEFT'
+      if self.options.emulate_middle and ((self.images['MOUSE'].current == 'BTN_LEFT'
           and code == 'BTN_RIGHT') or
-          (self.mouse_image.current == 'BTN_RIGHT' and code == 'BTN_LEFT')):
+          (self.images['MOUSE'].current == 'BTN_RIGHT' and code == 'BTN_LEFT')):
         code = 'BTN_MIDDLE'
       elif value == 0 and n_code != n_image:
         code = self.btns[n_image - n_code]
       elif value == 1 and n_image:
         code = self.btns[n_image | n_code]
-      self._handle_event(self.mouse_image, code, value)
+      self._handle_event(self.images['MOUSE'], code, value)
 
     if self.options.visible_click:
       if value == 1:
@@ -588,10 +552,10 @@ class KeyMon:
     if not self.enabled['MOUSE']:
       return
     if direction > 0:
-      self._handle_event(self.mouse_image, 'SCROLL_UP', 1)
+      self._handle_event(self.images['MOUSE'], 'SCROLL_UP', 1)
     elif direction < 0:
-      self._handle_event(self.mouse_image, 'SCROLL_DOWN', 1)
-    self.mouse_image.switch_to_default()
+      self._handle_event(self.images['MOUSE'], 'SCROLL_DOWN', 1)
+    self.images['MOUSE'].switch_to_default()
     return True
 
   def quit_program(self, *unused_args):
@@ -658,16 +622,8 @@ class KeyMon:
 
   def settings_changed(self, unused_dlg):
     """Event received from the settings dialog."""
-    self._toggle_a_key(self.mouse_image, 'MOUSE',
-        self.options.mouse)
-    self._toggle_a_key(self.meta_image, 'META',
-        self.options.meta)
-    self._toggle_a_key(self.shift_image, 'SHIFT',
-        self.options.shift)
-    self._toggle_a_key(self.ctrl_image, 'CTRL',
-        self.options.ctrl)
-    self._toggle_a_key(self.alt_image, 'ALT',
-        self.options.alt)
+    for img in self.IMAGES:
+      self._toggle_a_key(self.images[img], img, self.get_option(img))
     self.create_buttons()
     self.layout_boxes()
     self.mouse_indicator_win.hide()
