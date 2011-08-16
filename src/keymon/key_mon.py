@@ -322,7 +322,7 @@ class KeyMon:
 
   def create_images(self):
     self.images['MOUSE'] = two_state_image.TwoStateImage(self.pixbufs, 'MOUSE')
-    for img in self.IMAGES:
+    for img in self.MODS:
       self.images[img] = two_state_image.TwoStateImage(
           self.pixbufs, img + '_EMPTY', self.enabled[img])
     self.create_buttons()
