@@ -1,6 +1,10 @@
 Release Notes
 =============
 
+Development
+-----------
+* Issue 42, able to change keymap file in settings dialog
+
 August 4th, 2011 v 1.7
 ----------------------
 * Applied patches from Yu-Jie Lin to, have a background-less window and some

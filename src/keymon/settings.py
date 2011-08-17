@@ -213,6 +213,14 @@ class MiscFrame(CommonFrame):
         _('Themes:'),
         _('Which theme of buttons to show (ex. Apple)'),
         self.themes, 'theme')
+
+    self.kbd_files = sorted(list(set(
+        os.path.basename(kbd) for kbd in self.settings.options.kbd_files)))
+    self._add_dropdown(
+        vbox,
+        _('Keymap:'),
+        _('Which keymap file to use'),
+        self.kbd_files, 'kbd_file')
     self.add(vbox)
 
 class ButtonsFrame(CommonFrame):
@@ -286,8 +294,12 @@ def get_config_dir():
 
 def get_config_dirs(kind=''):
   """Return search paths of certain kind of configuration directory."""
-  return [os.path.join(get_config_dir(), kind),
-          os.path.join(os.path.dirname(__file__), kind)]
+  
+  return [d \
+          for d in (
+              os.path.join(get_config_dir(), kind),
+              os.path.join(os.path.dirname(__file__), kind)) \
+          if os.path.exists(d)]
 
 def get_themes():
   """Return a dict of themes.
@@ -299,8 +311,6 @@ def get_themes():
   theme_dirs = get_config_dirs('themes')
   themes = {}
   for theme_dir in theme_dirs:
-    if not os.path.exists(theme_dir):
-      continue
     for entry in sorted(os.listdir(theme_dir)):
       try:
         parser = SafeConfigParser()
@@ -313,5 +323,14 @@ def get_themes():
         LOG.warning(_('Unable to read theme %r') % (theme_config))
   return themes
 
+def get_kbd_files():
+  """Return a list of kbd file paths"""
+  config_dirs = get_config_dirs('')
+  kbd_files = [
+      os.path.join(d, f) \
+      for d in config_dirs \
+      for f in sorted(os.listdir(d)) if f.endswith('.kbd')]
+  return kbd_files
+    
 if __name__ == '__main__':
   manually_run_dialog()

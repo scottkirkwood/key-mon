@@ -286,6 +286,7 @@ def parse_modmap(lines):
 
 def read_kdb(fname):
   """Read the kdb file."""
+  logging.debug('Loading kbd file: %s' % fname)
   return parse_kdb(codecs.open(os.path.join(os.path.dirname(__file__), fname),
                               'r', 'utf-8').read())
 
@@ -330,6 +331,7 @@ def run_cmd(args):
 
 def read_mod_map():
   """Read a mod_map by runing xmodmap."""
+  logging.debug('Loading keymap from xmodmap...')
   xmodmap = parse_modmap(run_cmd(mod_map_args()))
   ret = ModMapper()
   for code in xmodmap.map:
@@ -348,27 +350,39 @@ def read_mod_map():
   return ret
 
 
-def safely_read_mod_map(fname):
-  """Read the specified mod_map file or get the US version by default."""
-  pathname = os.path.dirname(__file__)
-  default = 'us.kbd'
-  if fname:
-    if os.path.exists(fname):
-      return read_kdb(fname)
-    else:
-      return read_kdb(os.path.join(pathname, fname))
+def safely_read_mod_map(fname, kbd_files):
+  """Read the specified mod_map file or get the US version by default.
+  Args:
+    fname: name of kbd file to read
+    kbd_files: list of full path of kbd files
+  """
+  kbd_file = None
+  kbd_default = None
+  for kbd in kbd_files:
+    if not kbd_file and fname and kbd.endswith(fname):
+      kbd_file = kbd
+    if not kbd_default and kbd.endswith('us.kbd'):
+      kbd_default = kbd
+  if fname and not kbd_file:
+    logging.warning('Can not find kbd file: %s' % fname)
+  if kbd_file:
+    return read_kdb(kbd_file)
+
   ret = None
   try:
     ret = read_mod_map()
   except OSError:
-    print 'Error: unable execute xmodmap, reading default %r' % fname
-  defaults = read_kdb(os.path.join(pathname, default))
-  if not ret:
-    return defaults
-  # Merge the defaults with modmap
-  for keycode in defaults:
-    if keycode not in ret:
-      ret[keycode] = defaults[keycode]
+    logging.error('unable execute xmodmap')
+
+  if kbd_default:
+    defaults = read_kdb(kbd_default)
+    # Merge the defaults with modmap
+    logging.debug('Merging with default kbd file: %s' % kbd_default)
+    for keycode in defaults:
+      if keycode not in ret:
+        ret[keycode] = defaults[keycode]
+  else:
+    logging.error('Can not find default kbd file')
   return ret
 
 def _run_test():
