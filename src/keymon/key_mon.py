@@ -107,7 +107,8 @@ class KeyMon:
     self.images = dict((img, None) for img in self.IMAGES)
     self.enabled = dict((img, self.get_option(img.lower())) for img in self.IMAGES)
 
-    self.modmap = mod_mapper.safely_read_mod_map(self.options.kbd_file)
+    self.options.kbd_files = settings.get_kbd_files()
+    self.modmap = mod_mapper.safely_read_mod_map(self.options.kbd_file, self.options.kbd_files)
 
     self.name_fnames = self.create_names_to_fnames()
     self.devices = xlib.XEvents()
@@ -646,6 +647,9 @@ class KeyMon:
     self.window.resize_children()
     self.window.move(x, y)
     self.update_shape_mask(force=True)
+
+    # reload keymap
+    self.modmap = mod_mapper.safely_read_mod_map(self.options.kbd_file, self.options.kbd_files)
 
   def _toggle_a_key(self, image, name, show):
     """Toggle show/hide a key."""
