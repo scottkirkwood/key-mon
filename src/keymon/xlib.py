@@ -29,6 +29,7 @@ from Xlib.ext import record
 from Xlib.protocol import rq
 import locale
 import sys
+import time
 import threading
 import collections
 
@@ -207,9 +208,12 @@ class XEvents(threading.Thread):
 
 def _run_test():
   """Run a test or debug session."""
-  print 'Press ESCape to quit'
   events = XEvents()
   events.start()
+  while not events.listening():
+    time.sleep(1)
+    print 'Waiting for initializing...'
+  print 'Press ESCape to quit'
   try:
     while events.listening():
       try:
