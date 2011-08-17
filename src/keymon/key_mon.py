@@ -363,12 +363,10 @@ class KeyMon:
   def svg_name(self, fname):
     """Return an svg filename given the theme, system."""
     themepath = self.options.themes[self.options.theme][1]
-    fullname = os.path.join(themepath, '%s/%s%s.svg' % (
-        self.options.theme, fname, self.svg_size))
+    fullname = os.path.join(themepath, '%s%s.svg' % (fname, self.svg_size))
     if self.svg_size and not os.path.exists(fullname):
       # Small not found, defaulting to large size
-      fullname = os.path.join(themepath, '%s/%s.svg' %
-                              (self.options.theme, fname))
+      fullname = os.path.join(themepath, '%s/%s.svg' % fname)
     return fullname
 
   def add_events(self):
@@ -828,16 +826,15 @@ def main():
     for theme in theme_names:
       print (' - %%-%ds: %%s' % name_len) % (theme, opts.themes[theme][0])
     raise SystemExit()
-  elif opts.theme:
-    if opts.theme not in opts.themes:
-      print _('Theme %r does not exist') % opts.theme
-      print
-      print _('Please make sure %r can be found in '
-              'one of the following directories:') % opts.theme
-      print
-      for theme_dir in settings.get_theme_dirs():
-        print ' - %s' % theme_dir
-      sys.exit(-1)
+  elif opts.theme and opts.theme not in opts.themes:
+    print _('Theme %r does not exist') % opts.theme
+    print
+    print _('Please make sure %r can be found in '
+            'one of the following directories:') % opts.theme
+    print
+    for theme_dir in settings.get_config_dirs('themes'):
+      print ' - %s' % theme_dir
+    sys.exit(-1)
   if opts.reset:
     print _('Resetting to defaults.')
     opts.reset_to_defaults()

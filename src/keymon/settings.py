@@ -280,18 +280,23 @@ def manually_run_dialog():
   return 0
 
 def get_config_dir():
-
+  """Return the base directory of configuration."""
   return os.environ.get('XDG_CONFIG_HOME',
                         os.path.expanduser('~/.config')) + '/key-mon'
 
-def get_theme_dirs():
-
-  return [os.path.join(get_config_dir(), 'themes'),
-          os.path.join(os.path.dirname(__file__), 'themes')]
+def get_config_dirs(kind=''):
+  """Return search paths of certain kind of configuration directory."""
+  return [os.path.join(get_config_dir(), kind),
+          os.path.join(os.path.dirname(__file__), kind)]
 
 def get_themes():
-
-  theme_dirs = get_theme_dirs()
+  """Return a dict of themes.
+    keys are theme names
+    values are tuples of (description, path)
+      path is where the theme directory located,
+      i.e. theme files are path/*.
+  """
+  theme_dirs = get_config_dirs('themes')
   themes = {}
   for theme_dir in theme_dirs:
     if not os.path.exists(theme_dir):
@@ -303,7 +308,7 @@ def get_themes():
         parser.read(theme_config)
         desc = parser.get('theme', 'description')
         if entry not in themes:
-          themes[entry] = (desc, theme_dir)
+          themes[entry] = (desc, os.path.join(theme_dir, entry))
       except:
         LOG.warning(_('Unable to read theme %r') % (theme_config))
   return themes
