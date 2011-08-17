@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Settings dialog."""
+"""Settings dialog and related functions."""
 
 __author__ = 'scott@forusers.com (Scott Kirkwood)'
 
@@ -23,6 +23,8 @@ import gobject
 import gtk
 import logging
 import os
+
+from ConfigParser import SafeConfigParser
 
 LOG = logging.getLogger('settings')
 
@@ -205,9 +207,7 @@ class MiscFrame(CommonFrame):
           'Default is 0.5'),
         timeouts, 'fade_timeout', 4)
 
-    self.themes = []
-    theme_dir = os.path.join(os.path.dirname(__file__), 'themes')
-    self.themes = os.listdir(theme_dir)
+    self.themes = self.settings.options.themes.keys() 
     self._add_dropdown(
         vbox,
         _('Themes:'),
@@ -278,6 +278,35 @@ def manually_run_dialog():
   dlg.show_all()
   dlg.run()
   return 0
+
+def get_config_dir():
+
+  return os.environ.get('XDG_CONFIG_HOME',
+                        os.path.expanduser('~/.config')) + '/key-mon'
+
+def get_theme_dirs():
+
+  return [os.path.join(get_config_dir(), 'themes'),
+          os.path.join(os.path.dirname(__file__), 'themes')]
+
+def get_themes():
+
+  theme_dirs = get_theme_dirs()
+  themes = {}
+  for theme_dir in theme_dirs:
+    if not os.path.exists(theme_dir):
+      continue
+    for entry in sorted(os.listdir(theme_dir)):
+      try:
+        parser = SafeConfigParser()
+        theme_config = os.path.join(theme_dir, entry, 'config')
+        parser.read(theme_config)
+        desc = parser.get('theme', 'description')
+        if entry not in themes:
+          themes[entry] = (desc, theme_dir)
+      except:
+        LOG.warning(_('Unable to read theme %r') % (theme_config))
+  return themes
 
 if __name__ == '__main__':
   manually_run_dialog()

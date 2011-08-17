@@ -362,11 +362,12 @@ class KeyMon:
 
   def svg_name(self, fname):
     """Return an svg filename given the theme, system."""
-    fullname = os.path.join(self.pathname, 'themes/%s/%s%s.svg' % (
+    themepath = self.options.themes[self.options.theme][1]
+    fullname = os.path.join(themepath, '%s/%s%s.svg' % (
         self.options.theme, fname, self.svg_size))
     if self.svg_size and not os.path.exists(fullname):
       # Small not found, defaulting to large size
-      fullname = os.path.join(self.pathname, 'themes/%s/%s.svg' %
+      fullname = os.path.join(themepath, '%s/%s.svg' %
                               (self.options.theme, fname))
     return fullname
 
@@ -623,7 +624,7 @@ class KeyMon:
   def settings_changed(self, unused_dlg):
     """Event received from the settings dialog."""
     for img in self.IMAGES:
-      self._toggle_a_key(self.images[img], img, self.get_option(img))
+      self._toggle_a_key(self.images[img], img, self.get_option(img.lower()))
     self.create_buttons()
     self.layout_boxes()
     self.mouse_indicator_win.hide()
@@ -802,9 +803,7 @@ def create_options():
 def main():
   """Run the program."""
   opts = create_options()
-  CONFIG_DIR = os.environ.get('XDG_CONFIG_HOME',
-                              os.path.expanduser('~/.config')) + '/key-mon'
-  opts.read_ini_file(os.path.join(CONFIG_DIR, 'config'))
+  opts.read_ini_file(os.path.join(settings.get_config_dir(), 'config'))
   desc = _('Usage: %prog [Options...]')
   opts.parse_args(desc)
 
@@ -820,47 +819,23 @@ def main():
   elif opts.larger:
     opts.scale = 1.25
 
-  theme_dirs = [
-      os.path.join(CONFIG_DIR, 'themes'),
-      os.path.join(os.path.dirname(__file__), 'themes')]
+  opts.themes = settings.get_themes()
   if opts.list_themes:
-    theme_names = []
-    for theme_dir in theme_dirs:
-      if not os.path.exists(theme_dir):
-        continue
-      print _('Available themes in %s:') % theme_dir
-      print
-      for entry in sorted(os.listdir(theme_dir)):
-        try:
-          parser = SafeConfigParser()
-          theme_config = os.path.join(theme_dir, entry, 'config')
-          parser.read(theme_config)
-          desc = parser.get('theme', 'description')
-          print ' - %-10s: %s' % (entry, desc),
-          if entry in theme_names:
-            print _("*Overridden by same name above*")
-          else:
-            theme_names.append(entry)
-            print
-        except:
-          print _('Unable to read theme %r in %s') % (theme_config, theme_dir)
-      print
+    print _('Available themes:')
+    print
+    theme_names = sorted(opts.themes)
+    name_len = max(len(name) for name in theme_names)
+    for theme in theme_names:
+      print (' - %%-%ds: %%s' % name_len) % (theme, opts.themes[theme][0])
     raise SystemExit()
   elif opts.theme:
-    ok_theme = False
-    for theme_dir in theme_dirs:
-      if not os.path.exists(theme_dir):
-        continue
-      if any(opts.theme == entry for entry in sorted(os.listdir(theme_dir))):
-        ok_theme = True
-        break
-    if not ok_theme:
+    if opts.theme not in opts.themes:
       print _('Theme %r does not exist') % opts.theme
       print
       print _('Please make sure %r can be found in '
               'one of the following directories:') % opts.theme
       print
-      for theme_dir in theme_dirs:
+      for theme_dir in settings.get_theme_dirs():
         print ' - %s' % theme_dir
       sys.exit(-1)
   if opts.reset:
