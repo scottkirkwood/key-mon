@@ -792,9 +792,12 @@ def create_options():
                   ini_group='position', ini_name='y')
 
   opts.add_option_group(_('Developer Options'), _('These options are for developers.'))
+  opts.add_option(opt_long='--loglevel', dest='loglevel', type='str', default='',
+                  help=_('Logging level'))
   opts.add_option(opt_short='-d', opt_long='--debug', dest='debug', type='bool',
                   default=False,
-                  help=_('Output debugging information.'))
+                  help=_('Output debugging information. '
+                         'Shorthand for --loglevel=debug'))
   opts.add_option(opt_long='--screenshot', dest='screenshot', type='str', default='',
                   help=_('Create a "screenshot.png" and exit. '
                          'Pass a comma separated list of keys to simulate'
@@ -804,6 +807,27 @@ def create_options():
 
 def main():
   """Run the program."""
+  # Check for --loglevel, --debug, we deal with them by ourselves because
+  # option parser also use logging.
+  loglevel = None
+  for idx, arg in enumerate(sys.argv):
+    if '--loglevel' in arg:
+      if '=' in arg:
+        loglevel = arg.split('=')[1]
+      else:
+        loglevel = sys.argv[idx + 1]
+      level = getattr(logging, loglevel.upper(), None)
+      if level is None:
+          raise ValueError('Invalid log level: %s' % loglevel)
+      loglevel = level
+  else:
+    if '--debug' in sys.argv or '-d' in sys.argv:
+      loglevel = logging.DEBUG
+  if loglevel is not None:
+    logging.basicConfig(
+        level=loglevel,
+        format='%(filename)s [%(lineno)d]: %(levelname)s %(message)s')
+
   opts = create_options()
   opts.read_ini_file(os.path.join(settings.get_config_dir(), 'config'))
   desc = _('Usage: %prog [Options...]')
@@ -812,10 +836,6 @@ def main():
   if opts.version:
     show_version()
     sys.exit(0)
-  if opts.debug:
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format = '%(filename)s [%(lineno)d]: %(levelname)s %(message)s')
   if opts.smaller:
     opts.scale = 0.75
   elif opts.larger:
