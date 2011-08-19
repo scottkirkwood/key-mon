@@ -3,6 +3,7 @@ Release Notes
 
 Development
 -----------
+* Added --loglevel for specifying logging level
 * Cache shape masks
 * Issue 38, add an about box.
 * Issue 42, able to change keymap file in settings dialog.
@@ -11,6 +12,7 @@ Development
 * Fixed issue 74, fix old keys doesn't show the correct number of key images.
 * Fixed issue 78, mouse image still shows when with --nomouse;
 * Fixed issue 84, mouse image shows up when enabled other images.
+* Fixed issue 85, avoid undefined option exception.
 
 August 4th, 2011 v 1.7
 ----------------------
