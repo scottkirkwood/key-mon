@@ -99,6 +99,7 @@ class KeyMon:
     self.key_image = None
     self.buttons = None
     
+    self.no_press_timer = None
     self.shape_mask_current = None
     self.shape_mask_cache = {}
 
@@ -117,6 +118,7 @@ class KeyMon:
     self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames,
                                                          self.options.scale)
     self.create_window()
+    self.reset_no_press_timer()
 
   def get_option(self, attr):
     """Shorthand for getattr(self.options, attr)"""
@@ -258,7 +260,7 @@ class KeyMon:
     self.mouse_indicator_win = shaped_window.ShapedWindow(
         self.svg_name('mouse-indicator'))
 
-    #self.window.set_opacity(1.0)
+    self.window.set_opacity(self.options.opacity)
     self.window.set_keep_above(True)
 
     self.event_box = gtk.EventBox()
@@ -310,11 +312,14 @@ class KeyMon:
     # Initialize the mask just in case masks of buttons can't fill the window,
     # if that happens, some artifacts will be seen usually at right edge.
     gc.set_foreground(
-        gtk.gdk.Color() if self.options.backgroundless else \
-        gtk.gdk.Color(255, 255, 255))
+        gtk.gdk.Color(pixel=0) if self.options.backgroundless else \
+        gtk.gdk.Color(pixel=1))
     shape_mask.draw_rectangle(gc, True, 0, 0, width, height)
 
     for btn_allocation, mask in zip(cache_id, masks):
+      # Don't create mask until every image is allocated
+      if btn_allocation[0] == -1:
+        return
       shape_mask.draw_drawable(gc, mask, 0, 0, *btn_allocation)
 
     self.window.shape_combine_mask(shape_mask, 0, 0)
@@ -398,9 +403,9 @@ class KeyMon:
     widget.begin_move_drag(evt.button, int(evt.x_root), int(evt.y_root), evt.time)
     return True
 
-  def _window_moved(self, widget, unused_event):
+  def _window_moved(self, widget, evt):
     """The window has moved position, save it."""
-    x, y = widget.get_position()
+    x, y = evt.x, evt.y
     logging.info('Moved window to %d, %d' % (x, y))
     self.options.x_pos = x
     self.options.y_pos = y
@@ -431,8 +436,46 @@ class KeyMon:
           self.handle_key(code_num, event.code, event.value)
         elif event.code.startswith('BTN'):
           self.handle_mouse_button(event.code, event.value)
+      self.reset_no_press_timer()
     elif event.type.startswith('EV_REL') and event.code == 'REL_WHEEL':
       self.handle_mouse_scroll(event.value, event.value)
+
+  def reset_no_press_timer(self):
+    """Initialize no_press_timer"""
+    if not self.options.no_press_fadeout:
+      return
+    logging.debug('Resetting no_press_timer')
+    if not self.window.get_property('visible'):
+      self.window.show()
+      self.window.move(self.options.x_pos, self.options.y_pos)
+    self.window.set_opacity(self.options.opacity)
+    if self.no_press_timer:
+      gobject.source_remove(self.no_press_timer)
+      self.no_press_timer = None
+    self.no_press_timer = gobject.timeout_add(int(self.options.no_press_fadeout * 1000), self.no_press_fadeout)
+
+  def no_press_fadeout(self, begin=True):
+    """Fadeout the window in a second
+    Args:
+      begin: indicate if this timeout is requested by handle_event.
+    """
+    opacity = self.window.get_opacity() - self.options.opacity / 10.0
+    if opacity < 0.0:
+      opacity = 0.0;
+    logging.debug('Set opacity = %f' % opacity)
+    self.window.set_opacity(opacity)
+    if opacity == 0.0:
+      self.window.hide()
+      # No need to fade out more
+      self.no_press_timer = None
+      return False
+
+    if begin:
+      # Recreate a new timer with 0.1 seccond interval
+      self.no_press_timer = gobject.timeout_add(100, self.no_press_fadeout)
+      # The current self.options.no_press_fadeout interval will not be timed
+      # out again.
+      return False
 
   def _show_down_key(self, name):
     """Show the down key.
@@ -745,6 +788,11 @@ def create_options():
                   ini_group='ui', ini_name='backgroundless',
                   default=False,
                   help=_('Show only buttons'))
+  opts.add_option(opt_long='--no-press-fadeout', dest='no_press_fadeout',
+                  type='float', default=0.0,
+                  ini_group='ui', ini_name='no_press_fadeout',
+                  help=_('Fadeout the window after a period with no key press. '
+                         'Defaults to %default seconds (Experimental)'))
   opts.add_option(opt_long='--only_combo', dest='only_combo', type='bool',
                   ini_group='ui', ini_name='only_combo',
                   default=False,
@@ -781,7 +829,7 @@ def create_options():
                   help=_('Reset all options to their defaults.'),
                   default=None)
 
-  opts.add_option(opt_short=None, opt_long=None, type='float',
+  opts.add_option(opt_short=None, opt_long='--opacity', type='float',
                   dest='opacity', default=1.0, help='Opacity of window',
                   ini_group='ui', ini_name='opacity')
   opts.add_option(opt_short=None, opt_long=None, type='int',
