@@ -15,6 +15,8 @@ Development
 * Fixed issue 78, mouse image still shows when with --nomouse;
 * Fixed issue 84, mouse image shows up when enabled other images.
 * Fixed issue 85, avoid undefined option exception.
+* Fixed issue 86, fix create_moveresize_window error by manually handle window
+  dragging.
 
 August 4th, 2011 v 1.7
 ----------------------
