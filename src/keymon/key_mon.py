@@ -64,6 +64,8 @@ def fix_svg_key_closure(fname, from_tos):
     fbytes = fin.read()
     fin.close()
     for fin, t in from_tos:
+      # Quick XML escape fix
+      t = t.replace('<', '&lt;')
       fbytes = fbytes.replace(fin, t)
     return fbytes
 
