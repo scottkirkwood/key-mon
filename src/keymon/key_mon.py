@@ -22,6 +22,7 @@ Shows their status graphically.
 __author__ = 'Scott Kirkwood (scott+keymon@forusers.com)'
 __version__ = '1.7'
 
+import locale
 import logging
 import pygtk
 pygtk.require('2.0')
@@ -69,6 +70,15 @@ def fix_svg_key_closure(fname, from_tos):
   return fix_svg_key
 
 
+def cstrf(func):
+  """Change locale before using str function"""
+  OLD_CTYPE = locale.getlocale(locale.LC_CTYPE)
+  locale.setlocale(locale.LC_CTYPE, 'C')
+  s = func()
+  locale.setlocale(locale.LC_CTYPE, OLD_CTYPE)
+  return s
+
+
 class KeyMon:
   """main KeyMon window class."""
 
@@ -108,7 +118,7 @@ class KeyMon:
     self.MODS = ['SHIFT', 'CTRL', 'META', 'ALT']
     self.IMAGES = ['MOUSE'] + self.MODS
     self.images = dict((img, None) for img in self.IMAGES)
-    self.enabled = dict((img, self.get_option(img.lower())) for img in self.IMAGES)
+    self.enabled = dict((img, self.get_option(cstrf(img.lower))) for img in self.IMAGES)
 
     self.options.kbd_files = settings.get_kbd_files()
     self.modmap = mod_mapper.safely_read_mod_map(self.options.kbd_file, self.options.kbd_files)
@@ -706,7 +716,7 @@ class KeyMon:
   def settings_changed(self, unused_dlg):
     """Event received from the settings dialog."""
     for img in self.IMAGES:
-      self._toggle_a_key(self.images[img], img, self.get_option(img.lower()))
+      self._toggle_a_key(self.images[img], img, self.get_option(cstrf(img.lower)))
     self.create_buttons()
     self.layout_boxes()
     self.mouse_indicator_win.hide()
