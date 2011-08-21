@@ -853,8 +853,8 @@ def create_options():
                   help=_('Show where you clicked'))
   opts.add_option(opt_long='--kbdfile', dest='kbd_file',
                   ini_group='devices', ini_name='map',
-                  default='us.kbd',
-                  help=_('Use this kbd filename instead running xmodmap.'))
+                  default=None,
+                  help=_('Use this kbd filename.'))
   opts.add_option(opt_long='--swap', dest='swap_buttons', type='bool',
                   default=False,
                   ini_group='devices', ini_name='swap_buttons',

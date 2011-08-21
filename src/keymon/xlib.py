@@ -103,6 +103,10 @@ class XEvents(threading.Thread):
     self.keycode_to_symbol[269025063] = 'KEY_FORWARD'
     self.keycode_to_symbol[16777215] = 'KEY_CAPS_LOCK'
     self.keycode_to_symbol[269025067] = 'KEY_WAKEUP'
+    # Turkish / F layout
+    self.keycode_to_symbol[699] = 'KEY_GBREVE'   # scancode = 26 / 18
+    self.keycode_to_symbol[697] = 'KEY_IDOTLESS' # scancode = 23 / 19
+    self.keycode_to_symbol[442] = 'KEY_SCEDILLA' # scancode = 39 / 40
 
 
   def next_event(self):

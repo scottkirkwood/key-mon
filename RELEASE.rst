@@ -7,6 +7,7 @@ Development
 * Window is no longer showing in taskbar.
 * Window is no longer getting focus unless a mouse click on window first. Once
   pointer leaves, it will not accept focuse again.
+* Default kbdfile is decided by result of setxkbmap.
 * Cache shape masks
 * Issue 38, add an about box.
 * Issue 42, able to change keymap file in settings dialog.
@@ -20,6 +21,7 @@ Development
 * Fixed issue 85, avoid undefined option exception.
 * Fixed issue 86, fix create_moveresize_window error by manually handle window
   dragging.
+* Fixed issue 90, add two Turkish kbd files and missing codes to xlib.c.
 
 August 4th, 2011 v 1.7
 ----------------------

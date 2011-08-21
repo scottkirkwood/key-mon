@@ -356,12 +356,29 @@ def safely_read_mod_map(fname, kbd_files):
     fname: name of kbd file to read
     kbd_files: list of full path of kbd files
   """
+  # Assigning a default kbdfile name using result of setxkbmap
+  DEFAULT_KBD = None
+  try:
+    for line in  run_cmd(('setxkbmap', '-query')).split('\n'):
+      if 'layout:' in line:
+        DEFAULT_KBD = line.split(':')[1].strip()
+      if 'variant:' in line:
+        DEFAULT_KBD += '_' + line.split(':')[1].strip()
+    if DEFAULT_KBD:
+      logging.info('setxkbmap returns a keyboard layout_variant: %s' % DEFAULT_KBD)
+      DEFAULT_KBD += '.kbd'
+  except OSError:
+    pass
+  if not DEFAULT_KBD:
+    DEFAULT_KBD = 'us.kbd'
+  logging.info('Set default kbdfile to: %s' % DEFAULT_KBD)
+
   kbd_file = None
   kbd_default = None
   for kbd in kbd_files:
     if not kbd_file and fname and kbd.endswith(fname):
       kbd_file = kbd
-    if not kbd_default and kbd.endswith('us.kbd'):
+    if not kbd_default and kbd.endswith(DEFAULT_KBD):
       kbd_default = kbd
   if fname and not kbd_file:
     logging.warning('Can not find kbd file: %s' % fname)
@@ -369,18 +386,22 @@ def safely_read_mod_map(fname, kbd_files):
     return read_kdb(kbd_file)
 
   ret = None
-  try:
-    ret = read_mod_map()
-  except OSError:
-    logging.error('unable execute xmodmap')
+  if fname == 'xmodmap' or not kbd_default:
+    try:
+      ret = read_mod_map()
+    except OSError:
+      logging.error('unable execute xmodmap')
 
   if kbd_default:
-    defaults = read_kdb(kbd_default)
     # Merge the defaults with modmap
-    logging.debug('Merging with default kbd file: %s' % kbd_default)
-    for keycode in defaults:
-      if keycode not in ret:
-        ret[keycode] = defaults[keycode]
+    if fname == 'xmodmap':
+      logging.debug('Merging with default kbd file: %s' % kbd_default)
+      for keycode in defaults:
+        if keycode not in ret:
+          ret[keycode] = defaults[keycode]
+    else:
+      logging.debug('Using default kbd file: %s' % kbd_default)
+      ret = read_kdb(kbd_default)
   else:
     logging.error('Can not find default kbd file')
   return ret
