@@ -4,6 +4,9 @@ Release Notes
 Development
 -----------
 * Added --loglevel for specifying logging level
+* Window is no longer showing in taskbar.
+* Window is no longer getting focus unless a mouse click on window first. Once
+  pointer leaves, it will not accept focuse again.
 * Cache shape masks
 * Issue 38, add an about box.
 * Issue 42, able to change keymap file in settings dialog.

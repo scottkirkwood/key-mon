@@ -279,6 +279,9 @@ class KeyMon:
 
     self.add_events()
 
+    self.set_accept_focus(False)
+    self.window.set_skip_taskbar_hint(True)
+
     old_x = self.options.x_pos
     old_y = self.options.y_pos
     if old_x != -1 and old_y != -1 and old_x and old_y:
@@ -382,6 +385,7 @@ class KeyMon:
     self.window.connect('destroy', self.destroy)
     self.window.connect('button-press-event', self.button_pressed)
     self.window.connect('button-release-event', self.button_released)
+    self.window.connect('leave-notify-event', self.pointer_leave)
     self.event_box.connect('button_release_event', self.right_click_handler)
 
     accelgroup = gtk.AccelGroup()
@@ -406,9 +410,27 @@ class KeyMon:
 
   def button_pressed(self, widget, evt):
     """A mouse button was pressed."""
+    self.set_accept_focus(True)
     if evt.button == 1:
       self.move_dragged = widget.get_pointer()
+      self.window.set_opacity(self.options.opacity)
+      # remove no_press_timer
+      if self.no_press_timer:
+        gobject.source_remove(self.no_press_timer)
+        self.no_press_timer = None
     return True
+
+  def pointer_leave(self, widget, evt):
+
+    self.set_accept_focus(False)
+
+  def set_accept_focus(self, accept_focus=True):
+
+    self.window.set_accept_focus(accept_focus)
+    if accept_focus:
+      logging.debug('window now accepts focus')
+    else:
+      logging.debug('window now does not accept focus')
 
   def _window_moved(self):
     """The window has moved position, save it."""
@@ -453,7 +475,8 @@ class KeyMon:
           self.handle_key(code_num, event.code, event.value)
         elif event.code.startswith('BTN'):
           self.handle_mouse_button(event.code, event.value)
-      self.reset_no_press_timer()
+      if not self.move_dragged:
+        self.reset_no_press_timer()
     elif event.type.startswith('EV_REL') and event.code == 'REL_WHEEL':
       self.handle_mouse_scroll(event.value, event.value)
 
