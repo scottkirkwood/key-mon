@@ -22,6 +22,7 @@ Shows their status graphically.
 __author__ = 'Scott Kirkwood (scott+keymon@forusers.com)'
 __version__ = '1.7'
 
+import locale
 import logging
 import pygtk
 pygtk.require('2.0')
@@ -63,6 +64,8 @@ def fix_svg_key_closure(fname, from_tos):
     fbytes = fin.read()
     fin.close()
     for fin, t in from_tos:
+      # Quick XML escape fix
+      t = t.replace('<', '&lt;')
       fbytes = fbytes.replace(fin, t)
     return fbytes
 
@@ -92,29 +95,26 @@ class KeyMon:
     else:
       self.svg_size = ''
     # Make lint happy by defining these.
-    self.mouse_image = None
-    self.alt_image = None
     self.hbox = None
     self.window = None
     self.event_box = None
     self.mouse_indicator_win = None
     self.key_image = None
-    self.shift_image = None
-    self.ctrl_image = None
-    self.meta_image = None
     self.buttons = None
     
+    self.no_press_timer = None
+
+    self.move_dragged = False
     self.shape_mask_current = None
     self.shape_mask_cache = {}
 
-    self.enabled = {
-        'MOUSE': self.options.mouse,
-        'SHIFT': self.options.shift,
-        'CTRL': self.options.ctrl,
-        'META': self.options.meta,
-        'ALT': self.options.alt,
-    }
-    self.modmap = mod_mapper.safely_read_mod_map(self.options.kbd_file)
+    self.MODS = [u'SHIFT', u'CTRL', u'META', u'ALT']
+    self.IMAGES = [u'MOUSE'] + self.MODS
+    self.images = dict((img, None) for img in self.IMAGES)
+    self.enabled = dict((img, self.get_option(img.lower())) for img in self.IMAGES)
+
+    self.options.kbd_files = settings.get_kbd_files()
+    self.modmap = mod_mapper.safely_read_mod_map(self.options.kbd_file, self.options.kbd_files)
 
     self.name_fnames = self.create_names_to_fnames()
     self.devices = xlib.XEvents()
@@ -123,6 +123,11 @@ class KeyMon:
     self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames,
                                                          self.options.scale)
     self.create_window()
+    self.reset_no_press_timer()
+
+  def get_option(self, attr):
+    """Shorthand for getattr(self.options, attr)"""
+    return getattr(self.options, attr)
 
   def do_screenshot(self):
     """Create a screenshot showing some keys."""
@@ -262,7 +267,7 @@ class KeyMon:
     self.mouse_indicator_win = shaped_window.ShapedWindow(
         self.svg_name('mouse-indicator'))
 
-    #self.window.set_opacity(1.0)
+    self.window.set_opacity(self.options.opacity)
     self.window.set_keep_above(True)
 
     self.event_box = gtk.EventBox()
@@ -279,11 +284,14 @@ class KeyMon:
 
     self.add_events()
 
-    self.window.show()
+    self.set_accept_focus(False)
+    self.window.set_skip_taskbar_hint(True)
+
     old_x = self.options.x_pos
     old_y = self.options.y_pos
     if old_x != -1 and old_y != -1 and old_x and old_y:
       self.window.move(old_x, old_y)
+    self.window.show()
 
   def update_shape_mask(self, *args, **kwargs):
     if not self.options.backgroundless:
@@ -314,11 +322,14 @@ class KeyMon:
     # Initialize the mask just in case masks of buttons can't fill the window,
     # if that happens, some artifacts will be seen usually at right edge.
     gc.set_foreground(
-        gtk.gdk.Color() if self.options.backgroundless else \
-        gtk.gdk.Color(255, 255, 255))
+        gtk.gdk.Color(pixel=0) if self.options.backgroundless else \
+        gtk.gdk.Color(pixel=1))
     shape_mask.draw_rectangle(gc, True, 0, 0, width, height)
 
     for btn_allocation, mask in zip(cache_id, masks):
+      # Don't create mask until every image is allocated
+      if btn_allocation[0] == -1:
+        return
       shape_mask.draw_drawable(gc, mask, 0, 0, *btn_allocation)
 
     self.window.shape_combine_mask(shape_mask, 0, 0)
@@ -326,20 +337,14 @@ class KeyMon:
     self.shape_mask_cache[cache_id] = shape_mask
 
   def create_images(self):
-    self.mouse_image = two_state_image.TwoStateImage(self.pixbufs, 'MOUSE')
-    self.shift_image = two_state_image.TwoStateImage(
-        self.pixbufs, 'SHIFT_EMPTY', self.enabled['SHIFT'])
-    self.ctrl_image = two_state_image.TwoStateImage(
-        self.pixbufs, 'CTRL_EMPTY')
-    self.meta_image = two_state_image.TwoStateImage(
-        self.pixbufs, 'META_EMPTY', self.enabled['META'])
-    self.alt_image = two_state_image.TwoStateImage(
-        self.pixbufs, 'ALT_EMPTY', self.enabled['ALT'])
+    self.images['MOUSE'] = two_state_image.TwoStateImage(self.pixbufs, 'MOUSE')
+    for img in self.MODS:
+      self.images[img] = two_state_image.TwoStateImage(
+          self.pixbufs, img + '_EMPTY', self.enabled[img])
     self.create_buttons()
 
   def create_buttons(self):
-    self.buttons = [self.mouse_image, self.shift_image, self.ctrl_image,
-        self.meta_image, self.alt_image]
+    self.buttons = list(self.images[img] for img in self.IMAGES)
     for _ in range(self.options.old_keys):
       key_image = two_state_image.TwoStateImage(self.pixbufs, 'KEY_EMPTY')
       self.buttons.append(key_image)
@@ -352,25 +357,10 @@ class KeyMon:
   def layout_boxes(self):
     for child in self.hbox.get_children():
       self.hbox.remove(child)
-    if not self.enabled['MOUSE']:
-      self.mouse_image.hide()
-    self.hbox.pack_start(self.mouse_image, False, False, 0)
-
-    if not self.enabled['SHIFT']:
-      self.shift_image.hide()
-    self.hbox.pack_start(self.shift_image, False, False, 0)
-
-    if not self.enabled['CTRL']:
-      self.ctrl_image.hide()
-    self.hbox.pack_start(self.ctrl_image, False, False, 0)
-
-    if not self.enabled['META']:
-      self.meta_image.hide()
-    self.hbox.pack_start(self.meta_image, False, False, 0)
-
-    if not self.enabled['ALT']:
-      self.alt_image.hide()
-    self.hbox.pack_start(self.alt_image, False, False, 0)
+    for img in self.IMAGES:
+      if not self.enabled[img]:
+        self.images[img].hide()
+      self.hbox.pack_start(self.images[img], False, False, 0)
 
     prev_key_image = None
     for key_image in self.buttons[-(self.options.old_keys + 1):-1]:
@@ -388,19 +378,19 @@ class KeyMon:
 
   def svg_name(self, fname):
     """Return an svg filename given the theme, system."""
-    fullname = os.path.join(self.pathname, 'themes/%s/%s%s.svg' % (
-        self.options.theme, fname, self.svg_size))
+    themepath = self.options.themes[self.options.theme][1]
+    fullname = os.path.join(themepath, '%s%s.svg' % (fname, self.svg_size))
     if self.svg_size and not os.path.exists(fullname):
       # Small not found, defaulting to large size
-      fullname = os.path.join(self.pathname, 'themes/%s/%s.svg' %
-                              (self.options.theme, fname))
+      fullname = os.path.join(themepath, '%s/%s.svg' % fname)
     return fullname
 
   def add_events(self):
     """Add events for the window to listen to."""
     self.window.connect('destroy', self.destroy)
     self.window.connect('button-press-event', self.button_pressed)
-    self.window.connect('configure-event', self._window_moved)
+    self.window.connect('button-release-event', self.button_released)
+    self.window.connect('leave-notify-event', self.pointer_leave)
     self.event_box.connect('button_release_event', self.right_click_handler)
 
     accelgroup = gtk.AccelGroup()
@@ -417,16 +407,46 @@ class KeyMon:
 
     gobject.idle_add(self.on_idle)
 
-  def button_pressed(self, widget, evt):
-    """A mouse button was pressed."""
-    if evt.button != 1:
-      return True
-    widget.begin_move_drag(evt.button, int(evt.x_root), int(evt.y_root), evt.time)
+  def button_released(self, widget, evt):
+    """A mouse button was released."""
+    if evt.button == 1:
+      self.move_dragged = None
     return True
 
-  def _window_moved(self, widget, unused_event):
+  def button_pressed(self, widget, evt):
+    """A mouse button was pressed."""
+    self.set_accept_focus(True)
+    if evt.button == 1:
+      self.move_dragged = widget.get_pointer()
+      self.window.set_opacity(self.options.opacity)
+      # remove no_press_timer
+      if self.no_press_timer:
+        gobject.source_remove(self.no_press_timer)
+        self.no_press_timer = None
+    return True
+
+  def pointer_leave(self, widget, evt):
+
+    self.set_accept_focus(False)
+
+  def set_accept_focus(self, accept_focus=True):
+
+    self.window.set_accept_focus(accept_focus)
+    if accept_focus:
+      logging.debug('window now accepts focus')
+    else:
+      logging.debug('window now does not accept focus')
+
+  def _window_moved(self):
     """The window has moved position, save it."""
-    x, y = widget.get_position()
+    if not self.move_dragged:
+      return
+    old_p = self.move_dragged
+    new_p = self.window.get_pointer()
+    x, y = self.window.get_position()
+    x, y = x + new_p[0] - old_p[0], y + new_p[1] - old_p[1]
+    self.window.move(x, y)
+
     logging.info('Moved window to %d, %d' % (x, y))
     self.options.x_pos = x
     self.options.y_pos = y
@@ -448,8 +468,11 @@ class KeyMon:
 
   def handle_event(self, event):
     """Handle an X event."""
-    if event.type == 'EV_MOV' and self.mouse_indicator_win.is_shown:
-      self.mouse_indicator_win.center_on_cursor(*event.value)
+    if event.type == 'EV_MOV':
+      if self.mouse_indicator_win.is_shown:
+        self.mouse_indicator_win.center_on_cursor(*event.value)
+      if self.move_dragged:
+        self._window_moved()
     elif event.type == 'EV_KEY' and event.value in (0, 1):
       if type(event.code) == str:
         if event.code.startswith('KEY'):
@@ -457,8 +480,47 @@ class KeyMon:
           self.handle_key(code_num, event.code, event.value)
         elif event.code.startswith('BTN'):
           self.handle_mouse_button(event.code, event.value)
+      if not self.move_dragged:
+        self.reset_no_press_timer()
     elif event.type.startswith('EV_REL') and event.code == 'REL_WHEEL':
       self.handle_mouse_scroll(event.value, event.value)
+
+  def reset_no_press_timer(self):
+    """Initialize no_press_timer"""
+    if not self.options.no_press_fadeout:
+      return
+    logging.debug('Resetting no_press_timer')
+    if not self.window.get_property('visible'):
+      self.window.move(self.options.x_pos, self.options.y_pos)
+      self.window.show()
+    self.window.set_opacity(self.options.opacity)
+    if self.no_press_timer:
+      gobject.source_remove(self.no_press_timer)
+      self.no_press_timer = None
+    self.no_press_timer = gobject.timeout_add(int(self.options.no_press_fadeout * 1000), self.no_press_fadeout)
+
+  def no_press_fadeout(self, begin=True):
+    """Fadeout the window in a second
+    Args:
+      begin: indicate if this timeout is requested by handle_event.
+    """
+    opacity = self.window.get_opacity() - self.options.opacity / 10.0
+    if opacity < 0.0:
+      opacity = 0.0;
+    logging.debug('Set opacity = %f' % opacity)
+    self.window.set_opacity(opacity)
+    if opacity == 0.0:
+      self.window.hide()
+      # No need to fade out more
+      self.no_press_timer = None
+      return False
+
+    if begin:
+      # Recreate a new timer with 0.1 seccond interval
+      self.no_press_timer = gobject.timeout_add(100, self.no_press_fadeout)
+      # The current self.options.no_press_fadeout interval will not be timed
+      # out again.
+      return False
 
   def _show_down_key(self, name):
     """Show the down key.
@@ -472,8 +534,7 @@ class KeyMon:
       return True
     if self.is_shift_code(name):
       return True
-    if (self.alt_image.is_pressed() or self.shift_image.is_pressed()
-        or self.ctrl_image.is_pressed() or self.meta_image.is_pressed()):
+    if (any(self.images[image].is_pressed() for img in self.MODS)):
       return True
     return False
 
@@ -492,10 +553,8 @@ class KeyMon:
       image.switch_to_default()
       return
     else:
-      self.alt_image.reset_time_if_pressed()
-      self.shift_image.reset_time_if_pressed()
-      self.ctrl_image.reset_time_if_pressed()
-      self.meta_image.reset_time_if_pressed()
+      for img in self.MODS:
+        self.images[img].reset_time_if_pressed()
       image.switch_to_default()
 
   def is_shift_code(self, code):
@@ -517,25 +576,16 @@ class KeyMon:
     if code in self.name_fnames:
       self._handle_event(self.key_image, code, value)
       return
-    if code.startswith('KEY_SHIFT'):
-      if self.enabled['SHIFT']:
-        self._handle_event(self.shift_image, 'SHIFT', value)
-      return
-    if self.enabled['ALT']:
-      if code.startswith('KEY_ALT'):
-        self._handle_event(self.alt_image, 'ALT', value)
+    for keysym, img in (('KEY_SHIFT', 'SHIFT'), ('KEY_CONTROL', 'CTRL'),
+                        ('KEY_ALT', 'ALT'), ('KEY_ISO_LEVEL3_SHIFT', 'ALT'),
+                        ('KEY_SUPER', 'META'), ('KEY_MULTI_KEY', 'META')):
+      if code.startswith(keysym):
+        if self.enabled[img]:
+          if keysym == 'KEY_ISO_LEVEL3_SHIFT':
+            self._handle_event(self.images['ALT'], 'ALTGR', value)
+          else:
+            self._handle_event(self.images[img], img, value)
         return
-      if code == 'KEY_ISO_LEVEL3_SHIFT':
-        self._handle_event(self.alt_image, 'ALTGR', value)
-        return
-    if code.startswith('KEY_CONTROL'):
-      if self.enabled['CTRL']:
-        self._handle_event(self.ctrl_image, 'CTRL', value)
-      return
-    if code.startswith('KEY_SUPER') or code == 'KEY_MULTI_KEY':
-      if self.enabled['META']:
-        self._handle_event(self.meta_image, 'META', value)
-      return
     if code.startswith('KEY_KP'):
       letter = medium_name
       if code not in self.name_fnames:
@@ -568,17 +618,17 @@ class KeyMon:
       for i, btn in enumerate(self.btns):
         if btn == code:
           n_code = i
-        if btn == self.mouse_image.current:
+        if btn == self.images['MOUSE'].current:
           n_image = i
-      if self.options.emulate_middle and ((self.mouse_image.current == 'BTN_LEFT'
+      if self.options.emulate_middle and ((self.images['MOUSE'].current == 'BTN_LEFT'
           and code == 'BTN_RIGHT') or
-          (self.mouse_image.current == 'BTN_RIGHT' and code == 'BTN_LEFT')):
+          (self.images['MOUSE'].current == 'BTN_RIGHT' and code == 'BTN_LEFT')):
         code = 'BTN_MIDDLE'
       elif value == 0 and n_code != n_image:
         code = self.btns[n_image - n_code]
       elif value == 1 and n_image:
         code = self.btns[n_image | n_code]
-      self._handle_event(self.mouse_image, code, value)
+      self._handle_event(self.images['MOUSE'], code, value)
 
     if self.options.visible_click:
       if value == 1:
@@ -593,10 +643,10 @@ class KeyMon:
     if not self.enabled['MOUSE']:
       return
     if direction > 0:
-      self._handle_event(self.mouse_image, 'SCROLL_UP', 1)
+      self._handle_event(self.images['MOUSE'], 'SCROLL_UP', 1)
     elif direction < 0:
-      self._handle_event(self.mouse_image, 'SCROLL_DOWN', 1)
-    self.mouse_image.switch_to_default()
+      self._handle_event(self.images['MOUSE'], 'SCROLL_DOWN', 1)
+    self.images['MOUSE'].switch_to_default()
     return True
 
   def quit_program(self, *unused_args):
@@ -663,16 +713,8 @@ class KeyMon:
 
   def settings_changed(self, unused_dlg):
     """Event received from the settings dialog."""
-    self._toggle_a_key(self.mouse_image, 'MOUSE',
-        self.options.mouse)
-    self._toggle_a_key(self.meta_image, 'META',
-        self.options.meta)
-    self._toggle_a_key(self.shift_image, 'SHIFT',
-        self.options.shift)
-    self._toggle_a_key(self.ctrl_image, 'CTRL',
-        self.options.ctrl)
-    self._toggle_a_key(self.alt_image, 'ALT',
-        self.options.alt)
+    for img in self.IMAGES:
+      self._toggle_a_key(self.images[img], img, self.get_option(img.lower()))
     self.create_buttons()
     self.layout_boxes()
     self.mouse_indicator_win.hide()
@@ -696,6 +738,9 @@ class KeyMon:
     self.window.resize_children()
     self.window.move(x, y)
     self.update_shape_mask(force=True)
+
+    # reload keymap
+    self.modmap = mod_mapper.safely_read_mod_map(self.options.kbd_file, self.options.kbd_files)
 
   def _toggle_a_key(self, image, name, show):
     """Toggle show/hide a key."""
@@ -791,6 +836,11 @@ def create_options():
                   ini_group='ui', ini_name='backgroundless',
                   default=False,
                   help=_('Show only buttons'))
+  opts.add_option(opt_long='--no-press-fadeout', dest='no_press_fadeout',
+                  type='float', default=0.0,
+                  ini_group='ui', ini_name='no_press_fadeout',
+                  help=_('Fadeout the window after a period with no key press. '
+                         'Defaults to %default seconds (Experimental)'))
   opts.add_option(opt_long='--only_combo', dest='only_combo', type='bool',
                   ini_group='ui', ini_name='only_combo',
                   default=False,
@@ -801,8 +851,8 @@ def create_options():
                   help=_('Show where you clicked'))
   opts.add_option(opt_long='--kbdfile', dest='kbd_file',
                   ini_group='devices', ini_name='map',
-                  default='us.kbd',
-                  help=_('Use this kbd filename instead running xmodmap.'))
+                  default=None,
+                  help=_('Use this kbd filename.'))
   opts.add_option(opt_long='--swap', dest='swap_buttons', type='bool',
                   default=False,
                   ini_group='devices', ini_name='swap_buttons',
@@ -827,7 +877,7 @@ def create_options():
                   help=_('Reset all options to their defaults.'),
                   default=None)
 
-  opts.add_option(opt_short=None, opt_long=None, type='float',
+  opts.add_option(opt_short=None, opt_long='--opacity', type='float',
                   dest='opacity', default=1.0, help='Opacity of window',
                   ini_group='ui', ini_name='opacity')
   opts.add_option(opt_short=None, opt_long=None, type='int',
@@ -838,9 +888,12 @@ def create_options():
                   ini_group='position', ini_name='y')
 
   opts.add_option_group(_('Developer Options'), _('These options are for developers.'))
+  opts.add_option(opt_long='--loglevel', dest='loglevel', type='str', default='',
+                  help=_('Logging level'))
   opts.add_option(opt_short='-d', opt_long='--debug', dest='debug', type='bool',
                   default=False,
-                  help=_('Output debugging information.'))
+                  help=_('Output debugging information. '
+                         'Shorthand for --loglevel=debug'))
   opts.add_option(opt_long='--screenshot', dest='screenshot', type='str', default='',
                   help=_('Create a "screenshot.png" and exit. '
                          'Pass a comma separated list of keys to simulate'
@@ -850,46 +903,58 @@ def create_options():
 
 def main():
   """Run the program."""
+  # Check for --loglevel, --debug, we deal with them by ourselves because
+  # option parser also use logging.
+  loglevel = None
+  for idx, arg in enumerate(sys.argv):
+    if '--loglevel' in arg:
+      if '=' in arg:
+        loglevel = arg.split('=')[1]
+      else:
+        loglevel = sys.argv[idx + 1]
+      level = getattr(logging, loglevel.upper(), None)
+      if level is None:
+          raise ValueError('Invalid log level: %s' % loglevel)
+      loglevel = level
+  else:
+    if '--debug' in sys.argv or '-d' in sys.argv:
+      loglevel = logging.DEBUG
+  if loglevel is not None:
+    logging.basicConfig(
+        level=loglevel,
+        format='%(filename)s [%(lineno)d]: %(levelname)s %(message)s')
+
   opts = create_options()
-  opts.read_ini_file('~/.config/key-mon/config')
+  opts.read_ini_file(os.path.join(settings.get_config_dir(), 'config'))
   desc = _('Usage: %prog [Options...]')
   opts.parse_args(desc)
 
   if opts.version:
     show_version()
     sys.exit(0)
-  if opts.debug:
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format = '%(filename)s [%(lineno)d]: %(levelname)s %(message)s')
   if opts.smaller:
     opts.scale = 0.75
   elif opts.larger:
     opts.scale = 1.25
 
-  theme_dir = os.path.join(os.path.dirname(__file__), 'themes')
+  opts.themes = settings.get_themes()
   if opts.list_themes:
     print _('Available themes:')
-    for entry in sorted(os.listdir(theme_dir)):
-      try:
-        parser = SafeConfigParser()
-        theme_config = os.path.join(theme_dir, entry, 'config')
-        parser.read(theme_config)
-        desc = parser.get('theme', 'description')
-        print '%s: %s' % (entry, desc)
-      except:
-        print 'Unable to read theme %r' % theme_config
-        pass
+    print
+    theme_names = sorted(opts.themes)
+    name_len = max(len(name) for name in theme_names)
+    for theme in theme_names:
+      print (' - %%-%ds: %%s' % name_len) % (theme, opts.themes[theme][0])
     raise SystemExit()
-  elif opts.theme:
-    ok_theme = False
-    for entry in sorted(os.listdir(theme_dir)):
-      if opts.theme in entry:
-        ok_theme = True
-        break
-    if not ok_theme:
-      print _('Theme %r does not exist') % opts.theme
-      sys.exit(-1)
+  elif opts.theme and opts.theme not in opts.themes:
+    print _('Theme %r does not exist') % opts.theme
+    print
+    print _('Please make sure %r can be found in '
+            'one of the following directories:') % opts.theme
+    print
+    for theme_dir in settings.get_config_dirs('themes'):
+      print ' - %s' % theme_dir
+    sys.exit(-1)
   if opts.reset:
     print _('Resetting to defaults.')
     opts.reset_to_defaults()

@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Settings dialog."""
+"""Settings dialog and related functions."""
 
 __author__ = 'scott@forusers.com (Scott Kirkwood)'
 
@@ -23,6 +23,8 @@ import gobject
 import gtk
 import logging
 import os
+
+from ConfigParser import SafeConfigParser
 
 LOG = logging.getLogger('settings')
 
@@ -205,14 +207,20 @@ class MiscFrame(CommonFrame):
           'Default is 0.5'),
         timeouts, 'fade_timeout', 4)
 
-    self.themes = []
-    theme_dir = os.path.join(os.path.dirname(__file__), 'themes')
-    self.themes = os.listdir(theme_dir)
+    self.themes = self.settings.options.themes.keys() 
     self._add_dropdown(
         vbox,
         _('Themes:'),
         _('Which theme of buttons to show (ex. Apple)'),
         self.themes, 'theme')
+
+    self.kbd_files = sorted(list(set(
+        os.path.basename(kbd) for kbd in self.settings.options.kbd_files)))
+    self._add_dropdown(
+        vbox,
+        _('Keymap:'),
+        _('Which keymap file to use'),
+        self.kbd_files, 'kbd_file')
     self.add(vbox)
 
 class ButtonsFrame(CommonFrame):
@@ -279,5 +287,50 @@ def manually_run_dialog():
   dlg.run()
   return 0
 
+def get_config_dir():
+  """Return the base directory of configuration."""
+  return os.environ.get('XDG_CONFIG_HOME',
+                        os.path.expanduser('~/.config')) + '/key-mon'
+
+def get_config_dirs(kind=''):
+  """Return search paths of certain kind of configuration directory."""
+  
+  return [d \
+          for d in (
+              os.path.join(get_config_dir(), kind),
+              os.path.join(os.path.dirname(__file__), kind)) \
+          if os.path.exists(d)]
+
+def get_themes():
+  """Return a dict of themes.
+    keys are theme names
+    values are tuples of (description, path)
+      path is where the theme directory located,
+      i.e. theme files are path/*.
+  """
+  theme_dirs = get_config_dirs('themes')
+  themes = {}
+  for theme_dir in theme_dirs:
+    for entry in sorted(os.listdir(theme_dir)):
+      try:
+        parser = SafeConfigParser()
+        theme_config = os.path.join(theme_dir, entry, 'config')
+        parser.read(theme_config)
+        desc = parser.get('theme', 'description')
+        if entry not in themes:
+          themes[entry] = (desc, os.path.join(theme_dir, entry))
+      except:
+        LOG.warning(_('Unable to read theme %r') % (theme_config))
+  return themes
+
+def get_kbd_files():
+  """Return a list of kbd file paths"""
+  config_dirs = get_config_dirs('')
+  kbd_files = [
+      os.path.join(d, f) \
+      for d in config_dirs \
+      for f in sorted(os.listdir(d)) if f.endswith('.kbd')]
+  return kbd_files
+    
 if __name__ == '__main__':
   manually_run_dialog()

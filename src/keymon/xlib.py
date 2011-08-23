@@ -27,8 +27,8 @@ from Xlib import X
 from Xlib import XK
 from Xlib.ext import record
 from Xlib.protocol import rq
-import locale
 import sys
+import time
 import threading
 import collections
 
@@ -89,19 +89,19 @@ class XEvents(threading.Thread):
 
   def _setup_lookup(self):
     """Setup the key lookups."""
-    # set locale to default C locale, see Issue 77.
-    OLD_CTYPE = locale.getlocale(locale.LC_CTYPE)
-    locale.setlocale(locale.LC_CTYPE, 'C')
     for name in dir(XK):
       if name[:3] == "XK_":
         code = getattr(XK, name)
-        self.keycode_to_symbol[code] = 'KEY_' + name[3:].upper()
-    locale.setlocale(locale.LC_CTYPE, OLD_CTYPE)
+        self.keycode_to_symbol[code] = 'KEY_' + str(unicode(name[3:]).upper())
     self.keycode_to_symbol[65027] = 'KEY_ISO_LEVEL3_SHIFT'
     self.keycode_to_symbol[269025062] = 'KEY_BACK'
     self.keycode_to_symbol[269025063] = 'KEY_FORWARD'
     self.keycode_to_symbol[16777215] = 'KEY_CAPS_LOCK'
     self.keycode_to_symbol[269025067] = 'KEY_WAKEUP'
+    # Turkish / F layout
+    self.keycode_to_symbol[699] = 'KEY_GBREVE'   # scancode = 26 / 18
+    self.keycode_to_symbol[697] = 'KEY_IDOTLESS' # scancode = 23 / 19
+    self.keycode_to_symbol[442] = 'KEY_SCEDILLA' # scancode = 39 / 40
 
 
   def next_event(self):
@@ -207,9 +207,12 @@ class XEvents(threading.Thread):
 
 def _run_test():
   """Run a test or debug session."""
-  print 'Press ESCape to quit'
   events = XEvents()
   events.start()
+  while not events.listening():
+    time.sleep(1)
+    print 'Waiting for initializing...'
+  print 'Press ESCape to quit'
   try:
     while events.listening():
       try:
