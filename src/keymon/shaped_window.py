@@ -30,8 +30,8 @@ class ShapedWindow(gtk.Window):
     self.connect('size-allocate', self._on_size_allocate)
     self.set_decorated(False)
     self.set_keep_above(True)
+    self.set_accept_focus(False)
     self.scale = scale
-    self.is_shown = False
     self.name_fnames = {
       'mouse' : [fname],
     }
@@ -68,15 +68,7 @@ class ShapedWindow(gtk.Window):
       self.move(new_x, new_y)
       self.show()
 
-  def show(self):
-    self.is_shown = True
-    self.present()
-
-  def hide(self):
-    self.is_shown = False
-    gtk.Window.hide(self)
-
   def fade_away(self):
     """Make the window fade in a little bit."""
-    self.present()
+    self.show()
     gobject.timeout_add(200, self.hide)

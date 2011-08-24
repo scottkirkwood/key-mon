@@ -469,7 +469,7 @@ class KeyMon:
   def handle_event(self, event):
     """Handle an X event."""
     if event.type == 'EV_MOV':
-      if self.mouse_indicator_win.is_shown:
+      if self.mouse_indicator_win.get_property('visible'):
         self.mouse_indicator_win.center_on_cursor(*event.value)
       if self.move_dragged:
         self._window_moved()
