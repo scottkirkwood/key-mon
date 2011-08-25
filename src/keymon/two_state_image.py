@@ -75,8 +75,14 @@ class TwoStateImage(gtk.Image):
 
   def switch_to(self, name):
     """Switch to image with this name."""
-    if self.current != self.normal:
+    if self.current != self.normal and self.defer_to:
       self._defer_to(self.current)
+      # Make sure defer_to image will only start counting timeout after self
+      # image has timed out.
+      if self.count_down:
+        self.defer_to.count_down = self.count_down + self.timeout_secs
+      else:
+        self.defer_to.count_down += self.timeout_secs
     self._switch_to(name)
 
   def _switch_to(self, name):
