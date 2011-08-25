@@ -238,6 +238,9 @@ class KeyMon:
         'KEY_CAPS_LOCK': [
             fix_svg_key_closure(self.svg_name('two-line-wide'),
             [('TOP', 'Capslock'), ('BOTTOM', '')])],
+        'KEY_MULTI_KEY': [
+            fix_svg_key_closure(self.svg_name('two-line-wide'),
+            [('TOP', 'Compose'), ('BOTTOM', '')])],
       })
     else:
       ftn.update({
@@ -251,6 +254,8 @@ class KeyMon:
             fix_svg_key_closure(self.svg_name('one-line-wide'), [('&amp;', 'Enter')])],
         'KEY_CAPS_LOCK': [
             fix_svg_key_closure(self.svg_name('one-line-wide'), [('&amp;', 'Capslck')])],
+        'KEY_MULTI_KEY': [
+            fix_svg_key_closure(self.svg_name('one-line-wide'), [('&amp;', 'Compose')])],
       })
     return ftn
 
@@ -578,7 +583,7 @@ class KeyMon:
       return
     for keysym, img in (('KEY_SHIFT', 'SHIFT'), ('KEY_CONTROL', 'CTRL'),
                         ('KEY_ALT', 'ALT'), ('KEY_ISO_LEVEL3_SHIFT', 'ALT'),
-                        ('KEY_SUPER', 'META'), ('KEY_MULTI_KEY', 'META')):
+                        ('KEY_SUPER', 'META')):
       if code.startswith(keysym):
         if self.enabled[img]:
           if keysym == 'KEY_ISO_LEVEL3_SHIFT':
