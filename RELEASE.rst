@@ -4,6 +4,7 @@ Release Notes
 Development
 -----------
 * Added --loglevel for specifying logging level
+* Added Compose key. It now shows in key image.
 * Window is no longer showing in taskbar.
 * Window is no longer getting focus unless a mouse click on window first. Once
   pointer leaves, it will not accept focuse again.
@@ -23,6 +24,7 @@ Development
   dragging.
 * Fixed issue 90, add two Turkish kbd files and missing codes to xlib.c.
 * Fixed issue 75, make AltGr show in Alt image place.
+* Fixed issue 67, right Windows key does not show.
 
 August 4th, 2011 v 1.7
 ----------------------
