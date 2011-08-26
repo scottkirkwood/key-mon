@@ -1,0 +1,25 @@
+[MASTER]
+profile=no 
+ignore=.hg
+
+[MESSAGES CONTROL] 
+disable-msg=C0111
+
+[REPORTS]
+reports=no
+
+[BASIC]
+# Good variable names which should always be accepted, separated by a comma
+good-names=i,j,k,ex,Run,x,y,w,h,e,_
+
+[FORMAT]
+# String used as indentation unit. This is usually " " (4 spaces) or "\t" (1
+# tab).
+indent-string='  '
+
+# Maximum number of characters on a single line.
+max-line-length=100
+
+[VARIABLES]
+dummy-variables-rgx=_|dummy|unused_|cls|x|y|w|h|e
+

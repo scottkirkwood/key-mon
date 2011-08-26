@@ -1,0 +1,15 @@
+[Desktop Entry]
+Version=1.0
+Name=KeyMon
+GenericName=Keyboard and Mouse Monitor
+GenericName[pt_BR]=Monitor para mouse e teclado
+GenericName[tr]=Klavye ve Fare İzleyici
+Comment=Keyboard and Mouse Monitor for screencasts
+Comment[pt_BR]=Monitor para mouse e teclado, util para screencasts
+Comment[tr]=Ekran kayıtları için klavye ve fare izleyici
+Exec=key-mon
+Icon=key-mon
+Terminal=false
+Type=Application
+Categories=GTK;Graphics;
+StartupNotify=true
