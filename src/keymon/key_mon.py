@@ -924,10 +924,12 @@ def main():
   else:
     if '--debug' in sys.argv or '-d' in sys.argv:
       loglevel = logging.DEBUG
-  if loglevel is not None:
-    logging.basicConfig(
-        level=loglevel,
-        format='%(filename)s [%(lineno)d]: %(levelname)s %(message)s')
+  logging.basicConfig(
+      level=loglevel,
+      format='%(filename)s [%(lineno)d]: %(levelname)s %(message)s')
+  if loglevel is None:
+    # Disabling warning, info, debug messages
+    logging.disable(logging.WARNING)
 
   opts = create_options()
   opts.read_ini_file(os.path.join(settings.get_config_dir(), 'config'))
