@@ -638,7 +638,7 @@ class KeyMon:
     if self.options.visible_click:
       if value == 1:
         self.mouse_indicator_win.center_on_cursor()
-        self.mouse_indicator_win.show()
+        self.mouse_indicator_win.maybe_show()
       else:
         self.mouse_indicator_win.fade_away()
     return True

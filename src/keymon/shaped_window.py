@@ -32,6 +32,7 @@ class ShapedWindow(gtk.Window):
     self.set_keep_above(True)
     self.set_accept_focus(False)
     self.scale = scale
+    self.shown = False
     self.name_fnames = {
       'mouse' : [fname],
     }
@@ -66,9 +67,14 @@ class ShapedWindow(gtk.Window):
     pos = self.get_position()
     if pos[0] != new_x or pos[1] != new_y:
       self.move(new_x, new_y)
-      self.show()
+
+  def maybe_show(self):
+    if self.shown:
+      return
+    self.shown = True
+    self.show()
 
   def fade_away(self):
     """Make the window fade in a little bit."""
-    self.show()
+    self.shown = False
     gobject.timeout_add(200, self.hide)
