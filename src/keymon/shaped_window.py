@@ -25,13 +25,15 @@ import lazy_pixbuf_creator
 
 class ShapedWindow(gtk.Window):
   """Create a window shaped as fname."""
-  def __init__(self, fname, scale=1.0):
+  def __init__(self, fname, scale=1.0, timeout=0.2):
     gtk.Window.__init__(self)
     self.connect('size-allocate', self._on_size_allocate)
     self.set_decorated(False)
     self.set_keep_above(True)
     self.set_accept_focus(False)
     self.scale = scale
+    self.timeout = timeout
+    self.timeout_timer = None
     self.name_fnames = {
       'mouse' : [fname],
     }
@@ -68,7 +70,18 @@ class ShapedWindow(gtk.Window):
       self.move(new_x, new_y)
       self.show()
 
+  def show(self):
+    """Show this mouse indicator and ignore awaiting fade away request."""
+    if self.timeout_timer:
+      # There is a fade away request, ignore it
+      gobject.source_remove(self.timeout_timer)
+      self.timeout_timer = None
+      # This method only is called when mouse is pressed, so there will be a
+      # release and fade_away call, no need to set up another timer.
+    super(ShapedWindow, self).show()
+
   def fade_away(self):
     """Make the window fade in a little bit."""
+    # TODO this isn't doing any fading out
     self.show()
-    gobject.timeout_add(200, self.hide)
+    self.timeout_timer = gobject.timeout_add(int(self.timeout * 1000), self.hide)
