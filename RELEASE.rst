@@ -12,8 +12,9 @@ Development
 * Cache shape masks
 * Issue 38, add an about box.
 * Issue 42, able to change keymap file in settings dialog.
+* Issue 45, add --mouse-timeout, --visible-click-timeout, and rename
+  --fade-timeout to --key-timeout.
 * Issue 46, add --no-press-fadeout for hide the window after inactivity.
-  (Experimental)
 * Fixed issue 77, keysym does not match because Turkish locale setting, 'i'
   character won't be changed case in 'shift'.
 * Fixed issue 74, fix old keys doesn't show the correct number of key images.
