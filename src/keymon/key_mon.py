@@ -559,7 +559,8 @@ class KeyMon:
     # on key up
     if self.is_shift_code(name):
       # shift up is always shown
-      image.switch_to_default()
+      if not self.options.sticky_mode:
+        image.switch_to_default()
       return
     else:
       for img in self.MODS:
@@ -868,6 +869,10 @@ def create_options():
                   ini_group='ui', ini_name='only_combo',
                   default=False,
                   help=_('Show only key combos (ex. Control-A)'))
+  opts.add_option(opt_long='--sticky', dest='sticky_mode', type='bool',
+                  ini_group='ui', ini_name='sticky_mode',
+                  default=False,
+                  help=_('Sticky mode'))
   opts.add_option(opt_long='--visible_click', dest='visible_click', type='bool',
                   ini_group='ui', ini_name='visible-click',
                   default=False,
