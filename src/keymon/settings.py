@@ -189,6 +189,11 @@ class MiscFrame(CommonFrame):
         _('Only key combinations'),
         _('Show a key only when used with a modifier key (like Control)'),
         'only_combo')
+    self._add_check(
+        vbox,
+        _('StickyKeys mode'),
+        _('Make modifier keys be sticky'),
+        'sticky_mode')
 
     sizes = ['1.0', '0.6', '0.8', '1.0', '1.2', '1.4', '1.6', '1.8']
     self._add_dropdown(

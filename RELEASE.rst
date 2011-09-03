@@ -15,6 +15,8 @@ Development
 * Issue 45, add --mouse-timeout, --visible-click-timeout, and rename
   --fade-timeout to --key-timeout.
 * Issue 46, add --no-press-fadeout for hide the window after inactivity.
+* Issue 59, add --sticky for StickyKeys. Note it does not detect your
+  environment, it only make modifier keys be sticky when you use this option.
 * Fixed issue 77, keysym does not match because Turkish locale setting, 'i'
   character won't be changed case in 'shift'.
 * Fixed issue 74, fix old keys doesn't show the correct number of key images.
