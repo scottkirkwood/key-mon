@@ -189,6 +189,11 @@ class MiscFrame(CommonFrame):
         _('Only key combinations'),
         _('Show a key only when used with a modifier key (like Control)'),
         'only_combo')
+    self._add_check(
+        vbox,
+        _('StickyKeys mode'),
+        _('Make modifier keys be sticky'),
+        'sticky_mode')
 
     sizes = ['1.0', '0.6', '0.8', '1.0', '1.2', '1.4', '1.6', '1.8']
     self._add_dropdown(
@@ -202,10 +207,25 @@ class MiscFrame(CommonFrame):
             '1.4', '1.6', '1.8', '2.0', '2.5', '3.0', '3.5', '4.0']
     self._add_dropdown(
         vbox,
-        _('Timeout:'),
-        _('How long before activated buttons fadeout. '
+        _('Key timeout:'),
+        _('How long before activated key buttons disappear. '
           'Default is 0.5'),
-        timeouts, 'fade_timeout', 4)
+        timeouts, 'key_timeout', 4)
+
+    self._add_dropdown(
+        vbox,
+        _('Mouse timeout:'),
+        _('How long before activated mouse buttons disappear. '
+          'Default is 0.2'),
+        timeouts, 'mouse_timeout', 4)
+
+    self._add_dropdown(
+        vbox,
+        _('Highly visible click timeout:'),
+        _('How long before highly visible click disappear. '
+          'Default is 0.2'),
+        timeouts, 'visible_click_timeout', 4)
+
 
     self.themes = self.settings.options.themes.keys() 
     self._add_dropdown(
