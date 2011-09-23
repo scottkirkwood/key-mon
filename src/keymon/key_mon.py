@@ -101,7 +101,7 @@ class KeyMon:
     self.mouse_indicator_win = None
     self.key_image = None
     self.buttons = None
-    
+
     self.no_press_timer = None
 
     self.move_dragged = False
@@ -271,6 +271,11 @@ class KeyMon:
 
     self.mouse_indicator_win = shaped_window.ShapedWindow(
         self.svg_name('mouse-indicator'))
+
+    self.mouse_follower_win = shaped_window.ShapedWindow(
+        self.svg_name('mouse-follower'))
+    if self.options.follow_mouse:
+        self.mouse_follower_win.show()
 
     self.window.set_opacity(self.options.opacity)
     self.window.set_keep_above(True)
@@ -476,6 +481,8 @@ class KeyMon:
     if event.type == 'EV_MOV':
       if self.mouse_indicator_win.get_property('visible'):
         self.mouse_indicator_win.center_on_cursor(*event.value)
+      if self.mouse_follower_win.get_property('visible'):
+        self.mouse_follower_win.center_on_cursor(*event.value)
       if self.move_dragged:
         self._window_moved()
     elif event.type == 'EV_KEY' and event.value in (0, 1):
@@ -854,6 +861,10 @@ def create_options():
                   ini_group='ui', ini_name='visible-click',
                   default=False,
                   help=_('Show where you clicked'))
+  opts.add_option(opt_long='--follow_mouse', dest='follow_mouse', type='bool',
+                  ini_group='ui', ini_name='follow-mouse',
+                  default=False,
+                  help=_('Show the mouse more visibly'))
   opts.add_option(opt_long='--kbdfile', dest='kbd_file',
                   ini_group='devices', ini_name='map',
                   default=None,

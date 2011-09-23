@@ -293,16 +293,8 @@ class Options(object):
     for opt in self._options.values():
       opt.set_from_optparse(self._opt_ret)
 
-  def parse_ini(self, fp, ignore=False, ignore_kept=True):
-    """Parser an ini file from fp, which is file-like class.
-    Args:
-      fp: file object.
-      ignore: whether to ignore undefined option from ini file.
-      ignore_kept:
-          whether to add undefined options. If False, then undefined option
-          will not be saved back to ini file since it's not been stored in
-          self._options.
-    """
+  def parse_ini(self, fp):
+    """Parser an ini file from fp, which is file-like class."""
 
     config = ConfigParser.SafeConfigParser()
     config.readfp(fp)
@@ -319,14 +311,8 @@ class Options(object):
       for name, value in config.items(section):
         combined_name = section + '-' + name
         if not combined_name in checker:
-          if ignore_kept:
-            LOG.warning('Unknown option %r in section [%s] is kept', name, section)
-            self.add_option(combined_name, ini_group=section, ini_name=name)
-            self._options[combined_name].value = value
-            continue
-          LOG.warning('Unknown option %r in section [%s]', name, section)
-          if not ignore:
-            raise OptionException('Unknown option %r in section [%s]' % (name, section))
+          LOG.info('Unknown option %r in section [%s]', name, section)
+          raise OptionException('Unknown option %r in section [%s]' % (name, section))
 
   def write_ini(self, fp):
     """Parser an ini file from fp, which is file-like class."""
