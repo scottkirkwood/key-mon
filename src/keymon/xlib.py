@@ -98,6 +98,14 @@ class XEvents(threading.Thread):
     self.keycode_to_symbol[269025063] = 'KEY_FORWARD'
     self.keycode_to_symbol[16777215] = 'KEY_CAPS_LOCK'
     self.keycode_to_symbol[269025067] = 'KEY_WAKEUP'
+    # Multimedia keys
+    self.keycode_to_symbol[269025042] = 'KEY_AUDIOMUTE'
+    self.keycode_to_symbol[269025041] = 'KEY_AUDIOLOWERVOLUME'
+    self.keycode_to_symbol[269025043] = 'KEY_AUDIORAISEVOLUME'
+    self.keycode_to_symbol[269025047] = 'KEY_AUDIONEXT'
+    self.keycode_to_symbol[269025044] = 'KEY_AUDIOPLAY'
+    self.keycode_to_symbol[269025046] = 'KEY_AUDIOPREV'
+    self.keycode_to_symbol[269025045] = 'KEY_AUDIOSTOP'
     # Turkish / F layout
     self.keycode_to_symbol[699] = 'KEY_GBREVE'   # scancode = 26 / 18
     self.keycode_to_symbol[697] = 'KEY_IDOTLESS' # scancode = 23 / 19

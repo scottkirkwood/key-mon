@@ -270,7 +270,8 @@ class KeyMon:
     self.window.set_decorated(self.options.decorated)
 
     self.mouse_indicator_win = shaped_window.ShapedWindow(
-        self.svg_name('mouse-indicator'))
+        self.svg_name('mouse-indicator'),
+        timeout=self.options.visible_click_timeout)
 
     self.mouse_follower_win = shaped_window.ShapedWindow(
         self.svg_name('mouse-follower'))
@@ -361,7 +362,10 @@ class KeyMon:
     self.key_image = two_state_image.TwoStateImage(self.pixbufs, 'KEY_EMPTY')
     self.buttons.append(self.key_image)
     for but in self.buttons:
-      but.timeout_secs = self.options.fade_timeout
+      if but.normal == 'MOUSE':
+        but.timeout_secs = self.options.mouse_timeout
+      else:
+        but.timeout_secs = self.options.key_timeout
       but.connect('size_allocate', self.update_shape_mask)
 
   def layout_boxes(self):
@@ -562,7 +566,8 @@ class KeyMon:
     # on key up
     if self.is_shift_code(name):
       # shift up is always shown
-      image.switch_to_default()
+      if not self.options.sticky_mode:
+        image.switch_to_default()
       return
     else:
       for img in self.MODS:
@@ -730,6 +735,7 @@ class KeyMon:
     self.create_buttons()
     self.layout_boxes()
     self.mouse_indicator_win.hide()
+    self.mouse_indicator_win.timeout = self.options.visible_click_timeout
     self.window.set_decorated(self.options.decorated)
     self.name_fnames = self.create_names_to_fnames()
     self.pixbufs.reset_all(self.name_fnames, self.options.scale)
@@ -738,7 +744,10 @@ class KeyMon:
         but.reset_image(self.enabled[but.normal.replace('_EMPTY', '')])
       else:
         but.reset_image()
-      but.timeout_secs = self.options.fade_timeout
+      if but.normal == 'MOUSE':
+        but.timeout_secs = self.options.mouse_timeout
+      else:
+        but.timeout_secs = self.options.key_timeout
 
     # all this to get it to resize smaller
     x, y = self.window.get_position()
@@ -835,10 +844,20 @@ def create_options():
                   ini_group='ui', ini_name='scale',
                   help=_('Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is '
                          'half the size. Defaults to %default'))
-  opts.add_option(opt_long='--fade-timeout', dest='fade_timeout',
+  opts.add_option(opt_long='--key-timeout', dest='key_timeout',
                   type='float', default=0.5,
-                  ini_group='ui', ini_name='fade_timeout',
-                  help=_('Timeout before activated buttons fadeout. '
+                  ini_group='ui', ini_name='key_timeout',
+                  help=_('Timeout before key returns to unpressed image. '
+                         'Defaults to %default'))
+  opts.add_option(opt_long='--mouse-timeout', dest='mouse_timeout',
+                  type='float', default=0.2,
+                  ini_group='ui', ini_name='mouse_timeout',
+                  help=_('Timeout before mouse returns to unpressed image. '
+                         'Defaults to %default'))
+  opts.add_option(opt_long='--visible-click-timeout', dest='visible_click_timeout',
+                  type='float', default=0.2,
+                  ini_group='ui', ini_name='visible_click_timeout',
+                  help=_('Timeout before highly visible click disappears. '
                          'Defaults to %default'))
   opts.add_option(opt_long='--decorated', dest='decorated', type='bool',
                   ini_group='ui', ini_name='decorated',
@@ -857,6 +876,10 @@ def create_options():
                   ini_group='ui', ini_name='only_combo',
                   default=False,
                   help=_('Show only key combos (ex. Control-A)'))
+  opts.add_option(opt_long='--sticky', dest='sticky_mode', type='bool',
+                  ini_group='ui', ini_name='sticky_mode',
+                  default=False,
+                  help=_('Sticky mode'))
   opts.add_option(opt_long='--visible_click', dest='visible_click', type='bool',
                   ini_group='ui', ini_name='visible-click',
                   default=False,
@@ -935,10 +958,12 @@ def main():
   else:
     if '--debug' in sys.argv or '-d' in sys.argv:
       loglevel = logging.DEBUG
-  if loglevel is not None:
-    logging.basicConfig(
-        level=loglevel,
-        format='%(filename)s [%(lineno)d]: %(levelname)s %(message)s')
+  logging.basicConfig(
+      level=loglevel,
+      format='%(filename)s [%(lineno)d]: %(levelname)s %(message)s')
+  if loglevel is None:
+    # Disabling warning, info, debug messages
+    logging.disable(logging.WARNING)
 
   opts = create_options()
   opts.read_ini_file(os.path.join(settings.get_config_dir(), 'config'))
