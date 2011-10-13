@@ -1,20 +1,30 @@
-personal_ws-1.1 en 26 
+personal_ws-1.1 en 36 
 Ctrl
 keymap
 http
+keysym
+nomouse
+AltGr
+moveresize
 nd
+StickyKeys
 DBUS
 Wacom
 svg
 pybdist
 yyd
 screenshots
+setxkbmap
+taskbar
 librsvg
 refactoring
 keycodes
+kbdfile
+kbd
 Yu
 Capslock
 XLib
+xlib
 Jie
 py
 gksudo

@@ -1,3 +1,4 @@
+Yu-Jie Lin
 Danial G. Taylor for the original inspiration
 Jakub Steiner (jimmac) for original keyboard artwork
 Stefantalpalaru for patch for python 2.6.6
