@@ -287,8 +287,10 @@ def parse_modmap(lines):
 def read_kdb(fname):
   """Read the kdb file."""
   logging.debug('Loading kbd file: %s' % fname)
-  return parse_kdb(codecs.open(os.path.join(os.path.dirname(__file__), fname),
-                              'r', 'utf-8').read())
+  return parse_kdb(
+          codecs.open(
+              os.path.join(os.path.dirname(os.path.abspath(__file__)), fname),
+              'r', 'utf-8').read())
 
 
 def parse_kdb(text):
@@ -300,7 +302,8 @@ def parse_kdb(text):
       continue
     grps = re_line.search(line)
     if grps:
-      ret.set_map(int(grps.group(1)), (grps.group(2), grps.group(3), grps.group(4)))
+      ret.set_map(int(grps.group(1)), (grps.group(2), grps.group(3),
+          grps.group(4)))
   ret.done()
   return ret
 
