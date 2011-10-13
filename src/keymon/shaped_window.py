@@ -32,6 +32,7 @@ class ShapedWindow(gtk.Window):
     self.set_keep_above(True)
     self.set_accept_focus(False)
     self.scale = scale
+    self.shown = False
     self.timeout = timeout
     self.timeout_timer = None
     self.name_fnames = {
@@ -80,8 +81,14 @@ class ShapedWindow(gtk.Window):
       # release and fade_away call, no need to set up another timer.
     super(ShapedWindow, self).show()
 
+  def maybe_show(self):
+    if self.shown:
+      return
+    self.shown = True
+    self.show()
+
   def fade_away(self):
     """Make the window fade in a little bit."""
     # TODO this isn't doing any fading out
-    self.show()
+    self.shown = True
     self.timeout_timer = gobject.timeout_add(int(self.timeout * 1000), self.hide)

@@ -89,7 +89,7 @@ class KeyMon:
                  'BTN_LEFT', 'BTN_LEFTRIGHT', 'BTN_LEFTMIDDLE',
                  'BTN_LEFTMIDDLERIGHT']
     self.options = options
-    self.pathname = os.path.dirname(__file__)
+    self.pathname = os.path.dirname(os.path.abspath(__file__))
     if self.options.scale < 1.0:
       self.svg_size = '-small'
     else:

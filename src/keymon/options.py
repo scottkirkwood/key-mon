@@ -312,7 +312,7 @@ class Options(object):
         combined_name = section + '-' + name
         if not combined_name in checker:
           LOG.info('Unknown option %r in section [%s]', name, section)
-          raise OptionException('Unknown option %r in section [%s]' % (name, section))
+          # we no longer throw an error to be backward compatible
 
   def write_ini(self, fp):
     """Parser an ini file from fp, which is file-like class."""

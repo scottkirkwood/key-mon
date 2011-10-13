@@ -318,7 +318,7 @@ def get_config_dirs(kind=''):
   return [d \
           for d in (
               os.path.join(get_config_dir(), kind),
-              os.path.join(os.path.dirname(__file__), kind)) \
+              os.path.join(os.path.dirname(os.path.abspath(__file__)), kind)) \
           if os.path.exists(d)]
 
 def get_themes():
