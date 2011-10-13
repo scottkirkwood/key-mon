@@ -362,7 +362,8 @@ def safely_read_mod_map(fname, kbd_files):
   # Assigning a default kbdfile name using result of setxkbmap
   DEFAULT_KBD = None
   try:
-    for line in  run_cmd(('setxkbmap', '-query')).split('\n'):
+    # TODO is -print the new -query ?
+    for line in  run_cmd(('setxkbmap', '-print')).split('\n'):
       if 'layout:' in line:
         DEFAULT_KBD = line.split(':')[1].strip()
       if 'variant:' in line:
