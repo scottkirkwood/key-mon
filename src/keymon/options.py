@@ -121,12 +121,12 @@ class OptionItem(object):
       return
     if hasattr(opts, self._dest):
       opt_val = getattr(opts, self._dest)
-      if opt_val != self._default:
-        self._set_temp_value(opt_val)
+      self._set_temp_value(opt_val)
 
   def reset_to_default(self):
     """Reset to the default value."""
     self._set_value(self._default)
+    self._set_temp_value(None)
 
   def get_value(self):
     """Return the value."""
@@ -160,9 +160,12 @@ class OptionItem(object):
     else:
       setattr(self, attr, val)
     self._dirty = old_val != getattr(self, attr)
+    if self._dirty and self._temp_value:
+      self._temp_value = None
 
   def _set_value(self, val):
     self._set_attr_value('_value', val)
+    self._set_attr_value('_temp_value', None)
 
   def _set_temp_value(self, val):
     self._set_attr_value('_temp_value', val)
