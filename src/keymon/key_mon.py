@@ -20,9 +20,8 @@ Shows their status graphically.
 """
 
 __author__ = 'Scott Kirkwood (scott+keymon@forusers.com)'
-__version__ = '1.7'
+__version__ = '1.8'
 
-import locale
 import logging
 import pygtk
 pygtk.require('2.0')
@@ -110,7 +109,7 @@ class KeyMon:
 
     self.MODS = [u'SHIFT', u'CTRL', u'META', u'ALT']
     self.IMAGES = [u'MOUSE'] + self.MODS
-    self.images = dict((img, None) for img in self.IMAGES)
+    self.images = dict([(img, None) for img in self.IMAGES])
     self.enabled = dict((img, self.get_option(img.lower())) for img in self.IMAGES)
 
     self.options.kbd_files = settings.get_kbd_files()
@@ -304,7 +303,7 @@ class KeyMon:
       self.window.move(old_x, old_y)
     self.window.show()
 
-  def update_shape_mask(self, *args, **kwargs):
+  def update_shape_mask(self, *unused_args, **kwargs):
     if not self.options.backgroundless:
       return
     force = kwargs.get('force', False)
@@ -421,7 +420,7 @@ class KeyMon:
 
     gobject.idle_add(self.on_idle)
 
-  def button_released(self, widget, evt):
+  def button_released(self, unused_widget, evt):
     """A mouse button was released."""
     if evt.button == 1:
       self.move_dragged = None
@@ -439,7 +438,7 @@ class KeyMon:
         self.no_press_timer = None
     return True
 
-  def pointer_leave(self, widget, evt):
+  def pointer_leave(self, unused_widget, unused_evt):
 
     self.set_accept_focus(False)
 
@@ -550,7 +549,7 @@ class KeyMon:
       return True
     if self.is_shift_code(name):
       return True
-    if (any(self.images[image].is_pressed() for img in self.MODS)):
+    if (any(self.images[img].is_pressed() for img in self.MODS)):
       return True
     return False
 
@@ -785,7 +784,7 @@ class KeyMon:
             os.path.expanduser('~'),
             '/usr', '/usr/local', '/opt/local',
             ))
-    logo_paths = (logo_path + '/key-mon.xpm' for logo_path in logo_paths)
+    logo_paths = [logo_path + '/key-mon.xpm' for logo_path in logo_paths]
     for logo_path in logo_paths:
       if os.path.exists(logo_path):
         dlg.set_logo(gtk.gdk.pixbuf_new_from_file(logo_path))
@@ -795,7 +794,12 @@ class KeyMon:
     dlg.set_program_name('key-mon')
     dlg.set_website('http://code.google.com/p/key-mon/')
     dlg.set_version(__version__)
-    dlg.set_authors([__author__])
+    dlg.set_authors([
+        __author__,
+        'Yu-Jie Lin',
+        'Danial G. Taylor',
+        'Jakub Steiner',
+        ])
     dlg.set_license('''Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at

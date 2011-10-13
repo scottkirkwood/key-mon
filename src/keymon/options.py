@@ -121,6 +121,9 @@ class OptionItem(object):
       return
     if hasattr(opts, self._dest):
       opt_val = getattr(opts, self._dest)
+      if not self._ini_name:
+        # For commands like --version which aren't stored
+        self._set_value(opt_val)
       self._set_temp_value(opt_val)
 
   def reset_to_default(self):
