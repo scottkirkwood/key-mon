@@ -109,8 +109,9 @@ class OptionItem(object):
 
     if self._ini_group:
       # Only need the --no version if it could be saved to ini file.
-      parser.add_option('--no' + self._opt_long.lstrip('-'), action='store_false',
-        dest=self._dest, help=_('Opposite of %s') % self._opt_long)
+      parser.add_option('--no' + self._opt_long.lstrip('-'),
+              action='store_false',
+              dest=self._dest, help=_('Opposite of %s') % self._opt_long)
 
   def set_from_optparse(self, opts):
     """Try and set an option from optparse.
@@ -374,8 +375,7 @@ if __name__ == '__main__':
                type='bool',
                help='Make the dialog 25% larger than normal.')
   o.add_option(opt_short='-m', opt_long='--meta', dest='meta', type='bool',
-               ini_group='buttons', ini_name='meta',
-               default=False,
+               ini_group='buttons', ini_name='meta', default=False,
                help='Show the meta (windows) key.')
   o.add_option(opt_long='--scale', dest='scale', type='float', default=1.0,
                ini_group='ui', ini_name='scale',
