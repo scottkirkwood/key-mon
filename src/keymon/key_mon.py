@@ -395,7 +395,7 @@ class KeyMon:
     fullname = os.path.join(themepath, '%s%s.svg' % (fname, self.svg_size))
     if self.svg_size and not os.path.exists(fullname):
       # Small not found, defaulting to large size
-      fullname = os.path.join(themepath, '%s/%s.svg' % fname)
+      fullname = os.path.join(themepath, '%s.svg' % fname)
     return fullname
 
   def add_events(self):
@@ -760,7 +760,8 @@ class KeyMon:
     self.update_shape_mask(force=True)
 
     # reload keymap
-    self.modmap = mod_mapper.safely_read_mod_map(self.options.kbd_file, self.options.kbd_files)
+    self.modmap = mod_mapper.safely_read_mod_map(
+            self.options.kbd_file, self.options.kbd_files)
 
   def _toggle_a_key(self, image, name, show):
     """Toggle show/hide a key."""
