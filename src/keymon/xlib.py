@@ -69,7 +69,7 @@ class XEvents(threading.Thread):
 
   _butn_to_code = collections.defaultdict(lambda: 'BTN_DUNNO',
       [(1, 'BTN_LEFT'), (2, 'BTN_MIDDLE'), (3, 'BTN_RIGHT'),
-       (4, 'REL_WHEEL'), (5, 'REL_WHEEL')])
+       (4, 'REL_WHEEL'), (5, 'REL_WHEEL'), (6, 'REL_LEFT'), (7, 'REL_RIGHT')])
 
   def __init__(self):
     threading.Thread.__init__(self)

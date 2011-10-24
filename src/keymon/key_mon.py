@@ -179,6 +179,8 @@ class KeyMon:
       'SCROLL_UP': [self.svg_name('mouse'), self.svg_name('scroll-up-mouse')],
       'SCROLL_DOWN': [self.svg_name('mouse'), self.svg_name('scroll-dn-mouse')],
 
+      'REL_LEFT': [self.svg_name('mouse'), self.svg_name('sroll-lft-mouse')],
+      'REL_RIGHT': [self.svg_name('mouse'), self.svg_name('scroll-rgt-mouse')],
       'SHIFT': [self.svg_name('shift')],
       'SHIFT_EMPTY': [self.svg_name('shift'), self.svg_name('whiteout-72')],
       'CTRL': [self.svg_name('ctrl')],
@@ -499,6 +501,8 @@ class KeyMon:
         self.reset_no_press_timer()
     elif event.type.startswith('EV_REL') and event.code == 'REL_WHEEL':
       self.handle_mouse_scroll(event.value, event.value)
+    elif event.code.startswith('REL'):
+      self.handle_mouse_scroll(event.value, event.value)
 
   def reset_no_press_timer(self):
     """Initialize no_press_timer"""
@@ -658,7 +662,11 @@ class KeyMon:
     """Handle the mouse scroll button event."""
     if not self.enabled['MOUSE']:
       return
-    if direction > 0:
+    if direction == 'REL_RIGHT':
+      self._handle_event(self.images['MOUSE'], 'REL_RIGHT', 1)
+    elif direction == 'REL_LEFT':
+      self._handle_event(self.images['MOUSE'], 'REL_LEFT', 1)
+    elif direction > 0:
       self._handle_event(self.images['MOUSE'], 'SCROLL_UP', 1)
     elif direction < 0:
       self._handle_event(self.images['MOUSE'], 'SCROLL_DOWN', 1)
