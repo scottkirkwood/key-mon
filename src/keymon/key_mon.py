@@ -830,8 +830,7 @@ def create_options():
                   type='bool',
                   help=_('Make the dialog 25% larger than normal.'))
   opts.add_option(opt_short='-m', opt_long='--meta', dest='meta', type='bool',
-                  ini_group='buttons', ini_name='meta',
-                  default=False,
+                  ini_group='buttons', ini_name='meta', default=None,
                   help=_('Show the meta (windows) key.'))
   opts.add_option(opt_long='--mouse', dest='mouse', type='bool', default=True,
                   ini_group='buttons', ini_name='mouse',
