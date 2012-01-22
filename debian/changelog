@@ -1,3 +1,12 @@
+key-mon (1.9-1) unstable; urgency=low
+
+  * Added three clear themes by Nenad S. Lazich (thanks).
+  * Fixed issue 101 patch contributed by ernst.bl.
+  * Fixed issue 102, configurations not saved for meta.
+  * Fixed issue 103, crash on -s option.
+
+ -- Scott Kirkwood <scott@forusers.com>  Sun, 22 Jan 2012 15:03:22 +0500
+
 key-mon (1.8-1) unstable; urgency=low
 
   * Added --loglevel for specifying logging level

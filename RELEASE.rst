@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+Jan 22, 2012 v 1.9
+------------------
+* Added three clear themes by Nenad S. Lazich (thanks).
+* Fixed issue 101 patch contributed by ernst.bl.
+* Fixed issue 102, configurations not saved for meta.
+* Fixed issue 103, crash on -s option.
+
 Oct 14th, 2011 v 1.8
 --------------------
 * Added --loglevel for specifying logging level
