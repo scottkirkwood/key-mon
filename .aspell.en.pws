@@ -1,4 +1,4 @@
-personal_ws-1.1 en 36 
+personal_ws-1.1 en 40 
 Ctrl
 keymap
 http
@@ -10,7 +10,10 @@ nd
 StickyKeys
 DBUS
 Wacom
+Nenad
+loglevel
 svg
+Lazich
 pybdist
 yyd
 screenshots
@@ -26,6 +29,7 @@ Capslock
 XLib
 xlib
 Jie
+ernst
 py
 gksudo
 README

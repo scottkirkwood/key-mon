@@ -21,7 +21,7 @@ import gettext
 NAME = 'key-mon'
 DIR = 'src/keymon'
 gettext.install(NAME, DIR + '/locale')
-VER = '1.8'
+VER = '1.9'
 PY_NAME = 'key_mon'
 DEB_NAME = NAME.replace('-', '')
 RELEASE_FILE = 'RELEASE.rst'
