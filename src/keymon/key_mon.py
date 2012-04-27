@@ -633,21 +633,25 @@ class KeyMon:
   def handle_mouse_button(self, code, value):
     """Handle the mouse button event."""
     if self.enabled['MOUSE']:
-      n_image = 0
-      n_code = 0
-      for i, btn in enumerate(self.btns):
-        if btn == code:
-          n_code = i
-        if btn == self.images['MOUSE'].current:
-          n_image = i
-      if self.options.emulate_middle and ((self.images['MOUSE'].current == 'BTN_LEFT'
-          and code == 'BTN_RIGHT') or
-          (self.images['MOUSE'].current == 'BTN_RIGHT' and code == 'BTN_LEFT')):
-        code = 'BTN_MIDDLE'
-      elif value == 0 and n_code != n_image:
-        code = self.btns[n_image - n_code]
-      elif value == 1 and n_image:
-        code = self.btns[n_image | n_code]
+      if code in self.btns:
+        n_image = 0
+        n_code = 0
+        for i, btn in enumerate(self.btns):
+          if btn == code:
+            n_code = i
+          if btn == self.images['MOUSE'].current:
+            n_image = i
+        if self.options.emulate_middle and ((self.images['MOUSE'].current == 'BTN_LEFT'
+            and code == 'BTN_RIGHT') or
+            (self.images['MOUSE'].current == 'BTN_RIGHT' and code == 'BTN_LEFT')):
+          code = 'BTN_MIDDLE'
+        elif value == 0 and n_code != n_image:
+          code = self.btns[n_image - n_code]
+        elif value == 1 and n_image:
+          code = self.btns[n_image | n_code]
+      elif code not in self.name_fnames:
+        self.name_fnames[code] = [
+            fix_svg_key_closure(self.svg_name('mouse'), [('> ', '>%s' % code.replace('BTN_', ''))])]
       self._handle_event(self.images['MOUSE'], code, value)
 
     if self.options.visible_click:

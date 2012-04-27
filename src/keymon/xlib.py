@@ -67,9 +67,9 @@ class XEvent(object):
 class XEvents(threading.Thread):
   """A thread to queue up X window events from RECORD extension."""
 
-  _butn_to_code = collections.defaultdict(lambda: 'BTN_DUNNO',
-      [(1, 'BTN_LEFT'), (2, 'BTN_MIDDLE'), (3, 'BTN_RIGHT'),
-       (4, 'REL_WHEEL'), (5, 'REL_WHEEL'), (6, 'REL_LEFT'), (7, 'REL_RIGHT')])
+  _butn_to_code = {
+      1: 'BTN_LEFT', 2: 'BTN_MIDDLE', 3: 'BTN_RIGHT',
+      4: 'REL_WHEEL', 5: 'REL_WHEEL', 6: 'REL_LEFT', 7: 'REL_RIGHT'}
 
   def __init__(self):
     threading.Thread.__init__(self)
@@ -197,10 +197,10 @@ class XEvents(threading.Thread):
       else:
         value = 1
       self.events.append(XEvent('EV_REL',
-          0, XEvents._butn_to_code[event.detail], value))
+          0, XEvents._butn_to_code.get(event.detail, 'BTN_%d' % event.detail), value))
     else:
       self.events.append(XEvent('EV_KEY',
-          0, XEvents._butn_to_code[event.detail], value))
+          0, XEvents._butn_to_code.get(event.detail, 'BTN_%d' % event.detail), value))
 
   def _handle_key(self, event, value):
     """Add key event to events.
