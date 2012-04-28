@@ -11,7 +11,7 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    sodipodi:docname="mouse.svg"
-   inkscape:version="0.47 r22583"
+   inkscape:version="0.48.2 r9819"
    sodipodi:version="0.32"
    id="svg1770"
    height="48.000000px"
@@ -344,5 +344,16 @@
        d="M 26.888142,5.2073215 C 27.026917,3.2602875 25.584939,0.764685 21.044361,-0.2969757 9.516628,-3.5548386 8.325096,7.090909 2.538856,2.7010706 1.3895753,1.8291474 0.0590285,0.3640534 -1.5697818,-1.9209761"
        id="path4268"
        sodipodi:nodetypes="ccsc" />
+    <text
+       xml:space="preserve"
+       style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#550000;fill-opacity:0.78431373;stroke:none;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
+       x="26.741938"
+       y="35.473186"
+       id="text3560"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3562"
+         x="26.741938"
+         y="35.473186">&#8203;</tspan></text>
   </g>
 </svg>
