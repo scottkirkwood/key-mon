@@ -650,8 +650,10 @@ class KeyMon:
         elif value == 1 and n_image:
           code = self.btns[n_image | n_code]
       elif code not in self.name_fnames:
+        btn_num = code.replace('BTN_', '')
         self.name_fnames[code] = [
-            fix_svg_key_closure(self.svg_name('mouse'), [('> ', '>%s' % code.replace('BTN_', ''))])]
+            fix_svg_key_closure(self.svg_name('mouse'),
+                [('>&#8203;', '>' + btn_num)])]
       self._handle_event(self.images['MOUSE'], code, value)
 
     if self.options.visible_click:
