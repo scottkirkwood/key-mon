@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Apr 29, 2012 v 1.10
+-------------------
+* Issue 112, support more mouse buttons than just the three.
+* Issue 109, options not working. Also fixed Issue 99.
+
 Jan 22, 2012 v 1.9
 ------------------
 * Added three clear themes by Nenad S. Lazich (thanks).

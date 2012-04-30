@@ -1,3 +1,10 @@
+key-mon (1.10-1) unstable; urgency=low
+
+  * Issue 112, support more mouse buttons than just the three.
+  * Issue 109, options not working. Also fixed Issue 99.
+
+ -- Scott Kirkwood <scott@forusers.com>  Sun, 29 Apr 2012 21:41:12 +0500
+
 key-mon (1.9-1) unstable; urgency=low
 
   * Added three clear themes by Nenad S. Lazich (thanks).
