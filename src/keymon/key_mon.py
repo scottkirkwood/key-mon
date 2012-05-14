@@ -110,7 +110,7 @@ class KeyMon:
     self.MODS = [u'SHIFT', u'CTRL', u'META', u'ALT']
     self.IMAGES = [u'MOUSE'] + self.MODS
     self.images = dict([(img, None) for img in self.IMAGES])
-    self.enabled = dict((img, self.get_option(img.lower())) for img in self.IMAGES)
+    self.enabled = dict((img, self.get_option(str(unicode(img).lower()))) for img in self.IMAGES)
 
     self.options.kbd_files = settings.get_kbd_files()
     self.modmap = mod_mapper.safely_read_mod_map(self.options.kbd_file, self.options.kbd_files)
@@ -744,7 +744,7 @@ class KeyMon:
   def settings_changed(self, unused_dlg):
     """Event received from the settings dialog."""
     for img in self.IMAGES:
-      self._toggle_a_key(self.images[img], img, self.get_option(img.lower()))
+      self._toggle_a_key(self.images[img], img, self.get_option(str(unicode(img).lower())))
     self.create_buttons()
     self.layout_boxes()
     self.mouse_indicator_win.hide()
