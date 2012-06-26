@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+May 15, 2012 v 1.11
+-------------------
+* Issue 113, copy scroll left, scroll right to other themes.
+* Issue 115, fix crashing locale issue (thanks Yu-Jie Lin!).
+
 Apr 29, 2012 v 1.10
 -------------------
 * Issue 112, support more mouse buttons than just the three.
