@@ -125,7 +125,7 @@ class OptionItem(object):
       if not self._ini_name:
         # For commands like --version which aren't stored
         self._set_value(opt_val)
-      if opt_val != self._default:
+      if opt_val != self.self.ini_value or opt_val != self._default:
         self._set_temp_value(opt_val)
 
   def reset_to_default(self):
