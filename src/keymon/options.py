@@ -124,19 +124,19 @@ class OptionItem(object):
 
     # Was this option actually passed on the command line?
     found = False
-    for arg in args:
-      if arg == self._opt_short or arg == self._opt_long:
-        found = True
-        break
-    if not found:
-      return
+    if args:
+      for arg in args:
+        if arg == self._opt_short or arg == self._opt_long:
+          found = True
+          break
 
     if hasattr(opts, self._dest):
       opt_val = getattr(opts, self._dest)
       if not self._ini_name:
         # For commands like --version which don't have stored values
         self._set_value(opt_val)
-      self._set_temp_value(opt_val)
+      if found:
+        self._set_temp_value(opt_val)
 
   def reset_to_default(self):
     """Reset to the default value."""
