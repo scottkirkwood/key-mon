@@ -113,20 +113,30 @@ class OptionItem(object):
               action='store_false',
               dest=self._dest, help=_('Opposite of %s') % self._opt_long)
 
-  def set_from_optparse(self, opts):
+  def set_from_optparse(self, opts, args):
     """Try and set an option from optparse.
     Args:
       opts: options as returned from parse_args()
+      args: arguments as returned bys sys.args.
     """
     if not self._opt_short and not self._opt_long:
       return
+
+    # Was this option actually passed on the command line?
+    found = False
+    for arg in args:
+      if arg == self._opt_short or arg == self._opt_long:
+        found = True
+        break
+    if not found:
+      return
+
     if hasattr(opts, self._dest):
       opt_val = getattr(opts, self._dest)
       if not self._ini_name:
-        # For commands like --version which aren't stored
+        # For commands like --version which don't have stored values
         self._set_value(opt_val)
-      if opt_val != self.self.ini_value or opt_val != self._default:
-        self._set_temp_value(opt_val)
+      self._set_temp_value(opt_val)
 
   def reset_to_default(self):
     """Reset to the default value."""
@@ -297,7 +307,7 @@ class Options(object):
 
     self._opt_ret, self._other_args = parser.parse_args(args)
     for opt in self._options.values():
-      opt.set_from_optparse(self._opt_ret)
+      opt.set_from_optparse(self._opt_ret, args)
 
   def parse_ini(self, fp):
     """Parser an ini file from fp, which is file-like class."""
