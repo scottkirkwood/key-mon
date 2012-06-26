@@ -119,8 +119,8 @@ class KeyMon:
 
     self.MODS = ['SHIFT', 'CTRL', 'META', 'ALT']
     self.IMAGES = ['MOUSE'] + self.MODS
-    self.images = dict((img, None) for img in self.IMAGES)
-    self.enabled = dict((img, self.get_option(cstrf(img.lower))) for img in self.IMAGES)
+    self.images = dict([(img, None) for img in self.IMAGES])
+    self.enabled = dict([(img, self.get_option(cstrf(img.lower))) for img in self.IMAGES])
 
 
     self.options.kbd_files = settings.get_kbd_files()
