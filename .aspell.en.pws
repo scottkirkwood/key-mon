@@ -1,4 +1,4 @@
-personal_ws-1.1 en 40 
+personal_ws-1.1 en 41 
 Ctrl
 keymap
 http
@@ -34,6 +34,7 @@ py
 gksudo
 README
 tooltips
+ini
 th
 resize
 stefantalpalaru

@@ -1,3 +1,9 @@
+key-mon (1.12-1) unstable; urgency=low
+
+  * Issue 116, fix command line handling to take precedence over ini settings.
+
+ -- Scott Kirkwood <scott@forusers.com>  Tue, 26 Jun 2012 19:46:00 +0500
+
 key-mon (1.11-1) unstable; urgency=low
 
   * Issue 113, copy scroll left, scroll right to other themes.
