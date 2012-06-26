@@ -1,6 +1,10 @@
 Release Notes
 =============
 
+June 26, 2012 v 1.12
+--------------------
+* Issue 116, fix command line handling to take precedence over ini settings.
+
 May 15, 2012 v 1.11
 -------------------
 * Issue 113, copy scroll left, scroll right to other themes.
