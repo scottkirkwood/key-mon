@@ -1,3 +1,9 @@
+key-mon (1.13-1) unstable; urgency=low
+
+  * Additional bug fixes for commmand line handling.
+
+ -- Scott Kirkwood <scott@forusers.com>  Wed, 27 Jun 2012 10:01:49 +0500
+
 key-mon (1.12-1) unstable; urgency=low
 
   * Issue 116, fix command line handling to take precedence over ini settings.

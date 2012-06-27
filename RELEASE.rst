@@ -1,6 +1,10 @@
 Release Notes
 =============
 
+June 27, 2012 v 1.13
+--------------------
+* Additional bug fixes for command line handling.
+
 June 26, 2012 v 1.12
 --------------------
 * Issue 116, fix command line handling to take precedence over ini settings.
