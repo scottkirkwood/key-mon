@@ -155,7 +155,7 @@ class TestOptions(unittest.TestCase):
     o = self.options
     self.assertTrue(o.x)
     self.assertTrue(o.tr)
-    self.assertTrue(o.fa)
+    self.assertFalse(o.fa)
     self.assertEqual(o.num, 456)
     self.assertEqual(o.num99, 99)
 
