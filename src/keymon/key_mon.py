@@ -997,7 +997,7 @@ def main():
   opts = create_options()
   opts.read_ini_file(os.path.join(settings.get_config_dir(), 'config'))
   desc = _('Usage: %prog [Options...]')
-  opts.parse_args(desc)
+  opts.parse_args(desc, sys.argv)
 
   if opts.version:
     show_version()
