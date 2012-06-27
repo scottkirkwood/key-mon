@@ -131,6 +131,34 @@ class TestOptions(unittest.TestCase):
     self.assertEqual(o.num, 345)
     self.assertEqual(o.num99, 932)
 
+  def test_override_ini(self):
+    lines = []
+    lines.append('[ints]')
+    lines.append('num99 = 932')
+    lines.append('num = 345')
+    lines.append('')
+    lines.append('[options]')
+    lines.append('x = 0')
+    lines.append('true = 0')
+    lines.append('false = 1')
+    io = StringIO.StringIO('\n'.join(lines))
+    self.options.parse_ini(io)
+    args = [
+        '--num99', '99',
+        '--num', '456',
+        '--true',
+        '-x',
+        '--nofalse',
+    ]
+    self.options.parse_args("Usage", args)
+
+    o = self.options
+    self.assertTrue(o.x)
+    self.assertTrue(o.tr)
+    self.assertTrue(o.fa)
+    self.assertEqual(o.num, 456)
+    self.assertEqual(o.num99, 99)
+
   def test_to_ini_empty(self):
     io = StringIO.StringIO()
     self.options.write_ini(io)

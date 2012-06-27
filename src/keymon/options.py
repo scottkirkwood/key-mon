@@ -126,6 +126,10 @@ class OptionItem(object):
     found = False
     if args:
       for arg in args:
+        if self._type == 'bool' and arg.startswith('--no'):
+          arg = '--' + arg[4:]
+        # Remove the --x=123, if any
+        arg = arg.split('=')[0]
         if arg == self._opt_short or arg == self._opt_long:
           found = True
           break
@@ -426,7 +430,7 @@ if __name__ == '__main__':
   import StringIO
   io = StringIO.StringIO('\n'.join(lines))
   o.parse_ini(io)
-  o.parse_args('%prog [options]')
+  o.parse_args('%prog [options]', sys.argv)
   io = StringIO.StringIO()
   o.write_ini(io)
   print io.getvalue()
