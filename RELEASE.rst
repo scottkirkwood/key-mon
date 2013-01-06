@@ -1,6 +1,10 @@
 Release Notes
 =============
 
+Jan 27, 2013 v 1.14
+--------------------
+* Updated the Debian standards version and other minor fixes.
+
 June 27, 2012 v 1.13
 --------------------
 * Additional bug fixes for command line handling.
