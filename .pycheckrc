@@ -15,7 +15,7 @@ membersUsed = 0
 maxArgs = 11
 
 # ignore warnings from the list of modules
-blacklist = ['ConfigParser', 'ssl', 'threading', 'optparse', 'wx', 'Tkinter', 'wxPython', 'gtk', 'GTK', 'GDK']
+blacklist = ['ConfigParser', 'ssl', 'threading', 'optparse', 'wx', 'Tkinter', 'wxPython', 'gtk', 'GTK', 'GDK', 'unittest']
 
 # ignore global variables not used if name is one of these values
 variablesToIgnore = ['__version__', '__warningregistry__', '__all__', '__credits__', '__test__', '__author__', '__email__', '__revision__', '__id__', '__copyright__', '__license__', '__date__',

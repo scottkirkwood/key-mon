@@ -59,7 +59,7 @@ class TwoStateImage(gtk.Image):
     return self._really_pressed
 
   @really_pressed.setter
-  def really_pressed(self, value):
+  def really_pressed_set(self, value):
     """Set if a key is physically pressed.
 
     This is different than is_pressed(), which is the pressing state of
