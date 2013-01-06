@@ -400,6 +400,7 @@ def safely_read_mod_map(fname, kbd_files):
     # Merge the defaults with modmap
     if fname == 'xmodmap':
       logging.debug('Merging with default kbd file: %s' % kbd_default)
+      defaults = read_kdb(kbd_default)
       for keycode in defaults:
         if keycode not in ret:
           ret[keycode] = defaults[keycode]

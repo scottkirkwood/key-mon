@@ -31,6 +31,7 @@ import gettext
 import logging
 import optparse
 import os
+import sys
 
 LOG = logging.getLogger('options')
 

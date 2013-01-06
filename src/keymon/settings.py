@@ -312,14 +312,18 @@ def get_config_dir():
   return os.environ.get('XDG_CONFIG_HOME',
                         os.path.expanduser('~/.config')) + '/key-mon'
 
-def get_config_dirs(kind=''):
-  """Return search paths of certain kind of configuration directory."""
-  
-  return [d \
-          for d in (
+def get_config_dirs(kind):
+  """Return search paths of certain kind of configuration directory.
+  Args:
+    kind: Subfolder name
+  Return:
+    List of full paths
+  """
+  config_dirs = [d for d in (
               os.path.join(get_config_dir(), kind),
               os.path.join(os.path.dirname(os.path.abspath(__file__)), kind)) \
           if os.path.exists(d)]
+  return config_dirs
 
 def get_themes():
   """Return a dict of themes.
