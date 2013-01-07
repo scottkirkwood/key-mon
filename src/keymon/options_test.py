@@ -165,8 +165,8 @@ class TestOptions(unittest.TestCase):
     contents = io.getvalue()
     lines = []
     lines.append('[options]')
-    lines.append('false = 0')
     lines.append('true = 1')
+    lines.append('false = 0')
     lines.append('')
     lines.append('[ints]')
     lines.append('num99 = 99')
