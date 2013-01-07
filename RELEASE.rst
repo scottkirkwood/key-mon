@@ -1,7 +1,11 @@
 Release Notes
 =============
 
-Jan 27, 2013 v 1.14
+Jan 07, 2013 v 1.15
+--------------------
+* Fix for issue 124.  Property can't be set.
+
+Jan 06, 2013 v 1.14
 --------------------
 * Updated the Debian standards version and other minor fixes.
 
