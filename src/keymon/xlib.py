@@ -91,7 +91,9 @@ class XEvents(threading.Thread):
   def _setup_lookup(self):
     """Setup the key lookups."""
     # set locale to default C locale, see Issue 77.
-    OLD_CTYPE = locale.getlocale(locale.LC_CTYPE)
+    # Use setlocale(None) to get curent locale instead of getlocal.
+    # See Issue 125 and http://bugs.python.org/issue1699853.
+    OLD_CTYPE = locale.setlocale(locale.LC_CTYPE, None)
     locale.setlocale(locale.LC_CTYPE, 'C')
     for name in dir(XK):
       if name[:3] == "XK_":
