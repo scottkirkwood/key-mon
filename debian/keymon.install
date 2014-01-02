@@ -1,2 +1,9 @@
 icons/*.desktop /usr/share/applications
 icons/*.xpm /usr/share/pixmaps
+icons/hicolor/128x128/apps/*.png /usr/share/icons/hicolor/128x128/apps
+icons/hicolor/16x16/apps/*.png /usr/share/icons/hicolor/16x16/apps
+icons/hicolor/24x24/apps/*.png /usr/share/icons/hicolor/24x24/apps
+icons/hicolor/32x32/apps/*.png /usr/share/icons/hicolor/32x32/apps
+icons/hicolor/48x48/apps/*.png /usr/share/icons/hicolor/48x48/apps
+icons/hicolor/64x64/apps/*.png /usr/share/icons/hicolor/64x64/apps
+icons/hicolor/scalable/apps/*.svg /usr/share/icons/hicolor/scalable/apps

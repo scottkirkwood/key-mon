@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Jan 07, 2014 v 1.17
+--------------------
+* Added hi-color icons (thanks eko@lanet.tv).
+* Added big-letters theme (thanks eko).
+* Bumped the version.
+
 Jan 07, 2013 v 1.15
 --------------------
 * Fix for issue 124.  Property can't be set.

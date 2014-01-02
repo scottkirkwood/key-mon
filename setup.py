@@ -21,7 +21,7 @@ import gettext
 NAME = 'key-mon'
 DIR = 'src/keymon'
 gettext.install(NAME, DIR + '/locale')
-VER = '1.15'
+VER = '1.17'
 PY_NAME = 'key_mon'
 DEB_NAME = NAME.replace('-', '')
 RELEASE_FILE = 'RELEASE.rst'
@@ -42,6 +42,7 @@ DESKTOP_FILE = 'icons/%s.desktop' % NAME
 ICON = 'icons/%s.xpm' % NAME
 COMMAND = '/usr/bin/%s' % NAME
 LANGS = ['pt_BR']
+HICOLOR_PNG_SIZES = [16, 24, 32, 48, 64, 128]
 
 SETUP = dict(
   name=NAME,
@@ -56,6 +57,8 @@ SETUP = dict(
   },
   data_files = [
       ('share/pixmaps', [ICON]),
+      ('share/icons/hicolor', ['icons/hicolor/%dx%d/apps/%s.png' % (x, x, NAME) for x in HICOLOR_PNG_SIZES]),
+      ('share/icons/hicolor', ['icons/hicolor/scalable/apps/%s.svg' % NAME]),
   ],
   scripts=['src/key-mon'],
   author=AUTHOR_NAME,
