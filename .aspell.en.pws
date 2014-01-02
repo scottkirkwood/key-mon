@@ -1,4 +1,4 @@
-personal_ws-1.1 en 41 
+personal_ws-1.1 en 42 
 Ctrl
 keymap
 http
@@ -30,6 +30,7 @@ XLib
 xlib
 Jie
 ernst
+eko
 py
 gksudo
 README
