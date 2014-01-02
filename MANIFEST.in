@@ -8,3 +8,10 @@ include src/key-mon
 include man/*.1
 include icons/*.desktop
 include icons/*.xpm
+include icons/hicolor/16x16/apps/*.png
+include icons/hicolor/24x24/apps/*.png
+include icons/hicolor/32x32/apps/*.png
+include icons/hicolor/48x48/apps/*.png
+include icons/hicolor/64x64/apps/*.png
+include icons/hicolor/128x128/apps/*.png
+include icons/hicolor/scalable/apps/*.svg
