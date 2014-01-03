@@ -1,10 +1,10 @@
 key-mon (1.17-1) unstable; urgency=low
 
-  * Added hicolor icons (thanks eko@lanet.tv).
+  * Added hi-color icons (thanks eko@lanet.tv).
   * Added big-letters theme (thanks eko).
   * Bumped the version.
 
- -- Scott Kirkwood <scott@forusers.com>  Thu, 02 Jan 2014 10:19:38 +0500
+ -- Scott Kirkwood <scott@forusers.com>  Fri, 03 Jan 2014 08:21:18 +0500
 
 key-mon (1.15-1) unstable; urgency=low
 
