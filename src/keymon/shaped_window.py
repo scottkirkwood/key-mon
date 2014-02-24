@@ -73,7 +73,7 @@ class ShapedWindow(gtk.Window):
 
   def show(self):
     """Show this mouse indicator and ignore awaiting fade away request."""
-    if self.timeout_timer:
+    if self.timeout_timer and self.shown:
       # There is a fade away request, ignore it
       gobject.source_remove(self.timeout_timer)
       self.timeout_timer = None
@@ -82,7 +82,7 @@ class ShapedWindow(gtk.Window):
     super(ShapedWindow, self).show()
 
   def maybe_show(self):
-    if self.shown:
+    if self.shown or not self.timeout_timer:
       return
     self.shown = True
     self.show()
@@ -90,5 +90,5 @@ class ShapedWindow(gtk.Window):
   def fade_away(self):
     """Make the window fade in a little bit."""
     # TODO this isn't doing any fading out
-    self.shown = True
+    self.shown = False
     self.timeout_timer = gobject.timeout_add(int(self.timeout * 1000), self.hide)
