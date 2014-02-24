@@ -1,6 +1,10 @@
 Release Notes
 =============
 
+Feb 23, 2014 v 1.18
+-------------------
+* Issue 133, Patch from m.zdila to fix sticky mouse indicator.
+
 Jan 07, 2014 v 1.17
 --------------------
 * Added hi-color icons (thanks eko@lanet.tv).
