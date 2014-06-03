@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2014 Scott Kirkwood <scott+personal@forusers.com> -->
+<application>
+ <id type="desktop">key-mon.desktop</id>
+ <metadata_license>CC0-1.0</metadata_license>
+ <project_license>Apache-2.0</project_license>
+ <name>key-mon</name>
+ <summary>A screencast utility that displays your keyboard and mouse status</summary>
+ <description>
+  <p>
+    Key-mon is useful for teaching since it shows the current status of your
+    keyboard and mouse and you use them in another application.
+    No longer do you need to say
+    'Now I'm pressing the Ctrl-D key',
+    your students can just see the keystroke for themselves.
+  </p>
+ </description>
+ <screenshots>
+  <screenshot type="default" width="585" height="360">https://key-mon.googlecode.com/hg/docs/large-screenshot.png</screenshot>
+ </screenshots>
+ <url type="homepage">http://www.gnome.org/projects/en_US/gnome-power-manager</url>
+ <updatecontact>scott+personal@forusers.com</updatecontact>
+ <project_group>GNOME</project_group>
+</application>
