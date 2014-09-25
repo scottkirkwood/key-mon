@@ -226,7 +226,6 @@ class MiscFrame(CommonFrame):
           'Default is 0.2'),
         timeouts, 'visible_click_timeout', 4)
 
-
     self.themes = self.settings.options.themes.keys() 
     self._add_dropdown(
         vbox,
@@ -283,6 +282,14 @@ class ButtonsFrame(CommonFrame):
         _('Old Keys:'),
         _('When typing fast show more than one key typed.'),
         [0, 1, 2, 3, 4], 'old_keys')
+
+    fadeouts = ['0', '0.5', '1.0', '1.5', '2.0', '3.0', '4.0', '5.0']
+    self._add_dropdown(
+        vbox,
+        _('Fade window after period (seconds).'),
+        _('How long before window disappears after a click in seconds.'),
+        fadeouts, 'no_press_fadeout', 20)
+
     self.add(vbox)
 
 def _test_settings_changed(unused_widget):
