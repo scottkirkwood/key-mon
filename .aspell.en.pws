@@ -1,9 +1,10 @@
-personal_ws-1.1 en 43 
+personal_ws-1.1 en 45 
 Ctrl
 keymap
 http
 zdila
 keysym
+fadeout
 nomouse
 AltGr
 moveresize
@@ -34,6 +35,7 @@ ernst
 eko
 py
 gksudo
+Resizing
 README
 tooltips
 ini

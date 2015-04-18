@@ -1,6 +1,10 @@
 Release Notes
 =============
 
+Apr 18, 2015 v 1.19
+-------------------
+* Add Spanish keyboard (thank Iñaki)
+
 Feb 23, 2014 v 1.18
 -------------------
 * Issue 133, Patch from m.zdila to fix sticky mouse indicator.
