@@ -1,3 +1,9 @@
+key-mon (1.19-1) unstable; urgency=low
+
+  * Add Spanish keyboard (thank Iñaki)
+
+ -- Scott Kirkwood <scott@forusers.com>  Sat, 18 Apr 2015 10:39:20 +0500
+
 key-mon (1.18-1) unstable; urgency=low
 
   * Issue 133, Patch from m.zdila to fix sticky mouse indicator.
