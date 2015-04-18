@@ -20,7 +20,7 @@ Shows their status graphically.
 """
 
 __author__ = 'Scott Kirkwood (scott+keymon@forusers.com)'
-__version__ = '1.18'
+__version__ = '1.19'
 
 import locale
 import logging
