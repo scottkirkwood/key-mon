@@ -25,7 +25,7 @@ import lazy_pixbuf_creator
 
 class ShapedWindow(gtk.Window):
   """Create a window shaped as fname."""
-  def __init__(self, fname, opacity, scale=1.0, timeout=0.2):
+  def __init__(self, fname, opacity, color=None, scale=1.0, timeout=0.2):
     gtk.Window.__init__(self)
     self.connect('size-allocate', self._on_size_allocate)
     self.set_decorated(False)
@@ -40,7 +40,8 @@ class ShapedWindow(gtk.Window):
       'mouse' : [fname],
     }
     self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames,
-                                                         self.scale)
+                                                         self.scale,
+                                                         color=color)
     self.pixbuf = self.pixbufs.get('mouse')
     self.resize(self.pixbuf.get_width(), self.pixbuf.get_height())
 

@@ -284,6 +284,7 @@ class KeyMon:
     self.mouse_indicator_win = shaped_window.ShapedWindow(
         self.svg_name('mouse-indicator'),
         self.options.click_opacity,
+        color=self.options.click_color,
         timeout=self.options.visible_click_timeout)
 
     self.mouse_follower_win = shaped_window.ShapedWindow(
@@ -914,6 +915,10 @@ def create_options():
                   ini_group='ui', ini_name='visible-click',
                   default=False,
                   help=_('Show where you clicked'))
+  opts.add_option(opt_long='--click_color', dest='click_color', type='str',
+                  ini_group='ui', ini_name='click-color',
+                  default='ff0000',
+                  help=_('The color of the click indicator'))
   opts.add_option(opt_long='--click_opacity', dest='click_opacity', type='float',
                   ini_group='ui', ini_name='click-opacity',
                   default=0.5,
