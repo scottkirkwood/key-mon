@@ -7,11 +7,11 @@ Downloading
 
 You will always find the latest version at:
 
-  http://code.google.com/p/key-mon/downloads/list
+  https://github.com/scottkirkwood/key-mon/releases
 
 If you prefer you can clone repository from::
 
-  hg clone http://key-mon.code.google.com/hg key-mon
+  git clone https://github.com/scottkirkwood/key-mon.git
 
 Installation
 ------------
