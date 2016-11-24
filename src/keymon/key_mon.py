@@ -481,10 +481,11 @@ class KeyMon:
 
   def on_idle(self):
     """Check for events on idle."""
-    event = self.devices.next_event()
     try:
-      if event:
-        self.handle_event(event)
+      events = list(self.next_events())
+      if events:
+        for event in events:
+          self.handle_event(event)
       else:
         for button in self.buttons:
           button.empty_event()
@@ -493,6 +494,22 @@ class KeyMon:
       self.quit_program()
       return False
     return True  # continue calling
+
+  def next_events(self):
+    """Yields the next events with a single move event at the end, if any."""
+    move_event = None
+    while True:
+      event = self.devices.next_event()
+      if not event:
+        break
+      if event.type == 'EV_MOV':
+        # Ignore the previous outdated move event.
+        move_event = event
+        continue
+      yield event
+
+    if move_event:
+      yield move_event
 
   def handle_event(self, event):
     """Handle an X event."""
