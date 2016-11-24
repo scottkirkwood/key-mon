@@ -69,7 +69,7 @@ class ShapedWindow(gtk.Window):
     w, h = self.get_size()
     new_x, new_y = x - w/2, y - h/2
     pos = self.get_position()
-    if pos[0] != new_x or pos[1] != new_y:
+    if pos[0] != new_x or pos[1] != new_y or not self.get_visible():
       self.move(new_x, new_y)
       self.show()
 

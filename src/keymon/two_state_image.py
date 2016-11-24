@@ -17,7 +17,7 @@
 """Image that defaults back to a default state after a while.
 
 You can switch the image to something else but it defaults back to the default
-image (the first image) after calling EmptyEvent() a few times
+image (the first image) after calling empty_event() a few times
 """
 
 __author__ = 'scott@forusers.com (Scott Kirkwood))'
