@@ -25,7 +25,7 @@ import lazy_pixbuf_creator
 
 class ShapedWindow(gtk.Window):
   """Create a window shaped as fname."""
-  def __init__(self, fname, scale=1.0, timeout=0.2):
+  def __init__(self, fname, opacity, scale=1.0, timeout=0.2):
     gtk.Window.__init__(self)
     self.connect('size-allocate', self._on_size_allocate)
     self.set_decorated(False)
@@ -33,6 +33,7 @@ class ShapedWindow(gtk.Window):
     self.set_accept_focus(False)
     self.scale = scale
     self.shown = False
+    self.opacity = opacity
     self.timeout = timeout
     self.timeout_timer = None
     self.name_fnames = {
@@ -58,7 +59,7 @@ class ShapedWindow(gtk.Window):
     if not win.is_composited():
       print 'Unable to fade the window'
     else:
-      win.set_opacity(0.5)
+      win.set_opacity(self.opacity)
 
   def center_on_cursor(self, x=None, y=None):
     if x is None or y is None:
