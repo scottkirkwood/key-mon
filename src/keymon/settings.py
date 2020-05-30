@@ -24,7 +24,7 @@ import gtk
 import logging
 import os
 
-from ConfigParser import SafeConfigParser
+from configparser import SafeConfigParser
 
 LOG = logging.getLogger('settings')
 
@@ -226,7 +226,7 @@ class MiscFrame(CommonFrame):
           'Default is 0.2'),
         timeouts, 'visible_click_timeout', 4)
 
-    self.themes = self.settings.options.themes.keys() 
+    self.themes = list(self.settings.options.themes.keys()) 
     self._add_dropdown(
         vbox,
         _('Themes:'),
@@ -294,12 +294,12 @@ class ButtonsFrame(CommonFrame):
 
 def _test_settings_changed(unused_widget):
   """Help to test if the settings change message is received."""
-  print 'Settings changed'
+  print('Settings changed')
 
 
 def manually_run_dialog():
   """Test the dialog without starting keymon."""
-  import key_mon
+  from . import key_mon
 
   SettingsDialog.register()
   gettext.install('key_mon', 'locale')

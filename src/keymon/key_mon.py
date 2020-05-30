@@ -22,7 +22,7 @@ Shows their status graphically.
 __author__ = 'Scott Kirkwood (scott+keymon@forusers.com)'
 __version__ = '1.19'
 
-import locale
+from . import locale
 import logging
 import pygtk
 pygtk.require('2.0')
@@ -33,19 +33,19 @@ import os
 import sys
 import time
 try:
-  import xlib
+  from . import xlib
 except ImportError:
-  print 'Error: Missing xlib, run sudo apt-get install python-xlib'
+  print('Error: Missing xlib, run sudo apt-get install python-xlib')
   sys.exit(-1)
 
-import options
-import lazy_pixbuf_creator
-import mod_mapper
-import settings
-import shaped_window
-import two_state_image
+from . import options
+from . import lazy_pixbuf_creator
+from . import mod_mapper
+from . import settings
+from . import shaped_window
+from . import two_state_image
 
-from ConfigParser import SafeConfigParser
+from configparser import SafeConfigParser
 
 gettext.install('key-mon', 'locale')
 
@@ -148,7 +148,7 @@ class KeyMon:
         if key.startswith('KEY_'):
           key_info = self.modmap.get_from_name(key)
           if not key_info:
-            print 'Key %s not found' % key
+            print('Key %s not found' % key)
             self.destroy(None)
             return
           scancode = key_info[0]
@@ -160,8 +160,8 @@ class KeyMon:
         while gtk.events_pending():
           gtk.main_iteration(False)
         time.sleep(0.1)
-      except Exception, exp:
-        print exp
+      except Exception as exp:
+        print(exp)
     while gtk.events_pending():
       gtk.main_iteration(False)
     time.sleep(0.1)
@@ -175,7 +175,7 @@ class KeyMon:
         x, y, 0, 0, w, h)
     fname = 'screenshot.png'
     screenshot.save(fname, 'png')
-    print 'Saved screenshot %r' % fname
+    print('Saved screenshot %r' % fname)
     self.destroy(None)
 
   def create_names_to_fnames(self):
@@ -240,13 +240,13 @@ class KeyMon:
             [('TOP', 'Space'), ('BOTTOM', '')])],
         'KEY_TAB': [
             fix_svg_key_closure(self.svg_name('two-line-wide'),
-            [('TOP', 'Tab'), ('BOTTOM', u'\u21B9')])],
+            [('TOP', 'Tab'), ('BOTTOM', '\u21B9')])],
         'KEY_BACKSPACE': [
             fix_svg_key_closure(self.svg_name('two-line-wide'),
-            [('TOP', 'Back'), ('BOTTOM', u'\u21fd')])],
+            [('TOP', 'Back'), ('BOTTOM', '\u21fd')])],
         'KEY_RETURN': [
             fix_svg_key_closure(self.svg_name('two-line-wide'),
-            [('TOP', 'Enter'), ('BOTTOM', u'\u23CE')])],
+            [('TOP', 'Enter'), ('BOTTOM', '\u23CE')])],
         'KEY_CAPS_LOCK': [
             fix_svg_key_closure(self.svg_name('two-line-wide'),
             [('TOP', 'Capslock'), ('BOTTOM', '')])],
@@ -842,8 +842,8 @@ limitations under the License.''')
 
 def show_version():
   """Show the version number and author, used by help2man."""
-  print _('Keymon version %s.') % __version__
-  print _('Written by %s') % __author__
+  print(_('Keymon version %s.') % __version__)
+  print(_('Written by %s') % __author__)
 
 def create_options():
   opts = options.Options()
@@ -1009,24 +1009,24 @@ def main():
 
   opts.themes = settings.get_themes()
   if opts.list_themes:
-    print _('Available themes:')
-    print
+    print(_('Available themes:'))
+    print()
     theme_names = sorted(opts.themes)
     name_len = max(len(name) for name in theme_names)
     for theme in theme_names:
-      print (' - %%-%ds: %%s' % name_len) % (theme, opts.themes[theme][0])
+      print((' - %%-%ds: %%s' % name_len) % (theme, opts.themes[theme][0]))
     raise SystemExit()
   elif opts.theme and opts.theme not in opts.themes:
-    print _('Theme %r does not exist') % opts.theme
-    print
-    print _('Please make sure %r can be found in '
-            'one of the following directories:') % opts.theme
-    print
+    print(_('Theme %r does not exist') % opts.theme)
+    print()
+    print(_('Please make sure %r can be found in '
+            'one of the following directories:') % opts.theme)
+    print()
     for theme_dir in settings.get_config_dirs('themes'):
-      print ' - %s' % theme_dir
+      print(' - %s' % theme_dir)
     sys.exit(-1)
   if opts.reset:
-    print _('Resetting to defaults.')
+    print(_('Resetting to defaults.'))
     opts.reset_to_defaults()
     opts.save()
   keymon = KeyMon(opts)

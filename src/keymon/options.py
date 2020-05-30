@@ -26,7 +26,7 @@ It uses ConfigParser to save the variables to disk in ini format.
 """
 __author__ = 'Scott Kirkwood (scott+keymon@forusers.com)'
 
-import ConfigParser
+import configparser
 import gettext
 import logging
 import optparse
@@ -168,7 +168,7 @@ class OptionItem(object):
     elif self._type == 'float':
       setattr(self, attr, float(val))
     elif self._type == 'bool':
-      if isinstance(val, basestring):
+      if isinstance(val, str):
         if val.lower() in ('false', 'off', 'no', '0'):
           setattr(self, attr, False)
         elif val.lower() in ('true', 'on', 'yes', '1'):
@@ -311,16 +311,16 @@ class Options(object):
       opt.add_to_parser(parser)
 
     self._opt_ret, self._other_args = parser.parse_args(args)
-    for opt in self._options.values():
+    for opt in list(self._options.values()):
       opt.set_from_optparse(self._opt_ret, args)
 
   def parse_ini(self, fp):
     """Parser an ini file from fp, which is file-like class."""
 
-    config = ConfigParser.SafeConfigParser()
+    config = configparser.SafeConfigParser()
     config.readfp(fp)
     checker = {}
-    for opt in self._options.values():
+    for opt in list(self._options.values()):
       if opt.ini_group:
         checker[opt.ini_group + '-' + opt.ini_name] = True
         if (config.has_section(opt.ini_group) and
@@ -338,8 +338,8 @@ class Options(object):
   def write_ini(self, fp):
     """Parser an ini file from fp, which is file-like class."""
 
-    config = ConfigParser.SafeConfigParser()
-    for opt in self._options.values():
+    config = configparser.SafeConfigParser()
+    for opt in list(self._options.values()):
       if not opt.ini_group:
         continue
       if not config.has_section(opt.ini_group):
@@ -378,7 +378,7 @@ class Options(object):
 
   def reset_to_defaults(self):
     """Reset ini file to defaults."""
-    for opt in self._options.values():
+    for opt in list(self._options.values()):
       if not opt.ini_group:
         continue
       opt.reset_to_default()
@@ -428,10 +428,10 @@ if __name__ == '__main__':
   lines.append('map = us.kbd')
   lines.append('[position]')
   lines.append('x = -1')
-  import StringIO
-  io = StringIO.StringIO('\n'.join(lines))
+  import io
+  io = io.StringIO('\n'.join(lines))
   o.parse_ini(io)
   o.parse_args('%prog [options]', sys.argv)
-  io = StringIO.StringIO()
+  io = io.StringIO()
   o.write_ini(io)
-  print io.getvalue()
+  print(io.getvalue())

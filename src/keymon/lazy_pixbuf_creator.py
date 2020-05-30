@@ -76,7 +76,7 @@ class LazyPixbufCreator(object):
     ops = self.name_fnames[name]
     img = None
     for operation in ops:
-      if isinstance(operation, types.StringTypes):
+      if isinstance(operation, (str,)):
         img = self._composite(img, self._read_from_file(operation))
       else:
         image_bytes = operation()

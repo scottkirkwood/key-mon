@@ -21,7 +21,7 @@ Thanks to mathias.gumz for the original code.
 import gobject
 import gtk
 
-import lazy_pixbuf_creator
+from . import lazy_pixbuf_creator
 
 class ShapedWindow(gtk.Window):
   """Create a window shaped as fname."""
@@ -56,7 +56,7 @@ class ShapedWindow(gtk.Window):
     win.shape_combine_mask(self.mask, 0, 0)
     win.set_property('skip-taskbar-hint', True)
     if not win.is_composited():
-      print 'Unable to fade the window'
+      print('Unable to fade the window')
     else:
       win.set_opacity(0.5)
 

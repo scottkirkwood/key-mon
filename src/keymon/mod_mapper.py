@@ -35,9 +35,9 @@ MEDIUM_NAME = {
   'BRACKETRIGHT': ']',
   'BRACELEFT': '(',
   'BRACERIGHT': ')',
-  'DEAD_ACUTE': u'\u00B4',
-  'ACUTE': u'\u00B4',
-  'QUESTIONDOWN': u'\u00BF',
+  'DEAD_ACUTE': '\u00B4',
+  'ACUTE': '\u00B4',
+  'QUESTIONDOWN': '\u00BF',
   'WAKEUP': 'Wake',
   'BAR': '|',
   'TILDE': '~',
@@ -76,18 +76,18 @@ MEDIUM_NAME = {
   'KP_DELETE': '.',
   'ISO_LEVEL3_SHIFT': 'Alt',  # Right Alt
   'LESS': '<',
-  'KP_ENTER': u'\u23CE',
+  'KP_ENTER': '\u23CE',
   'CONTROL_R': 'Ctrl',
   'KP_DIVIDE': '/',
   'PRINT': 'Print',
   'LINEFEED': 'Lf',
   'HOME': 'Home',
-  'UP': u'\u2191',
+  'UP': '\u2191',
   'PRIOR': 'PgUp',
-  'LEFT': u'\u2190',
-  'RIGHT': u'\u2192',
+  'LEFT': '\u2190',
+  'RIGHT': '\u2192',
   'END': 'End',
-  'DOWN': u'\u2193',
+  'DOWN': '\u2193',
   'NEXT': 'PgDn',
   'INSERT': 'Ins',
   'DELETE': 'Del',
@@ -128,8 +128,8 @@ MEDIUM_NAME = {
   'XF86MAIL': 'Mail',
   'XF86FAVORITES': 'Fav',
   'XF86MYCOMPUTER': 'MyComputer',
-  'XF86BACK': u'\u21d0',
-  'XF86FORWARD': u'\u21d2',
+  'XF86BACK': '\u21d0',
+  'XF86FORWARD': '\u21d2',
   'XF86EJECT': 'Eject',
   'XF86AUDIONEXT': 'Next',
   'XF86AUDIOPLAY': 'Play',
@@ -174,8 +174,8 @@ MEDIUM_NAME = {
 }
 
 SHORT_NAME = {
-  'BACKSPACE': u'\u21fd',
-  'RETURN': u'\u23CE',
+  'BACKSPACE': '\u21fd',
+  'RETURN': '\u23CE',
   'CONTROL_L': 'Ctl',
   'SHIFT_L': 'Shft',
   'SHIFT_R': 'Shft',
@@ -314,12 +314,12 @@ def create_my_kdb(fname, codes):
   fout.write('# This is a space separated file with UTF-8 encoding\n')
   fout.write('# Short name is optional, will default to the medium-name\n')
   fout.write('# Scancode Map-Name Medium-Name Short-Name\n')
-  for code, (key, medium_name, short_name) in codes.map.items():
+  for code, (key, medium_name, short_name) in list(codes.map.items()):
     if short_name:
       fout.write('%d %s %s %s\n' % (code, key, medium_name, short_name))
     else:
       fout.write('%d %s %s\n' % (code, key, medium_name))
-  print 'Output %r with %d entries' % (fname, len(codes))
+  print('Output %r with %d entries' % (fname, len(codes)))
   fout.close()
 
 def mod_map_args():
@@ -417,10 +417,10 @@ def _run_test():
   modmap = read_mod_map()
   create_my_kdb(filename, modmap)
   entries = read_kdb(filename)
-  print 'Read %r with %d entires' % (filename, len(entries))
+  print('Read %r with %d entires' % (filename, len(entries)))
   for ecode in modmap:
     if ecode not in entries:
-      print 'Missing entry for code %s' % ecode
+      print('Missing entry for code %s' % ecode)
 
 
 if __name__ == '__main__':
