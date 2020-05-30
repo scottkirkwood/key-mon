@@ -117,8 +117,6 @@ class KeyMon:
     self.no_press_timer = None
 
     self.move_dragged = False
-    self.shape_mask_current = None
-    self.shape_mask_cache = {}
 
     self.MODS = ['SHIFT', 'CTRL', 'META', 'ALT']
     self.IMAGES = ['MOUSE'] + self.MODS
@@ -275,6 +273,25 @@ class KeyMon:
   def create_window(self):
     """Create the main window."""
     self.window = Gtk.Window()
+    self.window.set_name("key-mon")
+
+    rgba = self.window.get_screen().get_rgba_visual()
+    if rgba is not None:
+        self.window.set_visual(rgba)
+    self.provider = Gtk.CssProvider()
+
+    self.provider.load_from_data(
+    b"""
+    #key-mon {
+        background-color:rgba(0,0,0,0);
+    }
+    """
+    )
+    context = self.window.get_style_context()
+    context.add_provider(self.provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
+
+
     self.window.set_resizable(False)
 
     self.window.set_title('Keyboard Status Monitor')
@@ -318,60 +335,22 @@ class KeyMon:
     self.window.show()
 
   def update_shape_mask(self, *unused_args, **kwargs):
+    if self.options.backgroundless:
+        self.provider.load_from_data(
+        b"""
+        #key-mon {
+            background-color:rgba(0,0,0,0);
+        }
+        """)
+    else:
+        self.provider.load_from_data(
+        b"""
+        #key-mon {
+            background-color:rgba(255,255,255,1);
+        }
+        """)
+
     return
-    if not self.options.backgroundless:
-      return
-    force = kwargs.get('force', False)
-
-    btns = [btn for btn in self.buttons if btn.get_visible()]
-    # Generate id to see if current mask needs to be updated, which is a tuple
-    # of allocation of buttons.
-    cache_id = tuple(tuple(btn.get_allocation()) for btn in btns)
-    if cache_id == self.shape_mask_current and not force:
-      return
-
-    # Try to find existing mask in cache
-    # TODO limit number of cached masks
-    shape_mask = self.shape_mask_cache.get(cache_id, None)
-    if shape_mask and not force:
-      self.window.shape_combine_mask(shape_mask, 0, 0)
-      self.shape_mask_current = cache_id
-      return
-
-    _, _, width, height = self.window.get_allocation()
-
-
-#TODO(Gtk-Migration)
-# shape_mask : GdkPixbuf, probably (size of everythging)
-# masks : just the alpha fr all (shown) buttons
-# gc : "context" (cairo stuff : we allocate, we draw rect, and we use that to draw the rest on top(in shape_mask))
-# 
-#    shape_mask = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 1, width, height)
-#    masks = []
-#    for btn in btns:
-#        pb_in = self.pixbufs.get(btn.current)
-#        #render mask, threshold 127 ????
-#        mask.append(pb_in)
-#
-#    cr = Gdk.cairo_create(self.window)
-#    cr.set_source_rgb(0,0,0)
-#    
-#    gc = gtk.gdk.GC(shape_mask)
-#
-#    # Initialize the mask just in case masks of buttons can't fill the window,
-#    # if that happens, some artifacts will be seen usually at right edge.
-#    gc.set_foreground(gtk.gdk.Color(pixel=0))
-#"    shape_mask.draw_rectangle(gc, True, 0, 0, width, height)
-#
-#    for btn_allocation, mask in zip(cache_id, masks):
-#      # Don't create mask until every image is allocated
-#      if btn_allocation[0] == -1:
-#        return
-#      shape_mask.draw_drawable(gc, mask, 0, 0, *btn_allocation)
-#
-#    self.window.shape_combine_mask(shape_mask, 0, 0)
-#    self.shape_mask_current = cache_id
-#    self.shape_mask_cache[cache_id] = shape_mask
 
   def create_images(self):
     self.images['MOUSE'] = two_state_image.TwoStateImage(self.pixbufs, 'MOUSE')

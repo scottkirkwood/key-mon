@@ -46,18 +46,30 @@ class ShapedWindow(Gtk.Window):
     self.resize(self.pixbuf.get_width(), self.pixbuf.get_height())
 
     # a pixmap widget to contain the pixmap
-    self.image = Gtk.Image()
-    #TODO (Gtk-Migration)
-    #bitmap, self.mask = self.pixbuf.render_pixmap_and_mask()
-    #self.image.set_from_pixmap(bitmap, self.mask)
+    self.image = Gtk.Image.new_from_pixbuf(self.pixbuf)
+
+    rgba = self.get_screen().get_rgba_visual()
+    if rgba is not None:
+        self.set_visual(rgba)
+
+    self.set_name("mouse-follow")
+    provider = Gtk.CssProvider()
+    provider.load_from_data(
+    b"""
+    #mouse-follow {
+        background-color:rgba(0,0,0,0);
+    }
+    """
+    )
+    context = self.get_style_context()
+    context.add_provider(provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
     self.image.show()
     self.add(self.image)
 
   def _on_size_allocate(self, win, unused_allocation):
     """Called when first allocated."""
     # Set the window shape
-    #TODO (GTK-Migration)
-    #win.shape_combine_mask(self.mask, 0, 0)
     win.set_property('skip-taskbar-hint', True)
     if not win.is_composited():
       print('Unable to fade the window')
@@ -79,7 +91,8 @@ class ShapedWindow(Gtk.Window):
     """Show this mouse indicator and ignore awaiting fade away request."""
     if self.timeout_timer and self.shown:
       # There is a fade away request, ignore it
-      GLib.source_remove(self.timeout_timer)
+      if GLib.main_context_default().find_source_by_id(self.timeout_timer) and not GLib.main_context_default().find_source_by_id(self.timeout_timer).is_destroyed():
+        GLib.source_remove(self.timeout_timer)
       self.timeout_timer = None
       # This method only is called when mouse is pressed, so there will be a
       # release and fade_away call, no need to set up another timer.
