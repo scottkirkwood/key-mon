@@ -27,7 +27,7 @@ from Xlib import X
 from Xlib import XK
 from Xlib.ext import record
 from Xlib.protocol import rq
-from . import locale
+import locale
 import sys
 import time
 import threading

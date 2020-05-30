@@ -18,15 +18,17 @@
 
 Thanks to mathias.gumz for the original code.
 """
-import gobject
-import gtk
+import gi
+
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Gdk, GLib
 
 from . import lazy_pixbuf_creator
 
-class ShapedWindow(gtk.Window):
+class ShapedWindow(Gtk.Window):
   """Create a window shaped as fname."""
   def __init__(self, fname, scale=1.0, timeout=0.2):
-    gtk.Window.__init__(self)
+    Gtk.Window.__init__(self)
     self.connect('size-allocate', self._on_size_allocate)
     self.set_decorated(False)
     self.set_keep_above(True)
@@ -44,16 +46,18 @@ class ShapedWindow(gtk.Window):
     self.resize(self.pixbuf.get_width(), self.pixbuf.get_height())
 
     # a pixmap widget to contain the pixmap
-    self.image = gtk.Image()
-    bitmap, self.mask = self.pixbuf.render_pixmap_and_mask()
-    self.image.set_from_pixmap(bitmap, self.mask)
+    self.image = Gtk.Image()
+    #TODO (Gtk-Migration)
+    #bitmap, self.mask = self.pixbuf.render_pixmap_and_mask()
+    #self.image.set_from_pixmap(bitmap, self.mask)
     self.image.show()
     self.add(self.image)
 
   def _on_size_allocate(self, win, unused_allocation):
     """Called when first allocated."""
     # Set the window shape
-    win.shape_combine_mask(self.mask, 0, 0)
+    #TODO (GTK-Migration)
+    #win.shape_combine_mask(self.mask, 0, 0)
     win.set_property('skip-taskbar-hint', True)
     if not win.is_composited():
       print('Unable to fade the window')
@@ -62,8 +66,8 @@ class ShapedWindow(gtk.Window):
 
   def center_on_cursor(self, x=None, y=None):
     if x is None or y is None:
-      root = gtk.gdk.screen_get_default().get_root_window()
-      x, y, _ = root.get_pointer()
+      root = Gdk.Screen.get_default().get_root_window()
+      _, x, y, _ = root.get_pointer()
     w, h = self.get_size()
     new_x, new_y = x - w/2, y - h/2
     pos = self.get_position()
@@ -75,7 +79,7 @@ class ShapedWindow(gtk.Window):
     """Show this mouse indicator and ignore awaiting fade away request."""
     if self.timeout_timer and self.shown:
       # There is a fade away request, ignore it
-      gobject.source_remove(self.timeout_timer)
+      GLib.source_remove(self.timeout_timer)
       self.timeout_timer = None
       # This method only is called when mouse is pressed, so there will be a
       # release and fade_away call, no need to set up another timer.
@@ -91,4 +95,4 @@ class ShapedWindow(gtk.Window):
     """Make the window fade in a little bit."""
     # TODO this isn't doing any fading out
     self.shown = False
-    self.timeout_timer = gobject.timeout_add(int(self.timeout * 1000), self.hide)
+    self.timeout_timer = GLib.timeout_add(int(self.timeout * 1000), self.hide)
