@@ -2,17 +2,17 @@ Source: key-mon
 Section: graphics
 Priority: optional
 Maintainer: Scott Kirkwood <scott@forusers.com>
-Build-Depends: cdbs, debhelper (>= 7), python (>= 2.4), python-support
-XS-Python-Version: >= 2.4
+Build-Depends: cdbs, debhelper (>= 7), python3 (>= 3.5)
+XS-Python-Version: >= 3.5
 Standards-Version: 3.9.3
-Homepage: http://code.google.com/p/key-mon/
-Vcs-Hg: https://key-mon.googlecode.com/hg/
-Vcs-Browser: http://key-mon.googlecode.com/hg/
+Homepage: https://github.com/scottkirkwood/key-mon/
+Vcs-Git: https://github.com/scottkirkwood/key-mon.git
+Vcs-Browser: https://github.com/scottkirkwood/key-mon/
 
 Package: keymon
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, python-xlib,
-  python-gtk2, librsvg2-common
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, python3-xlib,
+  python3-gi, python3-gi-cairo, gir1.2-gtk-3.0, librsvg2-common
 XB-Python-Version: ${python:Versions}
 Description: Screencast utility that displays your keyboard and mouse status
  Key-mon is useful for teaching since it shows the current status of your

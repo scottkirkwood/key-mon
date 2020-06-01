@@ -18,15 +18,33 @@ You can find key-mon hosted at:
 You can file bugs at:
   https://github.com/scottkirkwood/key-mon/issues
 
+Latest downloads can be found at:
+  https://github.com/scottkirkwood/key-mon/releases
+
+
+Installation
+------------
+
+To install using ``pip``,::
+
+  $ pip install key-mon
+
+To install using ``easy_install``,::
+
+  $ easy_install key-mon
+
+  
 Requirements
 ------------
 
 This program requires other libraries which you may or may not have installed.
 
-* python-xlib - Interface for Python to the X11 Protocol
-                (http://python-xlib.sourceforge.net/)
-* python-gtk2 - Python bindings for the GTK+ widget set
-                (http://www.pygtk.org/)
+* python3-xlib   - Interface for Python to the X11 Protocol
+                   (https://github.com/python-xlib/python-xlib)
+* python3-gi     - Python bindings for libraries using GObject Introspection
+                   (https://pygobject.readthedocs.io/en/latest/)
+* gir1.2-gtk-3.0 - GIR bindings for the GTK3 widget set
+                   (https://pygobject.readthedocs.io/en/latest/)
 
 License
 -------
