@@ -24,28 +24,31 @@ __version__ = '1.19'
 
 import locale
 import logging
-import pygtk
-pygtk.require('2.0')
+
+import cairo
+import gi
+gi.require_version("Gtk", "3.0")
+gi.require_foreign("cairo")
+from gi.repository import Gtk, GdkPixbuf, GObject, GLib
+
 import gettext
-import gobject
-import gtk
 import os
 import sys
 import time
 try:
-  import xlib
+  from . import xlib
 except ImportError:
-  print 'Error: Missing xlib, run sudo apt-get install python-xlib'
+  print('Error: Missing xlib, run sudo apt-get install python-xlib')
   sys.exit(-1)
 
-import options
-import lazy_pixbuf_creator
-import mod_mapper
-import settings
-import shaped_window
-import two_state_image
+from . import options
+from . import lazy_pixbuf_creator
+from . import mod_mapper
+from . import settings
+from . import shaped_window
+from . import two_state_image
 
-from ConfigParser import SafeConfigParser
+from configparser import SafeConfigParser
 
 gettext.install('key-mon', 'locale')
 
@@ -114,8 +117,6 @@ class KeyMon:
     self.no_press_timer = None
 
     self.move_dragged = False
-    self.shape_mask_current = None
-    self.shape_mask_cache = {}
 
     self.MODS = ['SHIFT', 'CTRL', 'META', 'ALT']
     self.IMAGES = ['MOUSE'] + self.MODS
@@ -148,7 +149,7 @@ class KeyMon:
         if key.startswith('KEY_'):
           key_info = self.modmap.get_from_name(key)
           if not key_info:
-            print 'Key %s not found' % key
+            print('Key %s not found' % key)
             self.destroy(None)
             return
           scancode = key_info[0]
@@ -157,25 +158,23 @@ class KeyMon:
           event = xlib.XEvent('EV_KEY', scancode=0, code=key, value=1)
 
         self.handle_event(event)
-        while gtk.events_pending():
-          gtk.main_iteration(False)
+        while Gtk.events_pending():
+          Gtk.main_iteration(False)
         time.sleep(0.1)
-      except Exception, exp:
-        print exp
-    while gtk.events_pending():
-      gtk.main_iteration(False)
+      except Exception as exp:
+        print(exp)
+    while Gtk.events_pending():
+      Gtk.main_iteration(False)
     time.sleep(0.1)
     win = self.window
     x, y = win.get_position()
     w, h = win.get_size()
-    screenshot = gtk.gdk.Pixbuf.get_from_drawable(
-        gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, w, h),
-        gtk.gdk.get_default_root_window(),
-        gtk.gdk.colormap_get_system(),
-        x, y, 0, 0, w, h)
+    
+    screenshot = Gdk.pixbuf_get_from_window(Gdk.get_default_root_window(), 0, 0, w, h)
+
     fname = 'screenshot.png'
-    screenshot.save(fname, 'png')
-    print 'Saved screenshot %r' % fname
+    screenshot.savev(fname, 'png')
+    print('Saved screenshot %r' % fname)
     self.destroy(None)
 
   def create_names_to_fnames(self):
@@ -240,13 +239,13 @@ class KeyMon:
             [('TOP', 'Space'), ('BOTTOM', '')])],
         'KEY_TAB': [
             fix_svg_key_closure(self.svg_name('two-line-wide'),
-            [('TOP', 'Tab'), ('BOTTOM', u'\u21B9')])],
+            [('TOP', 'Tab'), ('BOTTOM', '\u21B9')])],
         'KEY_BACKSPACE': [
             fix_svg_key_closure(self.svg_name('two-line-wide'),
-            [('TOP', 'Back'), ('BOTTOM', u'\u21fd')])],
+            [('TOP', 'Back'), ('BOTTOM', '\u21fd')])],
         'KEY_RETURN': [
             fix_svg_key_closure(self.svg_name('two-line-wide'),
-            [('TOP', 'Enter'), ('BOTTOM', u'\u23CE')])],
+            [('TOP', 'Enter'), ('BOTTOM', '\u23CE')])],
         'KEY_CAPS_LOCK': [
             fix_svg_key_closure(self.svg_name('two-line-wide'),
             [('TOP', 'Capslock'), ('BOTTOM', '')])],
@@ -273,7 +272,26 @@ class KeyMon:
 
   def create_window(self):
     """Create the main window."""
-    self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+    self.window = Gtk.Window()
+    self.window.set_name("key-mon")
+
+    rgba = self.window.get_screen().get_rgba_visual()
+    if rgba is not None:
+        self.window.set_visual(rgba)
+    self.provider = Gtk.CssProvider()
+
+    self.provider.load_from_data(
+    b"""
+    #key-mon {
+        background-color:rgba(0,0,0,0);
+    }
+    """
+    )
+    context = self.window.get_style_context()
+    context.add_provider(self.provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
+
+
     self.window.set_resizable(False)
 
     self.window.set_title('Keyboard Status Monitor')
@@ -293,13 +311,13 @@ class KeyMon:
     self.window.set_opacity(self.options.opacity)
     self.window.set_keep_above(True)
 
-    self.event_box = gtk.EventBox()
+    self.event_box = Gtk.EventBox()
     self.window.add(self.event_box)
     self.event_box.show()
 
     self.create_images()
 
-    self.hbox = gtk.HBox(False, 0)
+    self.hbox = Gtk.Box(False, 0)
     self.event_box.add(self.hbox)
 
     self.layout_boxes()
@@ -317,47 +335,22 @@ class KeyMon:
     self.window.show()
 
   def update_shape_mask(self, *unused_args, **kwargs):
-    if not self.options.backgroundless:
-      return
-    force = kwargs.get('force', False)
+    if self.options.backgroundless:
+        self.provider.load_from_data(
+        b"""
+        #key-mon {
+            background-color:rgba(0,0,0,0);
+        }
+        """)
+    else:
+        self.provider.load_from_data(
+        b"""
+        #key-mon {
+            background-color:rgba(255,255,255,1);
+        }
+        """)
 
-    btns = [btn for btn in self.buttons if btn.get_visible()]
-    # Generate id to see if current mask needs to be updated, which is a tuple
-    # of allocation of buttons.
-    cache_id = tuple(tuple(btn.get_allocation()) for btn in btns)
-    if cache_id == self.shape_mask_current and not force:
-      return
-
-    # Try to find existing mask in cache
-    # TODO limit number of cached masks
-    shape_mask = self.shape_mask_cache.get(cache_id, None)
-    if shape_mask and not force:
-      self.window.shape_combine_mask(shape_mask, 0, 0)
-      self.shape_mask_current = cache_id
-      return
-
-    _, _, width, height = self.window.get_allocation()
-    masks = [self.pixbufs.get(btn.current).render_pixmap_and_mask()[1] \
-             for btn in btns]
-    shape_mask = gtk.gdk.Pixmap(None, width, height, masks[0].get_depth())
-
-    gc = gtk.gdk.GC(shape_mask)
-    # Initialize the mask just in case masks of buttons can't fill the window,
-    # if that happens, some artifacts will be seen usually at right edge.
-    gc.set_foreground(
-        gtk.gdk.Color(pixel=0) if self.options.backgroundless else \
-        gtk.gdk.Color(pixel=1))
-    shape_mask.draw_rectangle(gc, True, 0, 0, width, height)
-
-    for btn_allocation, mask in zip(cache_id, masks):
-      # Don't create mask until every image is allocated
-      if btn_allocation[0] == -1:
-        return
-      shape_mask.draw_drawable(gc, mask, 0, 0, *btn_allocation)
-
-    self.window.shape_combine_mask(shape_mask, 0, 0)
-    self.shape_mask_current = cache_id
-    self.shape_mask_cache[cache_id] = shape_mask
+    return
 
   def create_images(self):
     self.images['MOUSE'] = two_state_image.TwoStateImage(self.pixbufs, 'MOUSE')
@@ -419,19 +412,19 @@ class KeyMon:
     self.window.connect('leave-notify-event', self.pointer_leave)
     self.event_box.connect('button_release_event', self.right_click_handler)
 
-    accelgroup = gtk.AccelGroup()
-    key, modifier = gtk.accelerator_parse('<Control>q')
-    accelgroup.connect_group(key, modifier, gtk.ACCEL_VISIBLE, self.quit_program)
+    accelgroup = Gtk.AccelGroup()
+    key, modifier = Gtk.accelerator_parse('<Control>q')
+    accelgroup.connect(key, modifier, Gtk.AccelFlags.VISIBLE, self.quit_program)
 
-    key, modifier = gtk.accelerator_parse('<Control>s')
-    accelgroup.connect_group(key, modifier, gtk.ACCEL_VISIBLE, self.show_settings_dlg)
+    key, modifier = Gtk.accelerator_parse('<Control>s')
+    accelgroup.connect(key, modifier, Gtk.AccelFlags.VISIBLE, self.show_settings_dlg)
     self.window.add_accel_group(accelgroup)
 
     if self.options.screenshot:
-      gobject.timeout_add(700, self.do_screenshot)
+      GLib.timeout_add(700, self.do_screenshot)
       return
 
-    gobject.idle_add(self.on_idle)
+    GLib.idle_add(self.on_idle)
 
   def button_released(self, unused_widget, evt):
     """A mouse button was released."""
@@ -447,7 +440,7 @@ class KeyMon:
       self.window.set_opacity(self.options.opacity)
       # remove no_press_timer
       if self.no_press_timer:
-        gobject.source_remove(self.no_press_timer)
+        GLib.source_remove(self.no_press_timer)
         self.no_press_timer = None
     return True
 
@@ -525,9 +518,9 @@ class KeyMon:
       self.window.show()
     self.window.set_opacity(self.options.opacity)
     if self.no_press_timer:
-      gobject.source_remove(self.no_press_timer)
+      GLib.source_remove(self.no_press_timer)
       self.no_press_timer = None
-    self.no_press_timer = gobject.timeout_add(int(self.options.no_press_fadeout * 1000), self.no_press_fadeout)
+    self.no_press_timer = GLib.timeout_add(int(self.options.no_press_fadeout * 1000), self.no_press_fadeout)
 
   def no_press_fadeout(self, begin=True):
     """Fadeout the window in a second
@@ -547,7 +540,7 @@ class KeyMon:
 
     if begin:
       # Recreate a new timer with 0.1 seccond interval
-      self.no_press_timer = gobject.timeout_add(100, self.no_press_fadeout)
+      self.no_press_timer = GLib.timeout_add(100, self.no_press_fadeout)
       # The current self.options.no_press_fadeout interval will not be timed
       # out again.
       return False
@@ -699,7 +692,7 @@ class KeyMon:
     """Also quit the program."""
     self.devices.stop_listening()
     self.options.save()
-    gtk.main_quit()
+    Gtk.main_quit()
 
   def right_click_handler(self, unused_widget, event):
     """Handle the right click button and show a menu."""
@@ -709,30 +702,30 @@ class KeyMon:
     menu = self.create_context_menu()
 
     menu.show()
-    menu.popup(None, None, None, event.button, event.time)
+    menu.popup(None, None, None, None, event.button, event.time)
 
   def create_context_menu(self):
     """Create a context menu on right click."""
-    menu = gtk.Menu()
+    menu = Gtk.Menu()
 
-    toggle_chrome = gtk.CheckMenuItem(_('Window _Chrome'))
+    toggle_chrome = Gtk.CheckMenuItem(_('Window _Chrome'))
     toggle_chrome.set_active(self.window.get_decorated())
     toggle_chrome.connect_object('activate', self.toggle_chrome,
        self.window.get_decorated())
     toggle_chrome.show()
     menu.append(toggle_chrome)
 
-    settings_click = gtk.MenuItem(_('_Settings...\tCtrl-S'))
+    settings_click = Gtk.MenuItem(_('_Settings...\tCtrl-S'))
     settings_click.connect_object('activate', self.show_settings_dlg, None)
     settings_click.show()
     menu.append(settings_click)
 
-    about_click = gtk.MenuItem(_('_About...'))
+    about_click = Gtk.MenuItem(_('_About...'))
     about_click.connect_object('activate', self.show_about_dlg, None)
     about_click.show()
     menu.append(about_click)
 
-    quitcmd = gtk.MenuItem(_('_Quit\tCtrl-Q'))
+    quitcmd = Gtk.MenuItem(_('_Quit\tCtrl-Q'))
     quitcmd.connect_object('activate', self.destroy, None)
     quitcmd.show()
 
@@ -803,7 +796,7 @@ class KeyMon:
 
   def show_about_dlg(self, *_):
 
-    dlg = gtk.AboutDialog()
+    dlg = Gtk.AboutDialog()
     # Find the logo file
     logo_paths = (os.path.join(self.pathname, '../../icons'),)
     logo_paths += tuple(logo_path + '/share/pixmaps' for logo_path in (
@@ -813,7 +806,7 @@ class KeyMon:
     logo_paths = [logo_path + '/key-mon.xpm' for logo_path in logo_paths]
     for logo_path in logo_paths:
       if os.path.exists(logo_path):
-        dlg.set_logo(gtk.gdk.pixbuf_new_from_file(logo_path))
+        dlg.set_logo(GdkPixbuf.Pixbuf.new_from_file(logo_path))
         break
 
     dlg.set_name('Keyboard Status Monitor')
@@ -842,8 +835,8 @@ limitations under the License.''')
 
 def show_version():
   """Show the version number and author, used by help2man."""
-  print _('Keymon version %s.') % __version__
-  print _('Written by %s') % __author__
+  print(_('Keymon version %s.') % __version__)
+  print(_('Written by %s') % __author__)
 
 def create_options():
   opts = options.Options()
@@ -1009,29 +1002,29 @@ def main():
 
   opts.themes = settings.get_themes()
   if opts.list_themes:
-    print _('Available themes:')
-    print
+    print(_('Available themes:'))
+    print()
     theme_names = sorted(opts.themes)
     name_len = max(len(name) for name in theme_names)
     for theme in theme_names:
-      print (' - %%-%ds: %%s' % name_len) % (theme, opts.themes[theme][0])
+      print((' - %%-%ds: %%s' % name_len) % (theme, opts.themes[theme][0]))
     raise SystemExit()
   elif opts.theme and opts.theme not in opts.themes:
-    print _('Theme %r does not exist') % opts.theme
-    print
-    print _('Please make sure %r can be found in '
-            'one of the following directories:') % opts.theme
-    print
+    print(_('Theme %r does not exist') % opts.theme)
+    print()
+    print(_('Please make sure %r can be found in '
+            'one of the following directories:') % opts.theme)
+    print()
     for theme_dir in settings.get_config_dirs('themes'):
-      print ' - %s' % theme_dir
+      print(' - %s' % theme_dir)
     sys.exit(-1)
   if opts.reset:
-    print _('Resetting to defaults.')
+    print(_('Resetting to defaults.'))
     opts.reset_to_defaults()
     opts.save()
   keymon = KeyMon(opts)
   try:
-    gtk.main()
+    Gtk.main()
   except KeyboardInterrupt:
     keymon.quit_program()
 

@@ -15,8 +15,8 @@
 # limitations under the License.
 
 import unittest
-import options
-import StringIO
+from . import options
+import io
 
 class TestOptionItem(unittest.TestCase):
   def test_create_int(self):
@@ -120,7 +120,7 @@ class TestOptions(unittest.TestCase):
     lines.append('x = 0')
     lines.append('true = 0')
     lines.append('false = 1')
-    io = StringIO.StringIO('\n'.join(lines))
+    io = io.StringIO('\n'.join(lines))
     self.options.parse_ini(io)
     self.options.parse_args("Usage", [])
 
@@ -141,7 +141,7 @@ class TestOptions(unittest.TestCase):
     lines.append('x = 0')
     lines.append('true = 0')
     lines.append('false = 1')
-    io = StringIO.StringIO('\n'.join(lines))
+    io = io.StringIO('\n'.join(lines))
     self.options.parse_ini(io)
     args = [
         '--num99', '99',
@@ -160,7 +160,7 @@ class TestOptions(unittest.TestCase):
     self.assertEqual(o.num99, 99)
 
   def test_to_ini_empty(self):
-    io = StringIO.StringIO()
+    io = io.StringIO()
     self.options.write_ini(io)
     contents = io.getvalue()
     lines = []
@@ -172,7 +172,7 @@ class TestOptions(unittest.TestCase):
     lines.append('num99 = 99')
     lines.append('')
     lines.append('')
-    self.assertEquals('\n'.join(lines), contents)
+    self.assertEqual('\n'.join(lines), contents)
 
 if __name__ == '__main__':
   unittest.main()

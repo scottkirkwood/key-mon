@@ -29,9 +29,9 @@ Alpha transparencies from the new, overlayed, image are respected.
 
 __author__ = 'scott@forusers.com (Scott Kirkwood))'
 
-import pygtk
-pygtk.require('2.0')
-import gtk
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, GdkPixbuf
 import logging
 import os
 import sys
@@ -76,7 +76,7 @@ class LazyPixbufCreator(object):
     ops = self.name_fnames[name]
     img = None
     for operation in ops:
-      if isinstance(operation, types.StringTypes):
+      if isinstance(operation, (str,)):
         img = self._composite(img, self._read_from_file(operation))
       else:
         image_bytes = operation()
@@ -98,7 +98,7 @@ class LazyPixbufCreator(object):
           0, 0, img.props.width, img.props.height,  # x, y, w, h
           0, 0,  # offset x, y
           1.0, 1.0,  # scale x, y
-          gtk.gdk.INTERP_HYPER, 255)  # interpolation type, alpha
+          GdkPixbuf.InterpType.HYPER, 255)  # interpolation type, alpha
       return img
     return img2
 
@@ -106,7 +106,7 @@ class LazyPixbufCreator(object):
     """Read in the file in from fname."""
     logging.debug('Read file %s', fname)
     if self.resize == 1.0:
-      return gtk.gdk.pixbuf_new_from_file(fname)
+      return GdkPixbuf.Pixbuf.new_from_file(fname)
     fin = open(fname)
     image_bytes = self._resize(fin.read())
     fin.close()
@@ -115,10 +115,10 @@ class LazyPixbufCreator(object):
   def _read_from_bytes(self, image_bytes):
     """Writes the bytes to a file and then reads the file."""
     fout, fname = tempfile.mkstemp(prefix='keymon-', suffix='.svg')
-    os.write(fout, image_bytes)
+    os.write(fout, str.encode(image_bytes))
     os.close(fout)
     try:
-      img = gtk.gdk.pixbuf_new_from_file(fname)
+      img = GdkPixbuf.Pixbuf.new_from_file(fname)
     except:
       logging.error('Unable to read %r: %s', fname, image_bytes)
       sys.exit(-1)

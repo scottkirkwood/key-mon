@@ -22,18 +22,19 @@ image (the first image) after calling EmptyEvent() a few times
 
 __author__ = 'scott@forusers.com (Scott Kirkwood))'
 
-import pygtk
-pygtk.require('2.0')
-import gtk
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk
+
 import time
 
 DEFAULT_TIMEOUT_SECS = 0.5
 
-class TwoStateImage(gtk.Image):
+class TwoStateImage(Gtk.Image):
   """Image has a default image (say a blank image) which it goes back to.
   It can also pass the information down to another image."""
   def __init__(self, pixbufs, normal, show=True, defer_to=None):
-    gtk.Image.__init__(self)
+    Gtk.Image.__init__(self)
     self.pixbufs = pixbufs
     self.normal = normal
     self.count_down = None

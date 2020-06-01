@@ -128,7 +128,7 @@ class XEvents(threading.Thread):
   def start_listening(self):
     """Start listening to RECORD extension and queuing events."""
     if not self.record_display.has_extension("RECORD"):
-      print "RECORD extension not found"
+      print("RECORD extension not found")
       sys.exit(1)
     self._listening = True
     self.ctx = self.record_display.record_create_context(
@@ -187,7 +187,7 @@ class XEvents(threading.Thread):
       elif event.type == X.MotionNotify:
         self._handle_mouse(event, 2)
       else:
-        print event
+        print(event)
 
   def _handle_mouse(self, event, value):
     """Add a mouse event to events.
@@ -217,7 +217,7 @@ class XEvents(threading.Thread):
     """
     keysym = self.local_display.keycode_to_keysym(event.detail, 0)
     if keysym not in self.keycode_to_symbol:
-      print 'Missing code for %d = %d' % (event.detail - 8, keysym)
+      print('Missing code for %d = %d' % (event.detail - 8, keysym))
     self.events.append(XEvent('EV_KEY', event.detail - 8, self.keycode_to_symbol[keysym], value))
 
 def _run_test():
@@ -226,17 +226,17 @@ def _run_test():
   events.start()
   while not events.listening():
     time.sleep(1)
-    print 'Waiting for initializing...'
-  print 'Press ESCape to quit'
+    print('Waiting for initializing...')
+  print('Press ESCape to quit')
   try:
     while events.listening():
       try:
         evt = events.next_event()
       except KeyboardInterrupt:
-        print 'User interrupted'
+        print('User interrupted')
         events.stop_listening()
       if evt:
-        print evt
+        print(evt)
         if evt.code == 'KEY_ESCAPE':
           events.stop_listening()
   finally:
