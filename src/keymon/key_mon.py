@@ -529,7 +529,7 @@ class KeyMon:
     """
     opacity = self.window.get_opacity() - self.options.opacity / 10.0
     if opacity < 0.0:
-      opacity = 0.0;
+      opacity = 0.0
     logging.debug('Set opacity = %f' % opacity)
     self.window.set_opacity(opacity)
     if opacity == 0.0:
