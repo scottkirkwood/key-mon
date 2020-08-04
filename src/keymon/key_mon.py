@@ -239,13 +239,13 @@ class KeyMon:
             [('TOP', 'Space'), ('BOTTOM', '')])],
         'KEY_TAB': [
             fix_svg_key_closure(self.svg_name('two-line-wide'),
-            [('TOP', 'Tab'), ('BOTTOM', '\u21B9')])],
+            [('TOP', 'Tab'), ('BOTTOM', '\N{Leftwards arrow to bar over rightwards arrow to bar}')])],
         'KEY_BACKSPACE': [
             fix_svg_key_closure(self.svg_name('two-line-wide'),
-            [('TOP', 'Back'), ('BOTTOM', '\u21fd')])],
+            [('TOP', 'Back'), ('BOTTOM', '\N{Leftwards open-headed arrow}')])],
         'KEY_RETURN': [
             fix_svg_key_closure(self.svg_name('two-line-wide'),
-            [('TOP', 'Enter'), ('BOTTOM', '\u23CE')])],
+            [('TOP', 'Enter'), ('BOTTOM', '\N{Return symbol}')])],
         'KEY_CAPS_LOCK': [
             fix_svg_key_closure(self.svg_name('two-line-wide'),
             [('TOP', 'Capslock'), ('BOTTOM', '')])],
