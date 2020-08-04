@@ -229,18 +229,18 @@ class ModMapper(object):
       if vals[0] == name:
         return vals
       else:
-        logging.debug('code %s != %s', vals[1], name)
+        logging.debug(f'code {vals[1]} != {name}')
     if name in self.alt_map:
-      logging.info('Found key via alt lookup %s', name)
+      logging.info(f'Found key via alt lookup {name}')
       return self.alt_map[name]
-    logging.info('scancode: %r name:%r not found', scancode, name)
+    logging.info(f'scancode: {scancode!r} name:{name!r} not found')
     return None, None, None
 
   def get_from_name(self, name):
     """Get the scancode from a name."""
     if name in self.name_to_code:
       return self.name_to_code[name], self.alt_map[name]
-    logging.info('Key %s not found', name)
+    logging.info(f'Key {name} not found')
     return None
 
   def __getitem__(self, key):
@@ -286,7 +286,7 @@ def parse_modmap(lines):
 
 def read_kdb(fname):
   """Read the kdb file."""
-  logging.debug('Loading kbd file: %s' % fname)
+  logging.debug(f'Loading kbd file: {fname}')
   return parse_kdb(
           codecs.open(
               os.path.join(os.path.dirname(os.path.abspath(__file__)), fname),
@@ -316,10 +316,10 @@ def create_my_kdb(fname, codes):
   fout.write('# Scancode Map-Name Medium-Name Short-Name\n')
   for code, (key, medium_name, short_name) in list(codes.map.items()):
     if short_name:
-      fout.write('%d %s %s %s\n' % (code, key, medium_name, short_name))
+      fout.write(f'{code} {key} {medium_name} {short_name}\n')
     else:
-      fout.write('%d %s %s\n' % (code, key, medium_name))
-  print('Output %r with %d entries' % (fname, len(codes)))
+      fout.write(f'{code} {key} {medium_name}\n')
+  print(f'Output {fname!r} with {len(codes)} entries')
   fout.close()
 
 def mod_map_args():
@@ -369,13 +369,13 @@ def safely_read_mod_map(fname, kbd_files):
       if 'variant:' in line:
         DEFAULT_KBD += '_' + line.split(':')[1].strip()
     if DEFAULT_KBD:
-      logging.info('setxkbmap returns a keyboard layout_variant: %s' % DEFAULT_KBD)
+      logging.info(f'setxkbmap returns a keyboard layout_variant: {DEFAULT_KBD}') 
       DEFAULT_KBD += '.kbd'
   except OSError:
     pass
   if not DEFAULT_KBD:
     DEFAULT_KBD = 'us.kbd'
-  logging.info('Set default kbdfile to: %s' % DEFAULT_KBD)
+  logging.info(f'Set default kbdfile to: {DEFAULT_KBD}')
 
   kbd_file = None
   kbd_default = None
@@ -385,7 +385,7 @@ def safely_read_mod_map(fname, kbd_files):
     if not kbd_default and kbd.endswith(DEFAULT_KBD):
       kbd_default = kbd
   if fname and not kbd_file:
-    logging.warning('Can not find kbd file: %s' % fname)
+    logging.warning(f'Can not find kbd file: {fname}')
   if kbd_file:
     return read_kdb(kbd_file)
 
@@ -399,13 +399,13 @@ def safely_read_mod_map(fname, kbd_files):
   if kbd_default:
     # Merge the defaults with modmap
     if fname == 'xmodmap':
-      logging.debug('Merging with default kbd file: %s' % kbd_default)
+      logging.debug(f'Merging with default kbd file: {kbd_default}')
       defaults = read_kdb(kbd_default)
       for keycode in defaults:
         if keycode not in ret:
           ret[keycode] = defaults[keycode]
     else:
-      logging.debug('Using default kbd file: %s' % kbd_default)
+      logging.debug(f'Using default kbd file: {kbd_default}')
       ret = read_kdb(kbd_default)
   else:
     logging.error('Can not find default kbd file')
@@ -417,10 +417,10 @@ def _run_test():
   modmap = read_mod_map()
   create_my_kdb(filename, modmap)
   entries = read_kdb(filename)
-  print('Read %r with %d entires' % (filename, len(entries)))
+  print(f'Read {filename!r} with {len(entries)} entires')
   for ecode in modmap:
     if ecode not in entries:
-      print('Missing entry for code %s' % ecode)
+      print(f'Missing entry for code {ecode}')
 
 
 if __name__ == '__main__':

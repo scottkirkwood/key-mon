@@ -74,14 +74,14 @@ class OptionItem(object):
     self._opt_group = opt_group
     self._opt_short = opt_short
     if self._opt_short and not self._opt_short.startswith('-'):
-      raise OptionException('Invalid short option %s' % self._opt_short)
+      raise OptionException(f'Invalid short option {self._opt_short}')
     self._opt_long = opt_long
     if self._opt_long and not self._opt_long.startswith('--'):
-      raise OptionException('Invalid long option %r' % self._opt_long)
+      raise OptionException(f'Invalid long option {self._opt_long!r}')
     self._ini_group = ini_group
     self._ini_name = ini_name
     if self._type not in ('int', 'float', 'bool', 'str'):
-      raise OptionException('Unsupported type: %s' % self._type)
+      raise OptionException(f'Unsupported type: {self._type}')
     self._set_value(default)
 
   def add_to_parser(self, parser):
@@ -112,7 +112,7 @@ class OptionItem(object):
       # Only need the --no version if it could be saved to ini file.
       parser.add_option('--no' + self._opt_long.lstrip('-'),
               action='store_false',
-              dest=self._dest, help=_('Opposite of %s') % self._opt_long)
+              dest=self._dest, help=_(f'Opposite of {self._opt_long}'))
 
   def set_from_optparse(self, opts, args):
     """Try and set an option from optparse.
@@ -174,7 +174,7 @@ class OptionItem(object):
         elif val.lower() in ('true', 'on', 'yes', '1'):
           setattr(self, attr, True)
         else:
-          raise OptionException('Unable to convert %s to bool' % val)
+          raise OptionException(f'Unable to convert {val} to bool')
       else:
         setattr(self, attr, bool(val))
     else:
@@ -260,14 +260,14 @@ class Options(object):
 
   def __getattr__(self, name):
     if name not in self.__dict__['_options']:
-      raise AttributeError('Invalid attribute name: %r' % name)
+      raise AttributeError(f'Invalid attribute name: {name!r}')
     return self._options[name].value
 
   def __setattr__(self, name, value):
     if name == '_options' or name not in self.__dict__['_options']:
       object.__setattr__(self, name, value)
     else:
-      LOG.info('Setting %r = %r', name, value)
+      LOG.info(f'Setting {name!r} = {value!r}')
       self.__dict__['_options'][name].value = value
 
   def add_option_group(self, group, desc):
@@ -291,7 +291,7 @@ class Options(object):
       ini_name: the name of the name in the ini file
     """
     if dest in self._options:
-      raise OptionException('Options %s already added' % dest)
+      raise OptionException(f'Options {dest} already added')
 
     self._options_order.append(dest)
     self._options[dest] = OptionItem(dest, type, default,
@@ -326,13 +326,12 @@ class Options(object):
         if (config.has_section(opt.ini_group) and
             config.has_option(opt.ini_group, opt.ini_name)):
           opt.value = config.get(opt.ini_group, opt.ini_name)
-          LOG.info('From ini getting %s.%s = %s', opt.ini_group, opt.ini_name,
-              opt.value)
+          LOG.info(f'From ini getting {opt.ini_group}.{opt.ini_name} = {opt.value}')
     for section in config.sections():
       for name, value in config.items(section):
         combined_name = section + '-' + name
         if not combined_name in checker:
-          LOG.info('Unknown option %r in section [%s]', name, section)
+          LOG.info(f'Unknown option {name!r} in section [{section}]')
           # we no longer throw an error to be backward compatible
 
   def write_ini(self, fp):
@@ -351,13 +350,13 @@ class Options(object):
 
   def read_ini_file(self, fname):
     self._ini_filename = os.path.expanduser(fname)
-    LOG.info('Reading from %r', self._ini_filename)
+    LOG.info(f'Reading from {self._ini_filename!r}')
     if os.path.exists(self._ini_filename) and os.path.isfile(self._ini_filename):
       fi = open(self._ini_filename)
       self.parse_ini(fi)
       fi.close()
     else:
-      LOG.info('%r does not exist', self._ini_filename)
+      LOG.info(f'{self._ini_filename!r} does not exist')
 
   def save(self):
     self._write_ini_file(self._ini_filename)
@@ -366,12 +365,12 @@ class Options(object):
     if not os.path.exists(fname):
       dirname = os.path.dirname(fname)
       if not os.path.exists(dirname):
-        LOG.info('Creating directory %r', dirname)
+        LOG.info(f'Creating directory {dirname!r}')
         os.makedirs(dirname)
 
   def _write_ini_file(self, fname):
     self._make_dirs(fname)
-    LOG.info('Writing config file %r', fname)
+    LOG.info(f'Writing config file {fname!r}')
     fo = open(fname, 'w')
     self.write_ini(fo)
     fo.close()

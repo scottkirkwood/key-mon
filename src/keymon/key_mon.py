@@ -62,7 +62,7 @@ def fix_svg_key_closure(fname, from_tos):
 
   def fix_svg_key():
     """Given an SVG file return the SVG text fixed."""
-    logging.debug('Read file %r', fname)
+    logging.debug(f'Read file {fname!r}')
     fin = open(fname)
     fbytes = fin.read()
     fin.close()
@@ -149,7 +149,7 @@ class KeyMon:
         if key.startswith('KEY_'):
           key_info = self.modmap.get_from_name(key)
           if not key_info:
-            print('Key %s not found' % key)
+            print(f'Key {key} not found')
             self.destroy(None)
             return
           scancode = key_info[0]
@@ -174,7 +174,7 @@ class KeyMon:
 
     fname = 'screenshot.png'
     screenshot.savev(fname, 'png')
-    print('Saved screenshot %r' % fname)
+    print(f'Saved screenshot {fname!r}')
     self.destroy(None)
 
   def create_names_to_fnames(self):
@@ -221,15 +221,15 @@ class KeyMon:
 
     ftn.update({
       'BTN_RIGHT': [self.svg_name('mouse'),
-        self.svg_name('%s-mouse' % right_str)],
+        self.svg_name(f'{right_str}-mouse')],
       'BTN_LEFT': [self.svg_name('mouse'),
-        self.svg_name('%s-mouse' % left_str)],
+        self.svg_name(f'{left_str}-mouse')],
       'BTN_LEFTMIDDLE': [
-          self.svg_name('mouse'), self.svg_name('%s-mouse' % left_str),
+          self.svg_name('mouse'), self.svg_name(f'{left_str}-mouse'),
           self.svg_name('middle-mouse')],
       'BTN_MIDDLERIGHT': [
           self.svg_name('mouse'), self.svg_name('middle-mouse'),
-          self.svg_name('%s-mouse' % right_str)],
+          self.svg_name(f'{right_str}-mouse')],
     })
 
     if self.options.scale >= 1.0:
@@ -398,10 +398,10 @@ class KeyMon:
   def svg_name(self, fname):
     """Return an svg filename given the theme, system."""
     themepath = self.options.themes[self.options.theme][1]
-    fullname = os.path.join(themepath, '%s%s.svg' % (fname, self.svg_size))
+    fullname = os.path.join(themepath, f'{fname}{self.svg_size}.svg')
     if self.svg_size and not os.path.exists(fullname):
       # Small not found, defaulting to large size
-      fullname = os.path.join(themepath, '%s.svg' % fname)
+      fullname = os.path.join(themepath, f'{fname}.svg')
     return fullname
 
   def add_events(self):
@@ -466,7 +466,7 @@ class KeyMon:
     x, y = x + new_p[0] - old_p[0], y + new_p[1] - old_p[1]
     self.window.move(x, y)
 
-    logging.info('Moved window to %d, %d' % (x, y))
+    logging.info(f'Moved window to {x}, {y}')
     self.options.x_pos = x
     self.options.y_pos = y
 
@@ -530,7 +530,7 @@ class KeyMon:
     opacity = self.window.get_opacity() - self.options.opacity / 10.0
     if opacity < 0.0:
       opacity = 0.0
-    logging.debug('Set opacity = %f' % opacity)
+    logging.debug(f'Set opacity = {opacity}')
     self.window.set_opacity(opacity)
     if opacity == 0.0:
       self.window.hide()
@@ -566,7 +566,7 @@ class KeyMon:
     image.really_pressed = code == 1
     if code == 1:
       if self._show_down_key(name):
-        logging.debug('Switch to %s, code %s' % (name, code))
+        logging.debug(f'Switch to {name}, code {code}')
         image.switch_to(name)
       return
 
@@ -591,12 +591,11 @@ class KeyMon:
     code, medium_name, short_name = self.modmap.get_and_check(scan_code,
                                                               xlib_name)
     if not code:
-      logging.info('No mapping for scan_code %s', scan_code)
+      logging.info(f'No mapping for scan_code {scan_code}')
       return
     if self.options.scale < 1.0 and short_name:
       medium_name = short_name
-    logging.debug('Scan code %s, Key %s pressed = %r', scan_code,
-                                                       code, medium_name)
+    logging.debug(f'Scan code {scan_code}, Key {code} pressed = {medium_name!r}')
     if code in self.name_fnames:
       self._handle_event(self.key_image, code, value)
       return
@@ -622,7 +621,7 @@ class KeyMon:
     if code.startswith('KEY_'):
       letter = medium_name
       if code not in self.name_fnames:
-        logging.debug('code not in %s', code)
+        logging.debug(f'code not in {code}')
         if len(letter) == 1:
           template = 'one-char-template'
         else:
@@ -630,7 +629,7 @@ class KeyMon:
         self.name_fnames[code] = [
             fix_svg_key_closure(self.svg_name(template), [('&amp;', letter)])]
       else:
-        logging.debug('code in %s', code)
+        logging.debug(f'code in {code}')
       self._handle_event(self.key_image, code, value)
       return
 
@@ -835,8 +834,8 @@ limitations under the License.''')
 
 def show_version():
   """Show the version number and author, used by help2man."""
-  print(_('Keymon version %s.') % __version__)
-  print(_('Written by %s') % __author__)
+  print(_(f'Keymon version {__version__}.'))
+  print(_(f'Written by {__author__}'))
 
 def create_options():
   opts = options.Options()
@@ -975,14 +974,14 @@ def main():
         loglevel = sys.argv[idx + 1]
       level = getattr(logging, loglevel.upper(), None)
       if level is None:
-          raise ValueError('Invalid log level: %s' % loglevel)
+          raise ValueError(f'Invalid log level: {loglevel}')
       loglevel = level
   else:
     if '--debug' in sys.argv or '-d' in sys.argv:
       loglevel = logging.DEBUG
   logging.basicConfig(
-      level=loglevel,
-      format='%(filename)s [%(lineno)d]: %(levelname)s %(message)s')
+      level=loglevel, style='{',
+      format='{filename} [{lineno}]: {levelname} {message}')
   if loglevel is None:
     # Disabling warning, info, debug messages
     logging.disable(logging.WARNING)
@@ -1007,16 +1006,16 @@ def main():
     theme_names = sorted(opts.themes)
     name_len = max(len(name) for name in theme_names)
     for theme in theme_names:
-      print((' - %%-%ds: %%s' % name_len) % (theme, opts.themes[theme][0]))
+      print(f' - {theme:<{name_len}}: {opts.themes[theme][0]}')
     raise SystemExit()
   elif opts.theme and opts.theme not in opts.themes:
-    print(_('Theme %r does not exist') % opts.theme)
+    print(_(f'Theme {opts.theme!r} does not exist'))
     print()
-    print(_('Please make sure %r can be found in '
-            'one of the following directories:') % opts.theme)
+    print(_(f'Please make sure {opts.theme!r} can be found in '
+            'one of the following directories:'))
     print()
     for theme_dir in settings.get_config_dirs('themes'):
-      print(' - %s' % theme_dir)
+      print(f' - {theme_dir}')
     sys.exit(-1)
   if opts.reset:
     print(_('Resetting to defaults.'))

@@ -25,9 +25,9 @@ VER = '1.19'
 PY_NAME = 'key_mon'
 DEB_NAME = NAME.replace('-', '')
 RELEASE_FILE = 'RELEASE.rst'
-VCS = 'http://%s.code.google.com/hg' % NAME
+VCS = f'http://{NAME}.code.google.com/hg'
 
-PY_SRC = '%s.py' % PY_NAME
+PY_SRC = f'{PY_NAME}.py'
 DEPENDS = ['python-xlib', 'python-gtk2']
 DEPENDS_STR = ' '.join(DEPENDS)
 
@@ -37,10 +37,10 @@ COPYRIGHT_NAME = 'Google Inc.'
 GOOGLE_CODE_EMAIL = 'scott@forusers.com'
 MAILING_LIST = 'key-mon-discuss@googlegroups.com'
 KEYWORDS = ['keyboard', 'status', 'monitor', 'education']
-MAN_FILE = 'man/%s.1' % NAME
-DESKTOP_FILE = 'icons/%s.desktop' % NAME
-ICON = 'icons/%s.xpm' % NAME
-COMMAND = '/usr/bin/%s' % NAME
+MAN_FILE = f'man/{NAME}.1'
+DESKTOP_FILE = f'icons/{NAME}.desktop'
+ICON = f'icons/{NAME}.xpm'
+COMMAND = f'/usr/bin/{NAME}'
 LANGS = ['pt_BR']
 HICOLOR_PNG_SIZES = [16, 24, 32, 48, 64, 128]
 
@@ -57,8 +57,8 @@ SETUP = dict(
   },
   data_files = [
       ('share/pixmaps', [ICON]),
-      ('share/icons/hicolor', ['icons/hicolor/%dx%d/apps/%s.png' % (x, x, NAME) for x in HICOLOR_PNG_SIZES]),
-      ('share/icons/hicolor', ['icons/hicolor/scalable/apps/%s.svg' % NAME]),
+      ('share/icons/hicolor', [f'icons/hicolor/{x}x{x}/apps/{NAME}.png' for x in HICOLOR_PNG_SIZES]),
+      ('share/icons/hicolor', [f'icons/hicolor/scalable/apps/{NAME}.svg']),
   ],
   scripts=['src/key-mon'],
   author=AUTHOR_NAME,
@@ -66,8 +66,8 @@ SETUP = dict(
   platforms=['POSIX'],
   license='Apache 2.0',
   keywords=' '.join(KEYWORDS),
-  url='http://code.google.com/p/%s' % NAME,
-  download_url='http://%s.googlecode.com/files/%s-%s.zip' % (NAME, NAME, VER),
+  url=f'http://code.google.com/p/{NAME}'
+  download_url=f'http://{NAME}.googlecode.com/files/{NAME}-{VER}.zip',
   description=_('A screencast utility that displays your keyboard and mouse status'),
   long_description=_("""Key-mon is useful for teaching since it shows the current status of your
 keyboard and mouse and you use them in another application.  No longer do you need to say
