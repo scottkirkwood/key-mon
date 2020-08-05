@@ -71,12 +71,12 @@ class LazyPixbufCreator(object):
       The name given or EMPTY if error.
     """
     if name not in self.name_fnames:
-      logging.error('Don\'t understand the name %r', name)
+      logging.error(f'Don\'t understand the name {name!r}')
       return 'KEY_EMPTY'
     ops = self.name_fnames[name]
     img = None
     for operation in ops:
-      if isinstance(operation, (str,)):
+      if isinstance(operation, str):
         img = self._composite(img, self._read_from_file(operation))
       else:
         image_bytes = operation()
@@ -104,7 +104,7 @@ class LazyPixbufCreator(object):
 
   def _read_from_file(self, fname):
     """Read in the file in from fname."""
-    logging.debug('Read file %s', fname)
+    logging.debug(f'Read file {fname}')
     if self.resize == 1.0:
       return GdkPixbuf.Pixbuf.new_from_file(fname)
     fin = open(fname)
@@ -120,7 +120,7 @@ class LazyPixbufCreator(object):
     try:
       img = GdkPixbuf.Pixbuf.new_from_file(fname)
     except:
-      logging.error('Unable to read %r: %s', fname, image_bytes)
+      logging.error(f'Unable to read {fname!r}: {image_bytes}')
       sys.exit(-1)
 
     try:
@@ -133,11 +133,11 @@ class LazyPixbufCreator(object):
     """Resize the image by manipulating the svg."""
     if self.resize == 1.0:
       return image_bytes
-    template = r'(<svg[^<]+)(%s=")(\d+\.?\d*)'
-    image_bytes = self._resize_text(image_bytes, template % 'width')
-    image_bytes = self._resize_text(image_bytes, template % 'height')
+    template = r'(<svg[^<]+)({}=")(\d+\.?\d*)'
+    image_bytes = self._resize_text(image_bytes, template.format('width'))
+    image_bytes = self._resize_text(image_bytes, template.format('height'))
     image_bytes = image_bytes.replace('<g',
-        '<g transform="scale(%f, %f)"' % (self.resize, self.resize), 1)
+        f'<g transform="scale({self.resize}, {self.resize})"', 1)
     return image_bytes
 
   def _resize_text(self, image_bytes, regular_exp):

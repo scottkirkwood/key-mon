@@ -62,8 +62,7 @@ class XEvent(object):
   value = property(get_value)
 
   def __str__(self):
-    return 'type:%s scancode:%s code:%s value:%s' % (self._type, 
-        self._scancode, self._code, self._value)
+    return f'type:{self._type} scancode:{self._scancode} code:{self._code} value:{self._value}'
 
 class XEvents(threading.Thread):
   """A thread to queue up X window events from RECORD extension."""
@@ -204,10 +203,10 @@ class XEvents(threading.Thread):
       else:
         value = 1
       self.events.append(XEvent('EV_REL',
-          0, XEvents._butn_to_code.get(event.detail, 'BTN_%d' % event.detail), value))
+          0, XEvents._butn_to_code.get(event.detail, f'BTN_{event.detail}'), value))
     else:
       self.events.append(XEvent('EV_KEY',
-          0, XEvents._butn_to_code.get(event.detail, 'BTN_%d' % event.detail), value))
+          0, XEvents._butn_to_code.get(event.detail, f'BTN_{event.detail}'), value))
 
   def _handle_key(self, event, value):
     """Add key event to events.
@@ -217,7 +216,7 @@ class XEvents(threading.Thread):
     """
     keysym = self.local_display.keycode_to_keysym(event.detail, 0)
     if keysym not in self.keycode_to_symbol:
-      print('Missing code for %d = %d' % (event.detail - 8, keysym))
+      print(f'Missing code for {event.detail - 8} = {keysym}')
     self.events.append(XEvent('EV_KEY', event.detail - 8, self.keycode_to_symbol[keysym], value))
 
 def _run_test():

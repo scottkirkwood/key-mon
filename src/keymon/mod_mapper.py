@@ -35,9 +35,9 @@ MEDIUM_NAME = {
   'BRACKETRIGHT': ']',
   'BRACELEFT': '(',
   'BRACERIGHT': ')',
-  'DEAD_ACUTE': '\u00B4',
-  'ACUTE': '\u00B4',
-  'QUESTIONDOWN': '\u00BF',
+  'DEAD_ACUTE': '\N{Acute accent}',
+  'ACUTE': '\N{Acute accent}',
+  'QUESTIONDOWN': '\N{Inverted question mark}',
   'WAKEUP': 'Wake',
   'BAR': '|',
   'TILDE': '~',
@@ -76,18 +76,18 @@ MEDIUM_NAME = {
   'KP_DELETE': '.',
   'ISO_LEVEL3_SHIFT': 'Alt',  # Right Alt
   'LESS': '<',
-  'KP_ENTER': '\u23CE',
+  'KP_ENTER': '\N{Return symbol}',
   'CONTROL_R': 'Ctrl',
   'KP_DIVIDE': '/',
   'PRINT': 'Print',
   'LINEFEED': 'Lf',
   'HOME': 'Home',
-  'UP': '\u2191',
+  'UP': '\N{Upwards arrow}',
   'PRIOR': 'PgUp',
-  'LEFT': '\u2190',
-  'RIGHT': '\u2192',
+  'LEFT': '\N{Leftwards arrow}',
+  'RIGHT': '\N{Rightwards arrow}',
   'END': 'End',
-  'DOWN': '\u2193',
+  'DOWN': '\N{Downwards arrow}',
   'NEXT': 'PgDn',
   'INSERT': 'Ins',
   'DELETE': 'Del',
@@ -128,8 +128,8 @@ MEDIUM_NAME = {
   'XF86MAIL': 'Mail',
   'XF86FAVORITES': 'Fav',
   'XF86MYCOMPUTER': 'MyComputer',
-  'XF86BACK': '\u21d0',
-  'XF86FORWARD': '\u21d2',
+  'XF86BACK': '\N{Leftwards double arrow}',
+  'XF86FORWARD': '\N{Rightwards double arrow}',
   'XF86EJECT': 'Eject',
   'XF86AUDIONEXT': 'Next',
   'XF86AUDIOPLAY': 'Play',
@@ -174,8 +174,8 @@ MEDIUM_NAME = {
 }
 
 SHORT_NAME = {
-  'BACKSPACE': '\u21fd',
-  'RETURN': '\u23CE',
+  'BACKSPACE': '\N{Leftwards open-headed arrow}',
+  'RETURN': '\N{Return symbol}',
   'CONTROL_L': 'Ctl',
   'SHIFT_L': 'Shft',
   'SHIFT_R': 'Shft',
@@ -229,18 +229,18 @@ class ModMapper(object):
       if vals[0] == name:
         return vals
       else:
-        logging.debug('code %s != %s', vals[1], name)
+        logging.debug(f'code {vals[1]} != {name}')
     if name in self.alt_map:
-      logging.info('Found key via alt lookup %s', name)
+      logging.info(f'Found key via alt lookup {name}')
       return self.alt_map[name]
-    logging.info('scancode: %r name:%r not found', scancode, name)
+    logging.info(f'scancode: {scancode!r} name:{name!r} not found')
     return None, None, None
 
   def get_from_name(self, name):
     """Get the scancode from a name."""
     if name in self.name_to_code:
       return self.name_to_code[name], self.alt_map[name]
-    logging.info('Key %s not found', name)
+    logging.info(f'Key {name} not found')
     return None
 
   def __getitem__(self, key):
@@ -284,17 +284,17 @@ def parse_modmap(lines):
   return ret
 
 
-def read_kdb(fname):
-  """Read the kdb file."""
-  logging.debug('Loading kbd file: %s' % fname)
-  return parse_kdb(
+def read_kbd(fname):
+  """Read the kbd file."""
+  logging.debug(f'Loading kbd file: {fname}')
+  return parse_kbd(
           codecs.open(
               os.path.join(os.path.dirname(os.path.abspath(__file__)), fname),
               'r', 'utf-8').read())
 
 
-def parse_kdb(text):
-  """Parse a kdb text file."""
+def parse_kbd(text):
+  """Parse a kbd text file."""
   re_line = re.compile(r'(\d+) (\S+) (\S+)\s?(\S*)')
   ret = ModMapper()
   for line in text.split('\n'):
@@ -308,18 +308,18 @@ def parse_kdb(text):
   return ret
 
 
-def create_my_kdb(fname, codes):
-  """Create a kdb file from scancodes."""
+def create_my_kbd(fname, codes):
+  """Create a kbd file from scancodes."""
   fout = codecs.open(fname, 'w', 'utf-8')
   fout.write('# This is a space separated file with UTF-8 encoding\n')
   fout.write('# Short name is optional, will default to the medium-name\n')
   fout.write('# Scancode Map-Name Medium-Name Short-Name\n')
   for code, (key, medium_name, short_name) in list(codes.map.items()):
     if short_name:
-      fout.write('%d %s %s %s\n' % (code, key, medium_name, short_name))
+      fout.write(f'{code} {key} {medium_name} {short_name}\n')
     else:
-      fout.write('%d %s %s\n' % (code, key, medium_name))
-  print('Output %r with %d entries' % (fname, len(codes)))
+      fout.write(f'{code} {key} {medium_name}\n')
+  print(f'Output {fname!r} with {len(codes)} entries')
   fout.close()
 
 def mod_map_args():
@@ -369,13 +369,13 @@ def safely_read_mod_map(fname, kbd_files):
       if 'variant:' in line:
         DEFAULT_KBD += '_' + line.split(':')[1].strip()
     if DEFAULT_KBD:
-      logging.info('setxkbmap returns a keyboard layout_variant: %s' % DEFAULT_KBD)
+      logging.info(f'setxkbmap returns a keyboard layout_variant: {DEFAULT_KBD}') 
       DEFAULT_KBD += '.kbd'
   except OSError:
     pass
   if not DEFAULT_KBD:
     DEFAULT_KBD = 'us.kbd'
-  logging.info('Set default kbdfile to: %s' % DEFAULT_KBD)
+  logging.info(f'Set default kbdfile to: {DEFAULT_KBD}')
 
   kbd_file = None
   kbd_default = None
@@ -385,9 +385,9 @@ def safely_read_mod_map(fname, kbd_files):
     if not kbd_default and kbd.endswith(DEFAULT_KBD):
       kbd_default = kbd
   if fname and not kbd_file:
-    logging.warning('Can not find kbd file: %s' % fname)
+    logging.warning(f'Can not find kbd file: {fname}')
   if kbd_file:
-    return read_kdb(kbd_file)
+    return read_kbd(kbd_file)
 
   ret = None
   if fname == 'xmodmap' or not kbd_default:
@@ -399,28 +399,28 @@ def safely_read_mod_map(fname, kbd_files):
   if kbd_default:
     # Merge the defaults with modmap
     if fname == 'xmodmap':
-      logging.debug('Merging with default kbd file: %s' % kbd_default)
-      defaults = read_kdb(kbd_default)
+      logging.debug(f'Merging with default kbd file: {kbd_default}')
+      defaults = read_kbd(kbd_default)
       for keycode in defaults:
         if keycode not in ret:
           ret[keycode] = defaults[keycode]
     else:
-      logging.debug('Using default kbd file: %s' % kbd_default)
-      ret = read_kdb(kbd_default)
+      logging.debug(f'Using default kbd file: {kbd_default}')
+      ret = read_kbd(kbd_default)
   else:
     logging.error('Can not find default kbd file')
   return ret
 
 def _run_test():
   """Run some tests on the my.kbd file."""
-  filename = 'my.kdb'
+  filename = 'my.kbd'
   modmap = read_mod_map()
-  create_my_kdb(filename, modmap)
-  entries = read_kdb(filename)
-  print('Read %r with %d entires' % (filename, len(entries)))
+  create_my_kbd(filename, modmap)
+  entries = read_kbd(filename)
+  print(f'Read {filename!r} with {len(entries)} entires')
   for ecode in modmap:
     if ecode not in entries:
-      print('Missing entry for code %s' % ecode)
+      print(f'Missing entry for code {ecode}')
 
 
 if __name__ == '__main__':

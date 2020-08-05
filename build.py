@@ -37,7 +37,7 @@ import subprocess
 
 def build_screen_shots():
   """Build the screenshots for key-mon."""
-  prog = '%s/%s' % (setup.DIR, setup.PY_SRC)
+  prog = f'{setup.DIR}/{setup.PY_SRC}'
   destdir = 'docs'
   all_buttons = ['KEY_A', 'KEY_CONTROL_L', 'KEY_ALT_L', 'KEY_SHIFT_L']
   todos = [
@@ -75,7 +75,7 @@ def main():
   if options.png:
     build_screen_shots()
   elif not pybdist.handle_standard_options(options, setup):
-    print 'Doing nothing.  --help for commands.'
+    print('Doing nothing.  --help for commands.')
 
 if __name__ == '__main__':
   main()

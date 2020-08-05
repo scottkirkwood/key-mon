@@ -88,7 +88,7 @@ class CommonFrame(Gtk.Frame):
     """Add a check button."""
     check_button = Gtk.CheckButton(label=title)
     val = getattr(self.settings.options, option)
-    logging.info('got option %s as %s', option, val)
+    logging.info(f'got option {option} as {val}')
     if val:
       check_button.set_active(True)
     else:
@@ -110,7 +110,7 @@ class CommonFrame(Gtk.Frame):
       combo.append_text(str(opt))
     val = getattr(self.settings.options, option)
     if isinstance(val, float):
-      str_val = '%0.3g' % val
+      str_val = f'{val:0.3g}'
     else:
       str_val = val
     try:
@@ -121,7 +121,7 @@ class CommonFrame(Gtk.Frame):
 
     combo.set_tooltip_text(tooltip)
     hbox.pack_start(combo, expand=False, fill=False, padding=10)
-    logging.info('got option %s as %s', option, val)
+    logging.info(f'got option {option} as {val}')
     combo.connect('changed', self._combo_changed, option)
 
     vbox.pack_start(hbox, expand=False, fill=False, padding=0)
@@ -145,10 +145,10 @@ class CommonFrame(Gtk.Frame):
     """Update an option."""
     if str_val.isdigit():
       setattr(self.settings.options, option, val)
-      LOG.info('Set option %s to %s' % (option, val))
+      LOG.info(f'Set option {option} to {val}')
     else:
       setattr(self.settings.options, option, str_val)
-      LOG.info('Set option %s to %s' % (option, str_val))
+      LOG.info(f'Set option {option} to {str_val}')
     self.settings.options.save()
     self.settings.settings_changed()
 
@@ -305,8 +305,8 @@ def manually_run_dialog():
   SettingsDialog.register()
   gettext.install('key_mon', 'locale')
   logging.basicConfig(
-      level=logging.DEBUG,
-      format = '%(filename)s [%(lineno)d]: %(levelname)s %(message)s')
+      level=logging.DEBUG, style="{",
+      format='{filename} [{lineno}]: {levelname} {message}')
   options = key_mon.create_options()
   options.read_ini_file('~/.config/key-mon/config')
   dlg = SettingsDialog(None, options)
@@ -352,7 +352,7 @@ def get_themes():
         if entry not in themes:
           themes[entry] = (desc, os.path.join(theme_dir, entry))
       except:
-        LOG.warning(_('Unable to read theme %r') % (theme_config))
+        LOG.warning(_(f'Unable to read theme {theme_config!r}'))
   return themes
 
 def get_kbd_files():
