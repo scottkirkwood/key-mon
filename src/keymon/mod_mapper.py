@@ -284,17 +284,17 @@ def parse_modmap(lines):
   return ret
 
 
-def read_kdb(fname):
-  """Read the kdb file."""
+def read_kbd(fname):
+  """Read the kbd file."""
   logging.debug(f'Loading kbd file: {fname}')
-  return parse_kdb(
+  return parse_kbd(
           codecs.open(
               os.path.join(os.path.dirname(os.path.abspath(__file__)), fname),
               'r', 'utf-8').read())
 
 
-def parse_kdb(text):
-  """Parse a kdb text file."""
+def parse_kbd(text):
+  """Parse a kbd text file."""
   re_line = re.compile(r'(\d+) (\S+) (\S+)\s?(\S*)')
   ret = ModMapper()
   for line in text.split('\n'):
@@ -308,8 +308,8 @@ def parse_kdb(text):
   return ret
 
 
-def create_my_kdb(fname, codes):
-  """Create a kdb file from scancodes."""
+def create_my_kbd(fname, codes):
+  """Create a kbd file from scancodes."""
   fout = codecs.open(fname, 'w', 'utf-8')
   fout.write('# This is a space separated file with UTF-8 encoding\n')
   fout.write('# Short name is optional, will default to the medium-name\n')
@@ -387,7 +387,7 @@ def safely_read_mod_map(fname, kbd_files):
   if fname and not kbd_file:
     logging.warning(f'Can not find kbd file: {fname}')
   if kbd_file:
-    return read_kdb(kbd_file)
+    return read_kbd(kbd_file)
 
   ret = None
   if fname == 'xmodmap' or not kbd_default:
@@ -400,23 +400,23 @@ def safely_read_mod_map(fname, kbd_files):
     # Merge the defaults with modmap
     if fname == 'xmodmap':
       logging.debug(f'Merging with default kbd file: {kbd_default}')
-      defaults = read_kdb(kbd_default)
+      defaults = read_kbd(kbd_default)
       for keycode in defaults:
         if keycode not in ret:
           ret[keycode] = defaults[keycode]
     else:
       logging.debug(f'Using default kbd file: {kbd_default}')
-      ret = read_kdb(kbd_default)
+      ret = read_kbd(kbd_default)
   else:
     logging.error('Can not find default kbd file')
   return ret
 
 def _run_test():
   """Run some tests on the my.kbd file."""
-  filename = 'my.kdb'
+  filename = 'my.kbd'
   modmap = read_mod_map()
-  create_my_kdb(filename, modmap)
-  entries = read_kdb(filename)
+  create_my_kbd(filename, modmap)
+  entries = read_kbd(filename)
   print(f'Read {filename!r} with {len(entries)} entires')
   for ecode in modmap:
     if ecode not in entries:
