@@ -13,13 +13,10 @@ Home Page
 ---------
 
 You can find key-mon hosted at:
-  http://code.google.com/p/key-mon
+  https://github.com/scottkirkwood/key-mon
 
 You can file bugs at:
-  http://code.google.com/p/key-mon/issues/list
-
-Latest downloads can be found at:
-  http://code.google.com/p/key-mon/downloads/list
+  https://github.com/scottkirkwood/key-mon/issues
 
 Requirements
 ------------
