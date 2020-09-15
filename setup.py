@@ -25,10 +25,10 @@ VER = '1.19'
 PY_NAME = 'key_mon'
 DEB_NAME = NAME.replace('-', '')
 RELEASE_FILE = 'RELEASE.rst'
-VCS = f'http://{NAME}.code.google.com/hg'
+VCS = 'https://github.com/scottkirkwood/key-mon.git'
 
-PY_SRC = f'{PY_NAME}.py'
-DEPENDS = ['python-xlib', 'python-gtk2']
+PY_SRC = f'{PY_NAME}.py' % PY_NAME
+DEPENDS = ['python3-xlib', 'python3-gi-cairo', 'gir1.2-gtk-3.0']
 DEPENDS_STR = ' '.join(DEPENDS)
 
 MENU_SUBSECTION = 'Graphics'
@@ -66,8 +66,8 @@ SETUP = dict(
   platforms=['POSIX'],
   license='Apache 2.0',
   keywords=' '.join(KEYWORDS),
-  url=f'http://code.google.com/p/{NAME}',
-  download_url=f'http://{NAME}.googlecode.com/files/{NAME}-{VER}.zip',
+  url='https://github.com/scottkirkwood/key-mon',
+  download_url=f'https://github.com/scottkirkwood/{NAME}/archive/{VER}.zip',
   description=_('A screencast utility that displays your keyboard and mouse status'),
   long_description=_("""Key-mon is useful for teaching since it shows the current status of your
 keyboard and mouse and you use them in another application.  No longer do you need to say

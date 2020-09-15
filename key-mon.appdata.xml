@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2014 Scott Kirkwood <scott+personal@forusers.com> -->
-<application>
- <id type="desktop">key-mon.desktop</id>
+<component>
+ <id>com.github.key-mon</id>
  <metadata_license>CC0-1.0</metadata_license>
  <project_license>Apache-2.0</project_license>
  <name>key-mon</name>
@@ -15,10 +15,21 @@
     your students can just see the keystroke for themselves.
   </p>
  </description>
+ <categories>
+  <category>Utility</category>
+ </categories>
  <screenshots>
-  <screenshot type="default" width="585" height="360">https://key-mon.googlecode.com/hg/docs/large-screenshot.png</screenshot>
+   <screenshot type="default" width="585" height="360">
+     <image>https://raw.githubusercontent.com/scottkirkwood/key-mon/master/docs/large-screenshot.png</image>
+   </screenshot>
  </screenshots>
- <url type="homepage">http://www.gnome.org/projects/en_US/gnome-power-manager</url>
- <updatecontact>scott+personal@forusers.com</updatecontact>
- <project_group>GNOME</project_group>
-</application>
+ <releases>
+  <release version="1.20" date="2020-07-01">
+   <description>
+     <p>Update to Python3, Move code to GTK3</p>
+   </description>
+  </release>
+ </releases>
+ <url type="homepage">https://github.com/scottkirkwood/key-mon</url>
+ <url type="contact">mailto:scott+personal@forusers.com</url>
+</component>

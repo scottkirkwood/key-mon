@@ -810,7 +810,7 @@ class KeyMon:
 
     dlg.set_name('Keyboard Status Monitor')
     dlg.set_program_name('key-mon')
-    dlg.set_website('http://code.google.com/p/key-mon/')
+    dlg.set_website('https://github.com/scottkirkwood/key-mon')
     dlg.set_version(__version__)
     dlg.set_authors([
         __author__,
