@@ -97,6 +97,12 @@ class ShapedWindow(Gtk.Window):
       # This method only is called when mouse is pressed, so there will be a
       # release and fade_away call, no need to set up another timer.
     super(ShapedWindow, self).show()
+    # Fix click-through
+    pm = gtk.gdk.Pixmap(None, self.get_size()[0], self.get_size()[1], 1)
+    pmcr = pm.cairo_create()
+    pmcr.rectangle(0, 0, 1, 1)
+    pmcr.fill()
+    self.input_shape_combine_mask(pm, 0, 0)
 
   def maybe_show(self):
     if self.shown or not self.timeout_timer:
