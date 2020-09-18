@@ -27,7 +27,7 @@ DEB_NAME = NAME.replace('-', '')
 RELEASE_FILE = 'RELEASE.rst'
 VCS = 'https://github.com/scottkirkwood/key-mon.git'
 
-PY_SRC = f'{PY_NAME}.py' % PY_NAME
+PY_SRC = f'{PY_NAME}.py'
 DEPENDS = ['python3-xlib', 'python3-gi-cairo', 'gir1.2-gtk-3.0']
 DEPENDS_STR = ' '.join(DEPENDS)
 
