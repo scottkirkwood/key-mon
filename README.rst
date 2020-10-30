@@ -2,6 +2,9 @@
 Key-mon
 =======
 
+.. image:: https://img.shields.io/pypi/v/key-mon.svg
+   :target: https://pypi.org/project/key-mon/
+
 A screencast utility that displays your keyboard and mouse status
 
 Key-mon is useful for teaching since it shows the current status of your
@@ -29,7 +32,14 @@ To install using ``pip``,::
 
   $ pip install key-mon
 
-To install using ``easy_install``,::
+.. note::
+
+    The latest release on PyPI is quite old (from 2013); consider installing
+    `using the latest git commit <https://pip.pypa.io/en/latest/reference/pip_install/#git>`_::
+
+        $ pip install git+https://github.com/scottkirkwood/key-mon
+
+To install using ``easy_install``::
 
   $ easy_install key-mon
 
