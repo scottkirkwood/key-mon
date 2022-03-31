@@ -124,8 +124,8 @@ class LazyPixbufCreator(object):
     os.write(fout, str.encode(image_bytes))
     os.close(fout)
     try:
-      img = gtk.gdk.pixbuf_new_from_file(fname)
-    except IOError:
+      img = GdkPixbuf.Pixbuf.new_from_file(fname)
+    except:
       logging.error(f'Unable to read {fname!r}: {image_bytes}')
       sys.exit(-1)
 
