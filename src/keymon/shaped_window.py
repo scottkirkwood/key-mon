@@ -21,7 +21,9 @@ Thanks to mathias.gumz for the original code.
 import gi
 
 gi.require_version("Gtk", "3.0")
+gi.require_foreign("cairo")
 from gi.repository import Gtk, Gdk, GLib
+import cairo
 
 from . import lazy_pixbuf_creator
 
@@ -98,11 +100,7 @@ class ShapedWindow(Gtk.Window):
       # release and fade_away call, no need to set up another timer.
     super(ShapedWindow, self).show()
     # Fix click-through
-    pm = gtk.gdk.Pixmap(None, self.get_size()[0], self.get_size()[1], 1)
-    pmcr = pm.cairo_create()
-    pmcr.rectangle(0, 0, 1, 1)
-    pmcr.fill()
-    self.input_shape_combine_mask(pm, 0, 0)
+    self.input_shape_combine_region(cairo.Region())
 
   def maybe_show(self):
     if self.shown or not self.timeout_timer:
