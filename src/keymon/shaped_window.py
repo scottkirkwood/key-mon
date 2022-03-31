@@ -29,21 +29,28 @@ from . import lazy_pixbuf_creator
 
 class ShapedWindow(Gtk.Window):
   """Create a window shaped as fname."""
+<<<<<<< HEAD
   def __init__(self, fname, scale=1.0, timeout=0.2):
     Gtk.Window.__init__(self)
+=======
+  def __init__(self, fname, opacity, color=None, scale=1.0, timeout=0.2):
+    gtk.Window.__init__(self)
+>>>>>>> d5aea44eb0883c70790caae510738d8b49ad8253
     self.connect('size-allocate', self._on_size_allocate)
     self.set_decorated(False)
     self.set_keep_above(True)
     self.set_accept_focus(False)
     self.scale = scale
     self.shown = False
+    self.opacity = opacity
     self.timeout = timeout
     self.timeout_timer = None
     self.name_fnames = {
       'mouse' : [fname],
     }
     self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames,
-                                                         self.scale)
+                                                         self.scale,
+                                                         color=color)
     self.pixbuf = self.pixbufs.get('mouse')
     self.resize(self.pixbuf.get_width(), self.pixbuf.get_height())
 
@@ -76,7 +83,7 @@ class ShapedWindow(Gtk.Window):
     if not win.is_composited():
       print('Unable to fade the window')
     else:
-      win.set_opacity(0.5)
+      win.set_opacity(self.opacity)
 
   def center_on_cursor(self, x=None, y=None):
     if x is None or y is None:
@@ -85,7 +92,7 @@ class ShapedWindow(Gtk.Window):
     w, h = self.get_size()
     new_x, new_y = x - w/2, y - h/2
     pos = self.get_position()
-    if pos[0] != new_x or pos[1] != new_y:
+    if pos[0] != new_x or pos[1] != new_y or not self.get_visible():
       self.move(new_x, new_y)
       self.show()
 
@@ -108,8 +115,16 @@ class ShapedWindow(Gtk.Window):
     self.shown = True
     self.show()
 
+  def _end_fade(self):
+    self.hide()
+    self.timeout_timer = None
+
   def fade_away(self):
     """Make the window fade in a little bit."""
     # TODO this isn't doing any fading out
     self.shown = False
+<<<<<<< HEAD
     self.timeout_timer = GLib.timeout_add(int(self.timeout * 1000), self.hide)
+=======
+    self.timeout_timer = gobject.timeout_add(int(self.timeout * 1000), self._end_fade)
+>>>>>>> d5aea44eb0883c70790caae510738d8b49ad8253

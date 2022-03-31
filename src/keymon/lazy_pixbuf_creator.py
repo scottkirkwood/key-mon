@@ -41,14 +41,16 @@ import types
 
 class LazyPixbufCreator(object):
   """Class to create SVG images on the fly."""
-  def __init__(self, name_fnames, resize):
+  def __init__(self, name_fnames, resize, color=None):
     """Initialize with empty.
 
     Args:
       name_fnames: List of names to filename list.
+      color: Color to force on the SVG.
     """
     self.pixbufs = {}
     self.resize = resize
+    self.color = color
     self.name_fnames = name_fnames
 
   def reset_all(self, names_fnames, resize):
@@ -104,12 +106,20 @@ class LazyPixbufCreator(object):
 
   def _read_from_file(self, fname):
     """Read in the file in from fname."""
+<<<<<<< HEAD
     logging.debug(f'Read file {fname}')
     if self.resize == 1.0:
       return GdkPixbuf.Pixbuf.new_from_file(fname)
+=======
+    logging.debug('Read file %s', fname)
+>>>>>>> d5aea44eb0883c70790caae510738d8b49ad8253
     fin = open(fname)
-    image_bytes = self._resize(fin.read())
+    image_bytes = fin.read()
+    if self.resize != 1.0:
+      image_bytes = self._resize(image_bytes)
     fin.close()
+    if self.color:
+      image_bytes = re.sub(r'([";]stroke:#)([0-9A-Fa-f]{6})([";])', r'\g<1>%s\g<3>' % self.color, image_bytes)
     return self._read_from_bytes(image_bytes)
 
   def _read_from_bytes(self, image_bytes):
@@ -118,9 +128,15 @@ class LazyPixbufCreator(object):
     os.write(fout, str.encode(image_bytes))
     os.close(fout)
     try:
+<<<<<<< HEAD
       img = GdkPixbuf.Pixbuf.new_from_file(fname)
     except:
       logging.error(f'Unable to read {fname!r}: {image_bytes}')
+=======
+      img = gtk.gdk.pixbuf_new_from_file(fname)
+    except IOError:
+      logging.error('Unable to read %r: %s', fname, image_bytes)
+>>>>>>> d5aea44eb0883c70790caae510738d8b49ad8253
       sys.exit(-1)
 
     try:
