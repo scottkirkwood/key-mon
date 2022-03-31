@@ -106,13 +106,9 @@ class LazyPixbufCreator(object):
 
   def _read_from_file(self, fname):
     """Read in the file in from fname."""
-<<<<<<< HEAD
     logging.debug(f'Read file {fname}')
     if self.resize == 1.0:
       return GdkPixbuf.Pixbuf.new_from_file(fname)
-=======
-    logging.debug('Read file %s', fname)
->>>>>>> d5aea44eb0883c70790caae510738d8b49ad8253
     fin = open(fname)
     image_bytes = fin.read()
     if self.resize != 1.0:
@@ -128,15 +124,9 @@ class LazyPixbufCreator(object):
     os.write(fout, str.encode(image_bytes))
     os.close(fout)
     try:
-<<<<<<< HEAD
-      img = GdkPixbuf.Pixbuf.new_from_file(fname)
-    except:
-      logging.error(f'Unable to read {fname!r}: {image_bytes}')
-=======
       img = gtk.gdk.pixbuf_new_from_file(fname)
     except IOError:
-      logging.error('Unable to read %r: %s', fname, image_bytes)
->>>>>>> d5aea44eb0883c70790caae510738d8b49ad8253
+      logging.error(f'Unable to read {fname!r}: {image_bytes}')
       sys.exit(-1)
 
     try:

@@ -29,13 +29,8 @@ from . import lazy_pixbuf_creator
 
 class ShapedWindow(Gtk.Window):
   """Create a window shaped as fname."""
-<<<<<<< HEAD
-  def __init__(self, fname, scale=1.0, timeout=0.2):
-    Gtk.Window.__init__(self)
-=======
   def __init__(self, fname, opacity, color=None, scale=1.0, timeout=0.2):
     gtk.Window.__init__(self)
->>>>>>> d5aea44eb0883c70790caae510738d8b49ad8253
     self.connect('size-allocate', self._on_size_allocate)
     self.set_decorated(False)
     self.set_keep_above(True)
@@ -123,8 +118,4 @@ class ShapedWindow(Gtk.Window):
     """Make the window fade in a little bit."""
     # TODO this isn't doing any fading out
     self.shown = False
-<<<<<<< HEAD
-    self.timeout_timer = GLib.timeout_add(int(self.timeout * 1000), self.hide)
-=======
     self.timeout_timer = gobject.timeout_add(int(self.timeout * 1000), self._end_fade)
->>>>>>> d5aea44eb0883c70790caae510738d8b49ad8253
