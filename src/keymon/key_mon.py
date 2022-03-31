@@ -301,10 +301,12 @@ class KeyMon:
 
     self.mouse_indicator_win = shaped_window.ShapedWindow(
         self.svg_name('mouse-indicator'),
+        self.options.click_opacity,
+        color=self.options.click_color,
         timeout=self.options.visible_click_timeout)
 
     self.mouse_follower_win = shaped_window.ShapedWindow(
-        self.svg_name('mouse-follower'))
+        self.svg_name('mouse-follower'), 0.5)
     if self.options.follow_mouse:
         self.mouse_follower_win.show()
 
@@ -472,10 +474,11 @@ class KeyMon:
 
   def on_idle(self):
     """Check for events on idle."""
-    event = self.devices.next_event()
     try:
-      if event:
-        self.handle_event(event)
+      events = list(self.next_events())
+      if events:
+        for event in events:
+          self.handle_event(event)
       else:
         for button in self.buttons:
           button.empty_event()
@@ -484,6 +487,22 @@ class KeyMon:
       self.quit_program()
       return False
     return True  # continue calling
+
+  def next_events(self):
+    """Yields the next events with a single move event at the end, if any."""
+    move_event = None
+    while True:
+      event = self.devices.next_event()
+      if not event:
+        break
+      if event.type == 'EV_MOV':
+        # Ignore the previous outdated move event.
+        move_event = event
+        continue
+      yield event
+
+    if move_event:
+      yield move_event
 
   def handle_event(self, event):
     """Handle an X event."""
@@ -905,6 +924,14 @@ def create_options():
                   ini_group='ui', ini_name='visible-click',
                   default=False,
                   help=_('Show where you clicked'))
+  opts.add_option(opt_long='--click_color', dest='click_color', type='str',
+                  ini_group='ui', ini_name='click-color',
+                  default='ff0000',
+                  help=_('The color of the click indicator'))
+  opts.add_option(opt_long='--click_opacity', dest='click_opacity', type='float',
+                  ini_group='ui', ini_name='click-opacity',
+                  default=0.5,
+                  help=_('The opacity of the click indicator'))
   opts.add_option(opt_long='--follow_mouse', dest='follow_mouse', type='bool',
                   ini_group='ui', ini_name='follow-mouse',
                   default=False,
