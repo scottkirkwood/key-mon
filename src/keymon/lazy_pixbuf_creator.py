@@ -29,17 +29,18 @@ Alpha transparencies from the new, overlayed, image are respected.
 
 __author__ = 'scott@forusers.com (Scott Kirkwood))'
 
-import gi
-gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, GdkPixbuf
 import logging
 import os
-import sys
 import re
+import sys
 import tempfile
 import types
 
-class LazyPixbufCreator(object):
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, GdkPixbuf
+
+class LazyPixbufCreator():
   """Class to create SVG images on the fly."""
   def __init__(self, name_fnames, resize, color=None):
     """Initialize with empty.
@@ -73,7 +74,7 @@ class LazyPixbufCreator(object):
       The name given or EMPTY if error.
     """
     if name not in self.name_fnames:
-      logging.error(f'Don\'t understand the name {name!r}')
+      logging.error('Don\'t understand the name %s', name)
       return 'KEY_EMPTY'
     ops = self.name_fnames[name]
     img = None
@@ -96,7 +97,8 @@ class LazyPixbufCreator(object):
       updated image.
     """
     if img:
-      img2.composite(img,
+      img2.composite(
+          img,
           0, 0, img.props.width, img.props.height,  # x, y, w, h
           0, 0,  # offset x, y
           1.0, 1.0,  # scale x, y
@@ -106,7 +108,7 @@ class LazyPixbufCreator(object):
 
   def _read_from_file(self, fname):
     """Read in the file in from fname."""
-    logging.debug(f'Read file {fname}')
+    logging.debug('Read file %s', fname)
     if self.resize == 1.0:
       return GdkPixbuf.Pixbuf.new_from_file(fname)
     fin = open(fname)
@@ -115,7 +117,8 @@ class LazyPixbufCreator(object):
       image_bytes = self._resize(image_bytes)
     fin.close()
     if self.color:
-      image_bytes = re.sub(r'([";]stroke:#)([0-9A-Fa-f]{6})([";])', r'\g<1>%s\g<3>' % self.color, image_bytes)
+      image_bytes = re.sub(
+          r'([";]stroke:#)([0-9A-Fa-f]{6})([";])', r'\g<1>%s\g<3>' % self.color, image_bytes)
     return self._read_from_bytes(image_bytes)
 
   def _read_from_bytes(self, image_bytes):
@@ -126,7 +129,7 @@ class LazyPixbufCreator(object):
     try:
       img = GdkPixbuf.Pixbuf.new_from_file(fname)
     except:
-      logging.error(f'Unable to read {fname!r}: {image_bytes}')
+      logging.error('Unable to read %s: %d', fname, image_bytes)
       sys.exit(-1)
 
     try:
@@ -142,8 +145,8 @@ class LazyPixbufCreator(object):
     template = r'(<svg[^<]+)({}=")(\d+\.?\d*)'
     image_bytes = self._resize_text(image_bytes, template.format('width'))
     image_bytes = self._resize_text(image_bytes, template.format('height'))
-    image_bytes = image_bytes.replace('<g',
-        f'<g transform="scale({self.resize}, {self.resize})"', 1)
+    image_bytes = image_bytes.replace(
+        '<g', f'<g transform="scale({self.resize}, {self.resize})"', 1)
     return image_bytes
 
   def _resize_text(self, image_bytes, regular_exp):
