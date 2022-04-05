@@ -1,8 +1,8 @@
 [MASTER]
-profile=no 
+profile=no
 ignore=.hg
 
-[MESSAGES CONTROL] 
+[MESSAGES CONTROL]
 disable-msg=C0111
 
 [REPORTS]
@@ -22,4 +22,4 @@ max-line-length=100
 
 [VARIABLES]
 dummy-variables-rgx=_|dummy|unused_|cls|x|y|w|h|e
-
+additional-builtins=_

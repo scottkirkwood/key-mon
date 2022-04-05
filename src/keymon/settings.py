@@ -19,12 +19,12 @@
 __author__ = 'scott@forusers.com (Scott Kirkwood)'
 
 import gettext
-import gi
-
-gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, GObject
 import logging
 import os
+
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, GObject
 
 from configparser import SafeConfigParser
 
@@ -35,13 +35,14 @@ class SettingsDialog(Gtk.Dialog):
 
   __gproperties__ = {}
   __gsignals__ = {
-        'settings-changed' : (
+      'settings-changed' : (
           GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, ())
   }
 
   def __init__(self, unused_view, options):
-    Gtk.Dialog.__init__(self, title='Preferences', parent=None,
-        flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+    Gtk.Dialog.__init__(
+        self, title='Preferences', parent=None,
+        flags=Gtk.DialogFlags.MODAL|Gtk.DialogFlags.DESTROY_WITH_PARENT,
         buttons=(Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE))
     self.options = options
     self.set_default_size(350, 350)
@@ -88,7 +89,7 @@ class CommonFrame(Gtk.Frame):
     """Add a check button."""
     check_button = Gtk.CheckButton(label=title)
     val = getattr(self.settings.options, option)
-    logging.info(f'got option {option} as {val}')
+    logging.info('got option %s as %s', option, val)
     if val:
       check_button.set_active(True)
     else:
@@ -121,7 +122,7 @@ class CommonFrame(Gtk.Frame):
 
     combo.set_tooltip_text(tooltip)
     hbox.pack_start(combo, expand=False, fill=False, padding=10)
-    logging.info(f'got option {option} as {val}')
+    logging.info('got option %s as %s', option, val)
     combo.connect('changed', self._combo_changed, option)
 
     vbox.pack_start(hbox, expand=False, fill=False, padding=0)
@@ -145,10 +146,10 @@ class CommonFrame(Gtk.Frame):
     """Update an option."""
     if str_val.isdigit():
       setattr(self.settings.options, option, val)
-      LOG.info(f'Set option {option} to {val}')
+      LOG.info('Set option %s to %s', option, val)
     else:
       setattr(self.settings.options, option, str_val)
-      LOG.info(f'Set option {option} to {str_val}')
+      LOG.info('Set option %s to %s', option, str_val)
     self.settings.options.save()
     self.settings.settings_changed()
 
@@ -161,7 +162,7 @@ class MiscFrame(CommonFrame):
     """Create the box's layout."""
     vbox = Gtk.VBox()
     self._add_check(
-        vbox, 
+        vbox,
         _('Swap left-right mouse buttons'),
         _('Swap the left and the right mouse buttons'),
         'swap_buttons')
@@ -169,7 +170,7 @@ class MiscFrame(CommonFrame):
         vbox,
         _('Left+right buttons emulates middle mouse button'),
         _('Clicking both mouse buttons emulates the middle mouse button.'),
-       'emulate_middle')
+        'emulate_middle')
     self._add_check(
         vbox,
         _('Highly visible click'),
@@ -205,7 +206,7 @@ class MiscFrame(CommonFrame):
         sizes, 'scale', 4)
 
     timeouts = ['0.2', '0.4', '0.5', '0.6', '0.8', '1.0', '1.2',
-            '1.4', '1.6', '1.8', '2.0', '2.5', '3.0', '3.5', '4.0']
+                '1.4', '1.6', '1.8', '2.0', '2.5', '3.0', '3.5', '4.0']
     self._add_dropdown(
         vbox,
         _('Key timeout:'),
@@ -227,7 +228,7 @@ class MiscFrame(CommonFrame):
           'Default is 0.2'),
         timeouts, 'visible_click_timeout', 4)
 
-    self.themes = list(self.settings.options.themes.keys()) 
+    self.themes = list(self.settings.options.themes.keys())
     self._add_dropdown(
         vbox,
         _('Themes:'),
@@ -327,9 +328,10 @@ def get_config_dirs(kind):
   Return:
     List of full paths
   """
-  config_dirs = [d for d in (
-              os.path.join(get_config_dir(), kind),
-              os.path.join(os.path.dirname(os.path.abspath(__file__)), kind)) \
+  config_dirs = [
+      d for d in (
+          os.path.join(get_config_dir(), kind),
+          os.path.join(os.path.dirname(os.path.abspath(__file__)), kind)) \
           if os.path.exists(d)]
   return config_dirs
 
@@ -363,6 +365,6 @@ def get_kbd_files():
       for d in config_dirs \
       for f in sorted(os.listdir(d)) if f.endswith('.kbd')]
   return kbd_files
-    
+
 if __name__ == '__main__':
   manually_run_dialog()
