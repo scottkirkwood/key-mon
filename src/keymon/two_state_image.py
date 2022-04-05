@@ -22,11 +22,11 @@ image (the first image) after calling empty_event() a few times
 
 __author__ = 'scott@forusers.com (Scott Kirkwood))'
 
+import time
+
 import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
-
-import time
 
 DEFAULT_TIMEOUT_SECS = 0.5
 
@@ -52,6 +52,7 @@ class TwoStateImage(Gtk.Image):
     self.showit = True
 
   def is_pressed(self):
+    """Returns whether the image is currently in pressed state."""
     return self.current != self.normal
 
   def get_really_pressed(self):
@@ -69,7 +70,7 @@ class TwoStateImage(Gtk.Image):
 
   # Lint doesn't like @property.setter because of duplicate method names.
   really_pressed = property(get_really_pressed, set_really_pressed, None,
-      "Physically pressed button")
+                            "Physically pressed button")
 
   def reset_time_if_pressed(self):
     """Start the countdown now."""
@@ -102,19 +103,21 @@ class TwoStateImage(Gtk.Image):
 
   def empty_event(self):
     """Sort of a idle event.
-    
+
     Returns True if image has been changed.
     """
     if self.count_down is None:
-      return
+      return False
+
     delta = time.time() - self.count_down
     if delta > self.timeout_secs:
       if self.normal.replace('_EMPTY', '') in ('SHIFT', 'ALT', 'CTRL', 'META') and \
           self.really_pressed:
-        return
+        return True
       self.count_down = None
       self._switch_to(self.normal)
-      return True
+
+    return False
 
   def _defer_to(self, old_name):
     """If possible the button is passed on."""
