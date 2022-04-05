@@ -25,185 +25,185 @@ import re
 import subprocess
 
 MEDIUM_NAME = {
-  'ESCAPE': 'Esc',
-  'PLUS': '+',
-  'MINUS': '-',
-  'EQUAL': '=',
-  'BACKSPACE': 'Back',
-  'TAB': 'Tab',
-  'BRACKETLEFT': '[',
-  'BRACKETRIGHT': ']',
-  'BRACELEFT': '(',
-  'BRACERIGHT': ')',
-  'DEAD_ACUTE': '\N{Acute accent}',
-  'ACUTE': '\N{Acute accent}',
-  'QUESTIONDOWN': '\N{Inverted question mark}',
-  'WAKEUP': 'Wake',
-  'BAR': '|',
-  'TILDE': '~',
-  'NTILDE': '~',
-  'RETURN': 'Return',
-  'CONTROL_L': 'Ctrl',
-  'SEMICOLON': ';',
-  'APOSTROPHE': '\'',
-  'GRAVE': '`',
-  'SHIFT_L': 'Shift',
-  'BACKSLASH': '\\',
-  'COMMA': ',',
-  'PERIOD': '.',
-  'SLASH': '/',
-  'SHIFT_R': 'Shift',
-  'KP_MULTIPLY': '*',
-  'ALT_L': 'Alt',
-  'ALT_R': 'Alt',
-  'SPACE': 'Space',
-  'MULTI_KEY': 'Multi',
-  'NUM_LOCK': 'Num',
-  'SCROLL_LOCK': 'Scrl',
-  'KP_HOME': '7',
-  'KP_UP': '8',
-  'KP_PRIOR': '9',
-  'KP_SUBTRACT': '-',
-  'KP_LEFT': '4',
-  'KP_BEGIN': '5',
-  'KP_RIGHT': '6',
-  'KP_ADD': '+',
-  'KP_END': '1',
-  'KP_DOWN': '2',
-  'KP_PAGE_DOWN': '3',
-  'KP_NEXT': '3',
-  'KP_INSERT': '0',
-  'KP_DELETE': '.',
-  'ISO_LEVEL3_SHIFT': 'Alt',  # Right Alt
-  'LESS': '<',
-  'KP_ENTER': '\N{Return symbol}',
-  'CONTROL_R': 'Ctrl',
-  'KP_DIVIDE': '/',
-  'PRINT': 'Print',
-  'LINEFEED': 'Lf',
-  'HOME': 'Home',
-  'UP': '\N{Upwards arrow}',
-  'PRIOR': 'PgUp',
-  'LEFT': '\N{Leftwards arrow}',
-  'RIGHT': '\N{Rightwards arrow}',
-  'END': 'End',
-  'DOWN': '\N{Downwards arrow}',
-  'NEXT': 'PgDn',
-  'INSERT': 'Ins',
-  'DELETE': 'Del',
-  'XF86AUDIOMUTE': 'Mute',
-  'XF86AUDIOLOWERVOLUME': 'Vol-',
-  'XF86AUDIORAISEVOLUME': 'Vol+',
-  'XF86POWEROFF': 'Off',
-  'KP_EQUAL': '=',
-  'PLUSMINUS': '+/-',
-  'PAUSE': 'Pause',
-  'KP_DECIMAL': '.',
-  'SUPER_L': 'Super',
-  'MENU': 'Menu',
-  'CANCEL': 'Cancel',
-  'REDO': 'Redo',
-  'SUNPROPS': 'Sunprops',
-  'UNDO': 'Undo',
-  'SUNFRONT': 'Sunfront',
-  'XF86COPY': 'Copy',
-  'SUNOPEN': 'SunOpen',
-  'XF86PASTE': 'Paste',
-  'FIND': 'Find',
-  'XF86CUT': 'Cut',
-  'HELP': 'Help',
-  'XF86MENUKB': 'MenuKb',
-  'XF86CALCULATOR': 'Calc',
-  'XF86SLEEP': 'Sleep',
-  'XF86WAKEUP': 'Wake',
-  'XF86EXPLORER': 'Explorer',
-  'XF86SEND': 'Send',
-  'XF86XFER': 'Xfer',
-  'XF86LAUNCH1': 'Launch1',
-  'XF86LAUNCH2': 'Launch2',
-  'XF86WWW': 'www',
-  'XF86DOS': 'Dos',
-  'XF86SCREENSAVER': 'Screensaver',
-  'XF86ROTATEWINDOWS': 'RotateWin',
-  'XF86MAIL': 'Mail',
-  'XF86FAVORITES': 'Fav',
-  'XF86MYCOMPUTER': 'MyComputer',
-  'XF86BACK': '\N{Leftwards double arrow}',
-  'XF86FORWARD': '\N{Rightwards double arrow}',
-  'XF86EJECT': 'Eject',
-  'XF86AUDIONEXT': 'Next',
-  'XF86AUDIOPLAY': 'Play',
-  'XF86AUDIOPREV': 'Prev',
-  'XF86AUDIOSTOP': 'Stop',
-  'XF86AUDIORECORD': 'Record',
-  'XF86AUDIOREWIND': 'Rewind',
-  'XF86PHONE': 'Phone',
-  'XF86TOOLS': 'Tools',
-  'XF86HOMEPAGE': 'HomePage',
-  'XF86RELOAD': 'Reload',
-  'XF86CLOSE': 'Close',
-  'XF86SCROLLUP': 'ScrollUp',
-  'XF86SCROLLDOWN': 'ScrollDn',
-  'PARENLEFT': '(',
-  'PARENRIGHT': ')',
-  'XF86NEW': 'New',
-  'MODE_SWITCH': 'Mode',
-  'NOSYMBOL': '-',
-  'XF86AUDIOPAUSE': 'Pause',
-  'XF86LAUNCH3': 'Launch3',
-  'XF86LAUNCH4': 'Launch4',
-  'XF86SUSPEND': 'Suspend',
-  'XF86WEBCAM': 'WebCam',
-  'XF86SEARCH': 'Search',
-  'XF86FINANCE': 'Finance',
-  'XF86SHOP': 'Shop',
-  'XF86MONBRIGHTNESSDOWN': 'BrightnessDown',
-  'XF86MONBRIGHTNESSUP': 'BrightnessUp',
-  'XF86AUDIOMEDIA': 'AudioMedia',
-  'XF86DISPLAY': 'Display',
-  'XF86KBDLIGHTONOFF': 'LightOnOff',
-  'XF86KBDBRIGHTNESSDOWN': 'BrightnessDown',
-  'XF86KBDBRIGHTNESSUP': 'BrightnessUp',
-  'XF86REPLY': 'Reply',
-  'XF86MAILFORWARD': 'MailForward',
-  'XF86SAVE': 'Save',
-  'XF86DOCUMENTS': 'Docs',
-  'XF86BATTERY': 'Battery',
-  'XF86BLUETOOTH': 'Bluetooth',
-  'XF86WLAN': 'Lan',
+    'ESCAPE': 'Esc',
+    'PLUS': '+',
+    'MINUS': '-',
+    'EQUAL': '=',
+    'BACKSPACE': 'Back',
+    'TAB': 'Tab',
+    'BRACKETLEFT': '[',
+    'BRACKETRIGHT': ']',
+    'BRACELEFT': '(',
+    'BRACERIGHT': ')',
+    'DEAD_ACUTE': '\N{Acute accent}',
+    'ACUTE': '\N{Acute accent}',
+    'QUESTIONDOWN': '\N{Inverted question mark}',
+    'WAKEUP': 'Wake',
+    'BAR': '|',
+    'TILDE': '~',
+    'NTILDE': '~',
+    'RETURN': 'Return',
+    'CONTROL_L': 'Ctrl',
+    'SEMICOLON': ';',
+    'APOSTROPHE': '\'',
+    'GRAVE': '`',
+    'SHIFT_L': 'Shift',
+    'BACKSLASH': '\\',
+    'COMMA': ',',
+    'PERIOD': '.',
+    'SLASH': '/',
+    'SHIFT_R': 'Shift',
+    'KP_MULTIPLY': '*',
+    'ALT_L': 'Alt',
+    'ALT_R': 'Alt',
+    'SPACE': 'Space',
+    'MULTI_KEY': 'Multi',
+    'NUM_LOCK': 'Num',
+    'SCROLL_LOCK': 'Scrl',
+    'KP_HOME': '7',
+    'KP_UP': '8',
+    'KP_PRIOR': '9',
+    'KP_SUBTRACT': '-',
+    'KP_LEFT': '4',
+    'KP_BEGIN': '5',
+    'KP_RIGHT': '6',
+    'KP_ADD': '+',
+    'KP_END': '1',
+    'KP_DOWN': '2',
+    'KP_PAGE_DOWN': '3',
+    'KP_NEXT': '3',
+    'KP_INSERT': '0',
+    'KP_DELETE': '.',
+    'ISO_LEVEL3_SHIFT': 'Alt',  # Right Alt
+    'LESS': '<',
+    'KP_ENTER': '\N{Return symbol}',
+    'CONTROL_R': 'Ctrl',
+    'KP_DIVIDE': '/',
+    'PRINT': 'Print',
+    'LINEFEED': 'Lf',
+    'HOME': 'Home',
+    'UP': '\N{Upwards arrow}',
+    'PRIOR': 'PgUp',
+    'LEFT': '\N{Leftwards arrow}',
+    'RIGHT': '\N{Rightwards arrow}',
+    'END': 'End',
+    'DOWN': '\N{Downwards arrow}',
+    'NEXT': 'PgDn',
+    'INSERT': 'Ins',
+    'DELETE': 'Del',
+    'XF86AUDIOMUTE': 'Mute',
+    'XF86AUDIOLOWERVOLUME': 'Vol-',
+    'XF86AUDIORAISEVOLUME': 'Vol+',
+    'XF86POWEROFF': 'Off',
+    'KP_EQUAL': '=',
+    'PLUSMINUS': '+/-',
+    'PAUSE': 'Pause',
+    'KP_DECIMAL': '.',
+    'SUPER_L': 'Super',
+    'MENU': 'Menu',
+    'CANCEL': 'Cancel',
+    'REDO': 'Redo',
+    'SUNPROPS': 'Sunprops',
+    'UNDO': 'Undo',
+    'SUNFRONT': 'Sunfront',
+    'XF86COPY': 'Copy',
+    'SUNOPEN': 'SunOpen',
+    'XF86PASTE': 'Paste',
+    'FIND': 'Find',
+    'XF86CUT': 'Cut',
+    'HELP': 'Help',
+    'XF86MENUKB': 'MenuKb',
+    'XF86CALCULATOR': 'Calc',
+    'XF86SLEEP': 'Sleep',
+    'XF86WAKEUP': 'Wake',
+    'XF86EXPLORER': 'Explorer',
+    'XF86SEND': 'Send',
+    'XF86XFER': 'Xfer',
+    'XF86LAUNCH1': 'Launch1',
+    'XF86LAUNCH2': 'Launch2',
+    'XF86WWW': 'www',
+    'XF86DOS': 'Dos',
+    'XF86SCREENSAVER': 'Screensaver',
+    'XF86ROTATEWINDOWS': 'RotateWin',
+    'XF86MAIL': 'Mail',
+    'XF86FAVORITES': 'Fav',
+    'XF86MYCOMPUTER': 'MyComputer',
+    'XF86BACK': '\N{Leftwards double arrow}',
+    'XF86FORWARD': '\N{Rightwards double arrow}',
+    'XF86EJECT': 'Eject',
+    'XF86AUDIONEXT': 'Next',
+    'XF86AUDIOPLAY': 'Play',
+    'XF86AUDIOPREV': 'Prev',
+    'XF86AUDIOSTOP': 'Stop',
+    'XF86AUDIORECORD': 'Record',
+    'XF86AUDIOREWIND': 'Rewind',
+    'XF86PHONE': 'Phone',
+    'XF86TOOLS': 'Tools',
+    'XF86HOMEPAGE': 'HomePage',
+    'XF86RELOAD': 'Reload',
+    'XF86CLOSE': 'Close',
+    'XF86SCROLLUP': 'ScrollUp',
+    'XF86SCROLLDOWN': 'ScrollDn',
+    'PARENLEFT': '(',
+    'PARENRIGHT': ')',
+    'XF86NEW': 'New',
+    'MODE_SWITCH': 'Mode',
+    'NOSYMBOL': '-',
+    'XF86AUDIOPAUSE': 'Pause',
+    'XF86LAUNCH3': 'Launch3',
+    'XF86LAUNCH4': 'Launch4',
+    'XF86SUSPEND': 'Suspend',
+    'XF86WEBCAM': 'WebCam',
+    'XF86SEARCH': 'Search',
+    'XF86FINANCE': 'Finance',
+    'XF86SHOP': 'Shop',
+    'XF86MONBRIGHTNESSDOWN': 'BrightnessDown',
+    'XF86MONBRIGHTNESSUP': 'BrightnessUp',
+    'XF86AUDIOMEDIA': 'AudioMedia',
+    'XF86DISPLAY': 'Display',
+    'XF86KBDLIGHTONOFF': 'LightOnOff',
+    'XF86KBDBRIGHTNESSDOWN': 'BrightnessDown',
+    'XF86KBDBRIGHTNESSUP': 'BrightnessUp',
+    'XF86REPLY': 'Reply',
+    'XF86MAILFORWARD': 'MailForward',
+    'XF86SAVE': 'Save',
+    'XF86DOCUMENTS': 'Docs',
+    'XF86BATTERY': 'Battery',
+    'XF86BLUETOOTH': 'Bluetooth',
+    'XF86WLAN': 'Lan',
 }
 
 SHORT_NAME = {
-  'BACKSPACE': '\N{Leftwards open-headed arrow}',
-  'RETURN': '\N{Return symbol}',
-  'CONTROL_L': 'Ctl',
-  'SHIFT_L': 'Shft',
-  'SHIFT_R': 'Shft',
-  'SPACE': 'Spc',
-  'PRINT': 'Prt',
-  'LINEFEED': 'Lf',
-  'HOME': 'Hm',
-  'INSERT': 'Ins',
-  'DELETE': 'Del',
-  'XF86AUDIOMUTE': 'Mute',
-  'XF86AUDIOLOWERVOLUME': 'V-',
-  'XF86AUDIORAISEVOLUME': 'V+',
-  'XF86POWEROFF': 'Off',
-  'PRIOR': 'PgU',
-  'NEXT': 'PgD',
-  'PAUSE': 'Ps',
-  'SUPER_L': 'Spr',
-  'MULTI_KEY': 'Mul',
-  'MENU': 'Men',
-  'CANCEL': 'Can',
-  'REDO': 'Red',
-  'UNDO': 'Und',
-  'XF86COPY': 'Cp',
-  'XF86CUT': 'Cut',
-  'XF86MENUKB': 'MenuKb',
+    'BACKSPACE': '\N{Leftwards open-headed arrow}',
+    'RETURN': '\N{Return symbol}',
+    'CONTROL_L': 'Ctl',
+    'SHIFT_L': 'Shft',
+    'SHIFT_R': 'Shft',
+    'SPACE': 'Spc',
+    'PRINT': 'Prt',
+    'LINEFEED': 'Lf',
+    'HOME': 'Hm',
+    'INSERT': 'Ins',
+    'DELETE': 'Del',
+    'XF86AUDIOMUTE': 'Mute',
+    'XF86AUDIOLOWERVOLUME': 'V-',
+    'XF86AUDIORAISEVOLUME': 'V+',
+    'XF86POWEROFF': 'Off',
+    'PRIOR': 'PgU',
+    'NEXT': 'PgD',
+    'PAUSE': 'Ps',
+    'SUPER_L': 'Spr',
+    'MULTI_KEY': 'Mul',
+    'MENU': 'Men',
+    'CANCEL': 'Can',
+    'REDO': 'Red',
+    'UNDO': 'Und',
+    'XF86COPY': 'Cp',
+    'XF86CUT': 'Cut',
+    'XF86MENUKB': 'MenuKb',
 }
 
-class ModMapper(object):
+class ModMapper():
   """Converts Mod Map codes into names and strings."""
   def __init__(self):
     self.map = {}
@@ -228,19 +228,18 @@ class ModMapper(object):
       vals = self.map[scancode]
       if vals[0] == name:
         return vals
-      else:
-        logging.debug(f'code {vals[1]} != {name}')
+      logging.debug('code %s != %s', vals[1], name)
     if name in self.alt_map:
-      logging.info(f'Found key via alt lookup {name}')
+      logging.info('Found key via alt lookup %s', name)
       return self.alt_map[name]
-    logging.info(f'scancode: {scancode!r} name:{name!r} not found')
+    logging.info('scancode: %s name:%s not found', scancode, name)
     return None, None, None
 
   def get_from_name(self, name):
     """Get the scancode from a name."""
     if name in self.name_to_code:
       return self.name_to_code[name], self.alt_map[name]
-    logging.info(f'Key {name} not found')
+    logging.info('Key %s not found', name)
     return None
 
   def __getitem__(self, key):
@@ -286,11 +285,11 @@ def parse_modmap(lines):
 
 def read_kbd(fname):
   """Read the kbd file."""
-  logging.debug(f'Loading kbd file: {fname}')
+  logging.debug('Loading kbd file: %s', fname)
   return parse_kbd(
-          codecs.open(
-              os.path.join(os.path.dirname(os.path.abspath(__file__)), fname),
-              'r', 'utf-8').read())
+      codecs.open(
+          os.path.join(os.path.dirname(os.path.abspath(__file__)), fname),
+          'r', 'utf-8').read())
 
 
 def parse_kbd(text):
@@ -302,8 +301,7 @@ def parse_kbd(text):
       continue
     grps = re_line.search(line)
     if grps:
-      ret.set_map(int(grps.group(1)), (grps.group(2), grps.group(3),
-          grps.group(4)))
+      ret.set_map(int(grps.group(1)), (grps.group(2), grps.group(3), grps.group(4)))
   ret.done()
   return ret
 
@@ -360,32 +358,32 @@ def safely_read_mod_map(fname, kbd_files):
     kbd_files: list of full path of kbd files
   """
   # Assigning a default kbdfile name using result of setxkbmap
-  DEFAULT_KBD = None
+  default_kbd = None
   try:
-    # TODO is -print the new -query ?
+    # TODO(scott) is `-print` the new `-query`?
     for line in  run_cmd(('setxkbmap', '-print')).split('\n'):
       if 'layout:' in line:
-        DEFAULT_KBD = line.split(':')[1].strip()
+        default_kbd = line.split(':')[1].strip()
       if 'variant:' in line:
-        DEFAULT_KBD += '_' + line.split(':')[1].strip()
-    if DEFAULT_KBD:
-      logging.info(f'setxkbmap returns a keyboard layout_variant: {DEFAULT_KBD}') 
-      DEFAULT_KBD += '.kbd'
+        default_kbd += '_' + line.split(':')[1].strip()
+    if default_kbd:
+      logging.info('setxkbmap returns a keyboard layout_variant: %s', default_kbd)
+      default_kbd += '.kbd'
   except OSError:
     pass
-  if not DEFAULT_KBD:
-    DEFAULT_KBD = 'us.kbd'
-  logging.info(f'Set default kbdfile to: {DEFAULT_KBD}')
+  if not default_kbd:
+    default_kbd = 'us.kbd'
+  logging.info('Set default kbdfile to: %s', default_kbd)
 
   kbd_file = None
   kbd_default = None
   for kbd in kbd_files:
     if not kbd_file and fname and kbd.endswith(fname):
       kbd_file = kbd
-    if not kbd_default and kbd.endswith(DEFAULT_KBD):
+    if not kbd_default and kbd.endswith(default_kbd):
       kbd_default = kbd
   if fname and not kbd_file:
-    logging.warning(f'Can not find kbd file: {fname}')
+    logging.warning('Can not find kbd file: %s', fname)
   if kbd_file:
     return read_kbd(kbd_file)
 
@@ -399,13 +397,13 @@ def safely_read_mod_map(fname, kbd_files):
   if kbd_default:
     # Merge the defaults with modmap
     if fname == 'xmodmap':
-      logging.debug(f'Merging with default kbd file: {kbd_default}')
+      logging.debug('Merging with default kbd file: %s', kbd_default)
       defaults = read_kbd(kbd_default)
       for keycode in defaults:
         if keycode not in ret:
           ret[keycode] = defaults[keycode]
     else:
-      logging.debug(f'Using default kbd file: {kbd_default}')
+      logging.debug('Using default kbd file: %s', kbd_default)
       ret = read_kbd(kbd_default)
   else:
     logging.error('Can not find default kbd file')
