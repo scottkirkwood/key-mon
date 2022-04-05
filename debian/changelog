@@ -1,3 +1,10 @@
+key-mon (1.20-1) unstable; urgency=low
+
+  * Making a new Debian distribution.
+  * Tons of small fixes and updates to version dependencies
+
+ -- Scott Kirkwood <scott@forusers.com>  Mon, 04 Apr 2022 20:50:54 +0500
+
 key-mon (1.19-1) unstable; urgency=low
 
   * Add Spanish keyboard (thank Iñaki)

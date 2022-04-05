@@ -1,4 +1,3 @@
-tmp/key-mon-1.19/icons/key-mon.xcf
 tmp/key-mon-1.19/icons/hicolor/24x24/apps/key-mon.pn
 tmp/key-mon-1.19/icons/hicolor/48x48/apps/key-mon.png
 tmp/key-mon-1.19/icons/hicolor/64x64/apps/key-mon.png
@@ -7,14 +6,12 @@ tmp/key-mon-1.19/icons/hicolor/16x16/apps/key-mon.png
 tmp/key-mon-1.19/icons/hicolor/128x128/apps/key-mon.png
 docs/screenshot-smaller.png
 docs/screenshot.png
-icons/key-mon.xcf
 docs/screenshot-clear-command.png
 docs/screenshot-clear-ubuntu.png
 docs/screenshot-clear.png
 docs/screenshot-larger.png
 docs/screenshot-modern.png
 docs/screenshot-oblivion.png
-src/keymon/key_mon.pyc
 docs/large-screenshot.png
 docs/old-keys-2.png
 docs/sample-search-replace.png

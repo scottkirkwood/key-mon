@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Apr 04, 2022 v 1.20
+-------------------
+* Making a new Debian distribution.
+* Tons of small fixes and updates to version dependencies
+
 Apr 18, 2015 v 1.19
 -------------------
 * Add Spanish keyboard (thank Iñaki)
