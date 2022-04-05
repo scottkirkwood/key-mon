@@ -41,7 +41,7 @@ class ShapedWindow(Gtk.Window):
     self.timeout = timeout
     self.timeout_timer = None
     self.name_fnames = {
-      'mouse' : [fname],
+        'mouse' : [fname],
     }
     self.pixbufs = lazy_pixbuf_creator.LazyPixbufCreator(self.name_fnames,
                                                          self.scale,
@@ -54,12 +54,12 @@ class ShapedWindow(Gtk.Window):
 
     rgba = self.get_screen().get_rgba_visual()
     if rgba is not None:
-        self.set_visual(rgba)
+      self.set_visual(rgba)
 
     self.set_name("mouse-follow")
     provider = Gtk.CssProvider()
     provider.load_from_data(
-    b"""
+        b"""
     #mouse-follow {
         background-color:rgba(0,0,0,0);
     }
@@ -81,6 +81,7 @@ class ShapedWindow(Gtk.Window):
       win.set_opacity(self.opacity)
 
   def center_on_cursor(self, x=None, y=None):
+    """Move center of window to the cursor position"""
     if x is None or y is None:
       root = Gdk.Screen.get_default().get_root_window()
       _, x, y, _ = root.get_pointer()
@@ -95,7 +96,8 @@ class ShapedWindow(Gtk.Window):
     """Show this mouse indicator and ignore awaiting fade away request."""
     if self.timeout_timer and self.shown:
       # There is a fade away request, ignore it
-      if GLib.main_context_default().find_source_by_id(self.timeout_timer) and not GLib.main_context_default().find_source_by_id(self.timeout_timer).is_destroyed():
+      if (GLib.main_context_default().find_source_by_id(self.timeout_timer)
+          and not GLib.main_context_default().find_source_by_id(self.timeout_timer).is_destroyed()):
         GLib.source_remove(self.timeout_timer)
       self.timeout_timer = None
       # This method only is called when mouse is pressed, so there will be a
@@ -105,6 +107,7 @@ class ShapedWindow(Gtk.Window):
     self.input_shape_combine_region(cairo.Region())
 
   def maybe_show(self):
+    """Show the window if not already shown or timer timed out"""
     if self.shown or not self.timeout_timer:
       return
     self.shown = True
