@@ -22,18 +22,19 @@ events.
 
 __author__ = 'Scott Kirkwood (scott+keymon@forusers.com)'
 
+import collections
+import locale
+import sys
+import threading
+import time
+
 from Xlib import display
 from Xlib import X
 from Xlib import XK
 from Xlib.ext import record
 from Xlib.protocol import rq
-import locale
-import sys
-import time
-import threading
-import collections
 
-class XEvent(object):
+class XEvent():
   """An event, mimics edev.py events."""
   def __init__(self, atype, scancode, code, value):
     self._type = atype
@@ -92,13 +93,13 @@ class XEvents(threading.Thread):
     # set locale to default C locale, see Issue 77.
     # Use setlocale(None) to get curent locale instead of getlocal.
     # See Issue 125 and http://bugs.python.org/issue1699853.
-    OLD_CTYPE = locale.setlocale(locale.LC_CTYPE, None)
+    old_ctype = locale.setlocale(locale.LC_CTYPE, None)
     locale.setlocale(locale.LC_CTYPE, 'C')
     for name in dir(XK):
       if name[:3] == "XK_":
         code = getattr(XK, name)
         self.keycode_to_symbol[code] = 'KEY_' + name[3:].upper()
-    locale.setlocale(locale.LC_CTYPE, OLD_CTYPE)
+    locale.setlocale(locale.LC_CTYPE, old_ctype)
     self.keycode_to_symbol[65027] = 'KEY_ISO_LEVEL3_SHIFT'
     self.keycode_to_symbol[269025062] = 'KEY_BACK'
     self.keycode_to_symbol[269025063] = 'KEY_FORWARD'
@@ -172,7 +173,7 @@ class XEvents(threading.Thread):
     if reply.client_swapped:
       return
     data = reply.data
-    while len(data):
+    while len(data) > 0:
       event, data = rq.EventField(None).parse_binary_value(
           data, self.record_display.display, None, None)
       if event.type == X.ButtonPress:
@@ -196,17 +197,17 @@ class XEvents(threading.Thread):
     """
     if value == 2:
       self.events.append(XEvent('EV_MOV',
-          0, 0, (event.root_x, event.root_y)))
+                                0, 0, (event.root_x, event.root_y)))
     elif event.detail in [4, 5]:
       if event.detail == 5:
         value = -1
       else:
         value = 1
-      self.events.append(XEvent('EV_REL',
-          0, XEvents._butn_to_code.get(event.detail, f'BTN_{event.detail}'), value))
+      self.events.append(XEvent(
+          'EV_REL', 0, XEvents._butn_to_code.get(event.detail, f'BTN_{event.detail}'), value))
     else:
-      self.events.append(XEvent('EV_KEY',
-          0, XEvents._butn_to_code.get(event.detail, f'BTN_{event.detail}'), value))
+      self.events.append(XEvent(
+          'EV_KEY', 0, XEvents._butn_to_code.get(event.detail, f'BTN_{event.detail}'), value))
 
   def _handle_key(self, event, value):
     """Add key event to events.

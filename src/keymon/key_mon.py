@@ -22,19 +22,13 @@ Shows their status graphically.
 __author__ = 'Scott Kirkwood (scott+keymon@forusers.com)'
 __version__ = '1.20'
 
+import gettext
 import locale
 import logging
-
-import cairo
-import gi
-gi.require_version("Gtk", "3.0")
-gi.require_foreign("cairo")
-from gi.repository import Gtk, GdkPixbuf, GObject, GLib
-
-import gettext
 import os
 import sys
 import time
+
 try:
   from . import xlib
 except ImportError:
@@ -47,6 +41,12 @@ from . import mod_mapper
 from . import settings
 from . import shaped_window
 from . import two_state_image
+
+import cairo
+import gi
+gi.require_version("Gtk", "3.0")
+gi.require_foreign("cairo")
+from gi.repository import Gtk, GdkPixbuf, GObject, GLib
 
 from configparser import SafeConfigParser
 
@@ -164,13 +164,13 @@ class KeyMon:
       except Exception as exp:
         print(exp)
     while Gtk.events_pending():
-      Gtk.main_iteration(False)
+      Gtk.main_iteration()
     time.sleep(0.1)
     win = self.window
     x, y = win.get_position()
     w, h = win.get_size()
-    
-    screenshot = Gdk.pixbuf_get_from_window(Gdk.get_default_root_window(), 0, 0, w, h)
+
+    screenshot = GdkPixbuf.Pixbuf.new_from_resource(win) # TODO(sak): not working
 
     fname = 'screenshot.png'
     screenshot.savev(fname, 'png')
@@ -184,32 +184,32 @@ class KeyMon:
     else:
       self.svg_size = ''
     ftn = {
-      'MOUSE': [self.svg_name('mouse'),],
-      'BTN_MIDDLE': [self.svg_name('mouse'), self.svg_name('middle-mouse')],
-      'SCROLL_UP': [self.svg_name('mouse'), self.svg_name('scroll-up-mouse')],
-      'SCROLL_DOWN': [self.svg_name('mouse'), self.svg_name('scroll-dn-mouse')],
+        'MOUSE': [self.svg_name('mouse'),],
+        'BTN_MIDDLE': [self.svg_name('mouse'), self.svg_name('middle-mouse')],
+        'SCROLL_UP': [self.svg_name('mouse'), self.svg_name('scroll-up-mouse')],
+        'SCROLL_DOWN': [self.svg_name('mouse'), self.svg_name('scroll-dn-mouse')],
 
-      'REL_LEFT': [self.svg_name('mouse'), self.svg_name('sroll-lft-mouse')],
-      'REL_RIGHT': [self.svg_name('mouse'), self.svg_name('scroll-rgt-mouse')],
-      'SHIFT': [self.svg_name('shift')],
-      'SHIFT_EMPTY': [self.svg_name('shift'), self.svg_name('whiteout-72')],
-      'CTRL': [self.svg_name('ctrl')],
-      'CTRL_EMPTY': [self.svg_name('ctrl'), self.svg_name('whiteout-58')],
-      'META': [self.svg_name('meta'), self.svg_name('meta')],
-      'META_EMPTY': [self.svg_name('meta'), self.svg_name('whiteout-58')],
-      'ALT': [self.svg_name('alt')],
-      'ALT_EMPTY': [self.svg_name('alt'), self.svg_name('whiteout-58')],
-      'ALTGR': [self.svg_name('altgr')],
-      'ALTGR_EMPTY': [self.svg_name('altgr'), self.svg_name('whiteout-58')],
-      'KEY_EMPTY': [
-          fix_svg_key_closure(self.svg_name('one-char-template'), [('&amp;', '')]),
-              self.svg_name('whiteout-48')],
-      'BTN_LEFTRIGHT': [
-          self.svg_name('mouse'), self.svg_name('left-mouse'),
-          self.svg_name('right-mouse')],
-      'BTN_LEFTMIDDLERIGHT': [
-          self.svg_name('mouse'), self.svg_name('left-mouse'),
-          self.svg_name('middle-mouse'), self.svg_name('right-mouse')],
+        'REL_LEFT': [self.svg_name('mouse'), self.svg_name('sroll-lft-mouse')],
+        'REL_RIGHT': [self.svg_name('mouse'), self.svg_name('scroll-rgt-mouse')],
+        'SHIFT': [self.svg_name('shift')],
+        'SHIFT_EMPTY': [self.svg_name('shift'), self.svg_name('whiteout-72')],
+        'CTRL': [self.svg_name('ctrl')],
+        'CTRL_EMPTY': [self.svg_name('ctrl'), self.svg_name('whiteout-58')],
+        'META': [self.svg_name('meta'), self.svg_name('meta')],
+        'META_EMPTY': [self.svg_name('meta'), self.svg_name('whiteout-58')],
+        'ALT': [self.svg_name('alt')],
+        'ALT_EMPTY': [self.svg_name('alt'), self.svg_name('whiteout-58')],
+        'ALTGR': [self.svg_name('altgr')],
+        'ALTGR_EMPTY': [self.svg_name('altgr'), self.svg_name('whiteout-58')],
+        'KEY_EMPTY': [
+            fix_svg_key_closure(self.svg_name('one-char-template'), [('&amp;', '')]),
+                self.svg_name('whiteout-48')],
+        'BTN_LEFTRIGHT': [
+            self.svg_name('mouse'), self.svg_name('left-mouse'),
+            self.svg_name('right-mouse')],
+        'BTN_LEFTMIDDLERIGHT': [
+            self.svg_name('mouse'), self.svg_name('left-mouse'),
+            self.svg_name('middle-mouse'), self.svg_name('right-mouse')],
     }
     if self.options.swap_buttons:
       # swap the meaning of left and right
@@ -220,38 +220,38 @@ class KeyMon:
       right_str = 'right'
 
     ftn.update({
-      'BTN_RIGHT': [self.svg_name('mouse'),
-        self.svg_name(f'{right_str}-mouse')],
-      'BTN_LEFT': [self.svg_name('mouse'),
-        self.svg_name(f'{left_str}-mouse')],
-      'BTN_LEFTMIDDLE': [
-          self.svg_name('mouse'), self.svg_name(f'{left_str}-mouse'),
-          self.svg_name('middle-mouse')],
-      'BTN_MIDDLERIGHT': [
-          self.svg_name('mouse'), self.svg_name('middle-mouse'),
+        'BTN_RIGHT': [self.svg_name('mouse'),
           self.svg_name(f'{right_str}-mouse')],
+        'BTN_LEFT': [self.svg_name('mouse'),
+          self.svg_name(f'{left_str}-mouse')],
+        'BTN_LEFTMIDDLE': [
+            self.svg_name('mouse'), self.svg_name(f'{left_str}-mouse'),
+            self.svg_name('middle-mouse')],
+        'BTN_MIDDLERIGHT': [
+            self.svg_name('mouse'), self.svg_name('middle-mouse'),
+            self.svg_name(f'{right_str}-mouse')],
     })
 
     if self.options.scale >= 1.0:
       ftn.update({
-        'KEY_SPACE': [
-            fix_svg_key_closure(self.svg_name('two-line-wide'),
-            [('TOP', 'Space'), ('BOTTOM', '')])],
-        'KEY_TAB': [
-            fix_svg_key_closure(self.svg_name('two-line-wide'),
-            [('TOP', 'Tab'), ('BOTTOM', '\N{Leftwards arrow to bar over rightwards arrow to bar}')])],
-        'KEY_BACKSPACE': [
-            fix_svg_key_closure(self.svg_name('two-line-wide'),
-            [('TOP', 'Back'), ('BOTTOM', '\N{Leftwards open-headed arrow}')])],
-        'KEY_RETURN': [
-            fix_svg_key_closure(self.svg_name('two-line-wide'),
-            [('TOP', 'Enter'), ('BOTTOM', '\N{Return symbol}')])],
-        'KEY_CAPS_LOCK': [
-            fix_svg_key_closure(self.svg_name('two-line-wide'),
-            [('TOP', 'Capslock'), ('BOTTOM', '')])],
-        'KEY_MULTI_KEY': [
-            fix_svg_key_closure(self.svg_name('two-line-wide'),
-            [('TOP', 'Compose'), ('BOTTOM', '')])],
+          'KEY_SPACE': [
+              fix_svg_key_closure(self.svg_name('two-line-wide'),
+              [('TOP', 'Space'), ('BOTTOM', '')])],
+          'KEY_TAB': [
+              fix_svg_key_closure(self.svg_name('two-line-wide'),
+              [('TOP', 'Tab'), ('BOTTOM', '\N{Leftwards arrow to bar over rightwards arrow to bar}')])],
+          'KEY_BACKSPACE': [
+              fix_svg_key_closure(self.svg_name('two-line-wide'),
+              [('TOP', 'Back'), ('BOTTOM', '\N{Leftwards open-headed arrow}')])],
+          'KEY_RETURN': [
+              fix_svg_key_closure(self.svg_name('two-line-wide'),
+              [('TOP', 'Enter'), ('BOTTOM', '\N{Return symbol}')])],
+          'KEY_CAPS_LOCK': [
+              fix_svg_key_closure(self.svg_name('two-line-wide'),
+              [('TOP', 'Capslock'), ('BOTTOM', '')])],
+          'KEY_MULTI_KEY': [
+              fix_svg_key_closure(self.svg_name('two-line-wide'),
+              [('TOP', 'Compose'), ('BOTTOM', '')])],
       })
     else:
       ftn.update({
@@ -281,11 +281,11 @@ class KeyMon:
     self.provider = Gtk.CssProvider()
 
     self.provider.load_from_data(
-    b"""
+        b"""
     #key-mon {
         background-color:rgba(0,0,0,0);
     }
-    """
+        """
     )
     context = self.window.get_style_context()
     context.add_provider(self.provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
@@ -595,10 +595,10 @@ class KeyMon:
       if not self.options.sticky_mode:
         image.switch_to_default()
       return
-    else:
-      for img in self.MODS:
-        self.images[img].reset_time_if_pressed()
-      image.switch_to_default()
+
+    for img in self.MODS:
+      self.images[img].reset_time_if_pressed()
+    image.switch_to_default()
 
   def is_shift_code(self, code):
     if code in ('SHIFT', 'ALT', 'ALTGR', 'CTRL', 'META'):
@@ -610,11 +610,11 @@ class KeyMon:
     code, medium_name, short_name = self.modmap.get_and_check(scan_code,
                                                               xlib_name)
     if not code:
-      logging.info(f'No mapping for scan_code {scan_code}')
+      logging.info('No mapping for scan_code %d', scan_code)
       return
     if self.options.scale < 1.0 and short_name:
       medium_name = short_name
-    logging.debug(f'Scan code {scan_code}, Key {code} pressed = {medium_name!r}')
+    logging.debug('Scan code %d, Key %d pressed = %s', scan_code, code, medium_name)
     if code in self.name_fnames:
       self._handle_event(self.key_image, code, value)
       return
@@ -813,6 +813,7 @@ class KeyMon:
       image.hide()
 
   def show_about_dlg(self, *_):
+    """Show the about dialog"""
 
     dlg = Gtk.AboutDialog()
     # Find the logo file
@@ -857,6 +858,7 @@ def show_version():
   print(_(f'Written by {__author__}'))
 
 def create_options():
+  """Create the options available"""
   opts = options.Options()
 
   opts.add_option(opt_short='-s', opt_long='--smaller', dest='smaller', default=False,
@@ -1003,8 +1005,7 @@ def main():
       if level is None:
           raise ValueError(f'Invalid log level: {loglevel}')
       loglevel = level
-  else:
-    if '--debug' in sys.argv or '-d' in sys.argv:
+    elif '--debug' in sys.argv or '-d' in sys.argv:
       loglevel = logging.DEBUG
   logging.basicConfig(
       level=loglevel, style='{',
@@ -1035,7 +1036,8 @@ def main():
     for theme in theme_names:
       print(f' - {theme:<{name_len}}: {opts.themes[theme][0]}')
     raise SystemExit()
-  elif opts.theme and opts.theme not in opts.themes:
+
+  if opts.theme and opts.theme not in opts.themes:
     print(_(f'Theme {opts.theme!r} does not exist'))
     print()
     print(_(f'Please make sure {opts.theme!r} can be found in '
