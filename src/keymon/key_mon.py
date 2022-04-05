@@ -20,7 +20,7 @@ Shows their status graphically.
 """
 
 __author__ = 'Scott Kirkwood (scott+keymon@forusers.com)'
-__version__ = '1.19'
+__version__ = '1.20'
 
 import locale
 import logging
@@ -38,7 +38,7 @@ import time
 try:
   from . import xlib
 except ImportError:
-  print('Error: Missing xlib, run sudo apt-get install python-xlib')
+  print('Error: Missing xlib, run sudo apt-get install python3-xlib')
   sys.exit(-1)
 
 from . import options
@@ -726,24 +726,24 @@ class KeyMon:
     """Create a context menu on right click."""
     menu = Gtk.Menu()
 
-    toggle_chrome = Gtk.CheckMenuItem(_('Window _Chrome'))
+    toggle_chrome = Gtk.CheckMenuItem().new_with_mnemonic(_('Window _Chrome'))
     toggle_chrome.set_active(self.window.get_decorated())
     toggle_chrome.connect_object('activate', self.toggle_chrome,
        self.window.get_decorated())
     toggle_chrome.show()
     menu.append(toggle_chrome)
 
-    settings_click = Gtk.MenuItem(_('_Settings...\tCtrl-S'))
+    settings_click = Gtk.MenuItem().new_with_mnemonic(_('_Settings...\tCtrl-S'))
     settings_click.connect_object('activate', self.show_settings_dlg, None)
     settings_click.show()
     menu.append(settings_click)
 
-    about_click = Gtk.MenuItem(_('_About...'))
+    about_click = Gtk.MenuItem().new_with_mnemonic(_('_About...'))
     about_click.connect_object('activate', self.show_about_dlg, None)
     about_click.show()
     menu.append(about_click)
 
-    quitcmd = Gtk.MenuItem(_('_Quit\tCtrl-Q'))
+    quitcmd = Gtk.MenuItem().new_with_mnemonic(_('_Quit\tCtrl-Q'))
     quitcmd.connect_object('activate', self.destroy, None)
     quitcmd.show()
 

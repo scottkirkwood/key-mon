@@ -37,6 +37,7 @@ COPYRIGHT_NAME = 'Google Inc.'
 GOOGLE_CODE_EMAIL = 'scott@forusers.com'
 MAILING_LIST = 'key-mon-discuss@googlegroups.com'
 KEYWORDS = ['keyboard', 'status', 'monitor', 'education']
+MAN_HELP = f'{NAME} --help'
 MAN_FILE = f'man/{NAME}.1'
 DESKTOP_FILE = f'icons/{NAME}.desktop'
 ICON = f'icons/{NAME}.xpm'

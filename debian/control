@@ -3,8 +3,7 @@ Section: graphics
 Priority: optional
 Maintainer: Scott Kirkwood <scott@forusers.com>
 Build-Depends: cdbs, debhelper (>= 7), python3 (>= 3.5)
-XS-Python-Version: >= 3.5
-Standards-Version: 3.9.3
+Standards-Version: 4.5.0
 Homepage: https://github.com/scottkirkwood/key-mon/
 Vcs-Git: https://github.com/scottkirkwood/key-mon.git
 Vcs-Browser: https://github.com/scottkirkwood/key-mon/

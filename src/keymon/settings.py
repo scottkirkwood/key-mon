@@ -255,17 +255,17 @@ class ButtonsFrame(CommonFrame):
 
     self._add_check(
         vbox,
-        _('_Mouse'),
+        _('Mouse'),
         _('Show the mouse.'),
         'mouse')
     self._add_check(
         vbox,
-        _('_Shift'),
+        _('Shift'),
         _('Show the shift key when pressed.'),
         'shift')
     self._add_check(
         vbox,
-        _('_Ctrl'),
+        _('Ctrl'),
         _('Show the Control key when pressed.'),
         'ctrl')
     self._add_check(
@@ -275,7 +275,7 @@ class ButtonsFrame(CommonFrame):
         'meta')
     self._add_check(
         vbox,
-        _('_Alt'),
+        _('Alt'),
         _('Show the Alt key when pressed.'),
         'alt')
     self._add_dropdown(
