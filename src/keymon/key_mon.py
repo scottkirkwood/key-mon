@@ -62,14 +62,14 @@ def fix_svg_key_closure(fname, from_tos):
 
   def fix_svg_key():
     """Given an SVG file return the SVG text fixed."""
-    logging.debug(f'Read file {fname!r}')
+    logging.debug('Read file %s', fname)
     fin = open(fname)
     fbytes = fin.read()
     fin.close()
-    for fin, t in from_tos:
+    for fin, txt in from_tos:
       # Quick XML escape fix
-      t = t.replace('<', '&lt;')
-      fbytes = fbytes.replace(fin, t)
+      txt = txt.replace('<', '&lt;')
+      fbytes = fbytes.replace(fin, txt)
     return fbytes
 
   return fix_svg_key
@@ -77,17 +77,17 @@ def fix_svg_key_closure(fname, from_tos):
 
 def cstrf(func):
   """Change locale before using str function"""
-  OLD_CTYPE = locale.getlocale(locale.LC_CTYPE)
+  old_ctype = locale.getlocale(locale.LC_CTYPE)
   locale.setlocale(locale.LC_CTYPE, 'C')
-  s = func()
-  locale.setlocale(locale.LC_CTYPE, OLD_CTYPE)
-  return s
+  func_result = func()
+  locale.setlocale(locale.LC_CTYPE, old_ctype)
+  return func_result
 
 
 class KeyMon:
   """main KeyMon window class."""
 
-  def __init__(self, options):
+  def __init__(self, opts):
     """Create the Key Mon window.
     Options dict:
       scale: float 1.0 is default which means normal size.
@@ -100,7 +100,7 @@ class KeyMon:
     self.btns = ['MOUSE', 'BTN_RIGHT', 'BTN_MIDDLE', 'BTN_MIDDLERIGHT',
                  'BTN_LEFT', 'BTN_LEFTRIGHT', 'BTN_LEFTMIDDLE',
                  'BTN_LEFTMIDDLERIGHT']
-    self.options = options
+    self.options = opts
     self.pathname = os.path.dirname(os.path.abspath(__file__))
     if self.options.scale < 1.0:
       self.svg_size = '-small'
@@ -118,10 +118,10 @@ class KeyMon:
 
     self.move_dragged = False
 
-    self.MODS = ['SHIFT', 'CTRL', 'META', 'ALT']
-    self.IMAGES = ['MOUSE'] + self.MODS
-    self.images = dict([(img, None) for img in self.IMAGES])
-    self.enabled = dict([(img, self.get_option(cstrf(img.lower))) for img in self.IMAGES])
+    self.mod_constants = ['SHIFT', 'CTRL', 'META', 'ALT']
+    self.images_constants = ['MOUSE'] + self.mod_constants
+    self.images = {img: None for img in self.images_constants}
+    self.enabled = {img: self.get_option(cstrf(img.lower)) for img in self.images_constants}
 
 
     self.options.kbd_files = settings.get_kbd_files()
@@ -170,7 +170,7 @@ class KeyMon:
     x, y = win.get_position()
     w, h = win.get_size()
 
-    screenshot = GdkPixbuf.Pixbuf.new_from_resource(win) # TODO(sak): not working
+    screenshot = GdkPixbuf.Pixbuf.new_from_resource(win) # TODO(scott): not working
 
     fname = 'screenshot.png'
     screenshot.savev(fname, 'png')
@@ -203,7 +203,7 @@ class KeyMon:
         'ALTGR_EMPTY': [self.svg_name('altgr'), self.svg_name('whiteout-58')],
         'KEY_EMPTY': [
             fix_svg_key_closure(self.svg_name('one-char-template'), [('&amp;', '')]),
-                self.svg_name('whiteout-48')],
+            self.svg_name('whiteout-48')],
         'BTN_LEFTRIGHT': [
             self.svg_name('mouse'), self.svg_name('left-mouse'),
             self.svg_name('right-mouse')],
@@ -220,10 +220,12 @@ class KeyMon:
       right_str = 'right'
 
     ftn.update({
-        'BTN_RIGHT': [self.svg_name('mouse'),
-          self.svg_name(f'{right_str}-mouse')],
-        'BTN_LEFT': [self.svg_name('mouse'),
-          self.svg_name(f'{left_str}-mouse')],
+        'BTN_RIGHT': [
+            self.svg_name('mouse'),
+            self.svg_name(f'{right_str}-mouse')],
+        'BTN_LEFT': [
+            self.svg_name('mouse'),
+            self.svg_name(f'{left_str}-mouse')],
         'BTN_LEFTMIDDLE': [
             self.svg_name('mouse'), self.svg_name(f'{left_str}-mouse'),
             self.svg_name('middle-mouse')],
@@ -235,38 +237,45 @@ class KeyMon:
     if self.options.scale >= 1.0:
       ftn.update({
           'KEY_SPACE': [
-              fix_svg_key_closure(self.svg_name('two-line-wide'),
-              [('TOP', 'Space'), ('BOTTOM', '')])],
+              fix_svg_key_closure(
+                  self.svg_name('two-line-wide'),
+                  [('TOP', 'Space'), ('BOTTOM', '')])],
           'KEY_TAB': [
-              fix_svg_key_closure(self.svg_name('two-line-wide'),
-              [('TOP', 'Tab'), ('BOTTOM', '\N{Leftwards arrow to bar over rightwards arrow to bar}')])],
+              fix_svg_key_closure(
+                  self.svg_name('two-line-wide'),
+                  [('TOP', 'Tab'),
+                   ('BOTTOM', '\N{Leftwards arrow to bar over rightwards arrow to bar}')])],
           'KEY_BACKSPACE': [
-              fix_svg_key_closure(self.svg_name('two-line-wide'),
-              [('TOP', 'Back'), ('BOTTOM', '\N{Leftwards open-headed arrow}')])],
+              fix_svg_key_closure(
+                  self.svg_name('two-line-wide'),
+                  [('TOP', 'Back'), ('BOTTOM', '\N{Leftwards open-headed arrow}')])],
           'KEY_RETURN': [
-              fix_svg_key_closure(self.svg_name('two-line-wide'),
-              [('TOP', 'Enter'), ('BOTTOM', '\N{Return symbol}')])],
+              fix_svg_key_closure(
+                  self.svg_name('two-line-wide'),
+                  [('TOP', 'Enter'), ('BOTTOM', '\N{Return symbol}')])],
           'KEY_CAPS_LOCK': [
-              fix_svg_key_closure(self.svg_name('two-line-wide'),
-              [('TOP', 'Capslock'), ('BOTTOM', '')])],
+              fix_svg_key_closure(
+                  self.svg_name('two-line-wide'),
+                  [('TOP', 'Capslock'), ('BOTTOM', '')])],
           'KEY_MULTI_KEY': [
-              fix_svg_key_closure(self.svg_name('two-line-wide'),
-              [('TOP', 'Compose'), ('BOTTOM', '')])],
+              fix_svg_key_closure(
+                  self.svg_name('two-line-wide'),
+                  [('TOP', 'Compose'), ('BOTTOM', '')])],
       })
     else:
       ftn.update({
-        'KEY_SPACE': [
-            fix_svg_key_closure(self.svg_name('one-line-wide'), [('&amp;', 'Space')])],
-        'KEY_TAB': [
-            fix_svg_key_closure(self.svg_name('one-line-wide'), [('&amp;', 'Tab')])],
-        'KEY_BACKSPACE': [
-            fix_svg_key_closure(self.svg_name('one-line-wide'), [('&amp;', 'Back')])],
-        'KEY_RETURN': [
-            fix_svg_key_closure(self.svg_name('one-line-wide'), [('&amp;', 'Enter')])],
-        'KEY_CAPS_LOCK': [
-            fix_svg_key_closure(self.svg_name('one-line-wide'), [('&amp;', 'Capslck')])],
-        'KEY_MULTI_KEY': [
-            fix_svg_key_closure(self.svg_name('one-line-wide'), [('&amp;', 'Compose')])],
+          'KEY_SPACE': [
+              fix_svg_key_closure(self.svg_name('one-line-wide'), [('&amp;', 'Space')])],
+          'KEY_TAB': [
+              fix_svg_key_closure(self.svg_name('one-line-wide'), [('&amp;', 'Tab')])],
+          'KEY_BACKSPACE': [
+              fix_svg_key_closure(self.svg_name('one-line-wide'), [('&amp;', 'Back')])],
+          'KEY_RETURN': [
+              fix_svg_key_closure(self.svg_name('one-line-wide'), [('&amp;', 'Enter')])],
+          'KEY_CAPS_LOCK': [
+              fix_svg_key_closure(self.svg_name('one-line-wide'), [('&amp;', 'Capslck')])],
+          'KEY_MULTI_KEY': [
+              fix_svg_key_closure(self.svg_name('one-line-wide'), [('&amp;', 'Compose')])],
       })
     return ftn
 
@@ -277,7 +286,7 @@ class KeyMon:
 
     rgba = self.window.get_screen().get_rgba_visual()
     if rgba is not None:
-        self.window.set_visual(rgba)
+      self.window.set_visual(rgba)
     self.provider = Gtk.CssProvider()
 
     self.provider.load_from_data(
@@ -308,7 +317,7 @@ class KeyMon:
     self.mouse_follower_win = shaped_window.ShapedWindow(
         self.svg_name('mouse-follower'), 0.5)
     if self.options.follow_mouse:
-        self.mouse_follower_win.show()
+      self.mouse_follower_win.show()
 
     self.window.set_opacity(self.options.opacity)
     self.window.set_keep_above(True)
@@ -336,33 +345,34 @@ class KeyMon:
       self.window.move(old_x, old_y)
     self.window.show()
 
-  def update_shape_mask(self, *unused_args, **kwargs):
+  def update_shape_mask(self, *unused_args, **unused_kwargs):
+    """Update the shape mask"""
     if self.options.backgroundless:
-        self.provider.load_from_data(
-        b"""
+      self.provider.load_from_data(
+          b"""
         #key-mon {
             background-color:rgba(0,0,0,0);
         }
         """)
     else:
-        self.provider.load_from_data(
-        b"""
+      self.provider.load_from_data(
+          b"""
         #key-mon {
             background-color:rgba(255,255,255,1);
         }
         """)
 
-    return
-
   def create_images(self):
+    """Create the images (buttons)"""
     self.images['MOUSE'] = two_state_image.TwoStateImage(self.pixbufs, 'MOUSE')
-    for img in self.MODS:
+    for img in self.mod_constants:
       self.images[img] = two_state_image.TwoStateImage(
           self.pixbufs, img + '_EMPTY', self.enabled[img])
     self.create_buttons()
 
   def create_buttons(self):
-    self.buttons = list(self.images[img] for img in self.IMAGES)
+    """Create the buttons"""
+    self.buttons = list(self.images[img] for img in self.images_constants)
     for _ in range(self.options.old_keys):
       key_image = two_state_image.TwoStateImage(self.pixbufs, 'KEY_EMPTY')
       self.buttons.append(key_image)
@@ -376,9 +386,10 @@ class KeyMon:
       but.connect('size_allocate', self.update_shape_mask)
 
   def layout_boxes(self):
+    """Layout the buttons in the boxes"""
     for child in self.hbox.get_children():
       self.hbox.remove(child)
-    for img in self.IMAGES:
+    for img in self.images_constants:
       if not self.enabled[img]:
         self.images[img].hide()
       self.hbox.pack_start(self.images[img], False, False, 0)
@@ -447,11 +458,11 @@ class KeyMon:
     return True
 
   def pointer_leave(self, unused_widget, unused_evt):
-
+    """The pointer has left window"""
     self.set_accept_focus(False)
 
   def set_accept_focus(self, accept_focus=True):
-
+    """Allow the window accepct focus or not"""
     self.window.set_accept_focus(accept_focus)
     if accept_focus:
       logging.debug('window now accepts focus')
@@ -468,7 +479,7 @@ class KeyMon:
     x, y = x + new_p[0] - old_p[0], y + new_p[1] - old_p[1]
     self.window.move(x, y)
 
-    logging.info(f'Moved window to {x}, {y}')
+    logging.info('Moved window to %d, %d', x, y)
     self.options.x_pos = x
     self.options.y_pos = y
 
@@ -539,7 +550,8 @@ class KeyMon:
     if self.no_press_timer:
       GLib.source_remove(self.no_press_timer)
       self.no_press_timer = None
-    self.no_press_timer = GLib.timeout_add(int(self.options.no_press_fadeout * 1000), self.no_press_fadeout)
+    self.no_press_timer = GLib.timeout_add(
+        int(self.options.no_press_fadeout * 1000), self.no_press_fadeout)
 
   def no_press_fadeout(self, begin=True):
     """Fadeout the window in a second
@@ -549,7 +561,7 @@ class KeyMon:
     opacity = self.window.get_opacity() - self.options.opacity / 10.0
     if opacity < 0.0:
       opacity = 0.0
-    logging.debug(f'Set opacity = {opacity}')
+    logging.debug('Set opacity = %f', opacity)
     self.window.set_opacity(opacity)
     if opacity == 0.0:
       self.window.hide()
@@ -563,6 +575,7 @@ class KeyMon:
       # The current self.options.no_press_fadeout interval will not be timed
       # out again.
       return False
+    return True
 
   def _show_down_key(self, name):
     """Show the down key.
@@ -576,7 +589,7 @@ class KeyMon:
       return True
     if self.is_shift_code(name):
       return True
-    if (any(self.images[img].is_pressed() for img in self.MODS)):
+    if any(self.images[img].is_pressed() for img in self.mod_constants):
       return True
     return False
 
@@ -585,7 +598,7 @@ class KeyMon:
     image.really_pressed = code == 1
     if code == 1:
       if self._show_down_key(name):
-        logging.debug(f'Switch to {name}, code {code}')
+        logging.debug('Switch to %s, code %d', name, code)
         image.switch_to(name)
       return
 
@@ -596,11 +609,12 @@ class KeyMon:
         image.switch_to_default()
       return
 
-    for img in self.MODS:
+    for img in self.mod_constants:
       self.images[img].reset_time_if_pressed()
     image.switch_to_default()
 
   def is_shift_code(self, code):
+    """Is the code a shift code (like Alt)"""
     if code in ('SHIFT', 'ALT', 'ALTGR', 'CTRL', 'META'):
       return True
     return False
@@ -640,7 +654,7 @@ class KeyMon:
     if code.startswith('KEY_'):
       letter = medium_name
       if code not in self.name_fnames:
-        logging.debug(f'code not in {code}')
+        logging.debug('code not in %s', code)
         if len(letter) == 1:
           template = 'one-char-template'
         else:
@@ -648,7 +662,7 @@ class KeyMon:
         self.name_fnames[code] = [
             fix_svg_key_closure(self.svg_name(template), [('&amp;', letter)])]
       else:
-        logging.debug(f'code in {code}')
+        logging.debug('code in %s', code)
       self._handle_event(self.key_image, code, value)
       return
 
@@ -663,8 +677,8 @@ class KeyMon:
             n_code = i
           if btn == self.images['MOUSE'].current:
             n_image = i
-        if self.options.emulate_middle and ((self.images['MOUSE'].current == 'BTN_LEFT'
-            and code == 'BTN_RIGHT') or
+        if self.options.emulate_middle and (
+            (self.images['MOUSE'].current == 'BTN_LEFT' and code == 'BTN_RIGHT') or
             (self.images['MOUSE'].current == 'BTN_RIGHT' and code == 'BTN_LEFT')):
           code = 'BTN_MIDDLE'
         elif value == 0 and n_code != n_image:
@@ -674,7 +688,8 @@ class KeyMon:
       elif code not in self.name_fnames:
         btn_num = code.replace('BTN_', '')
         self.name_fnames[code] = [
-            fix_svg_key_closure(self.svg_name('mouse'),
+            fix_svg_key_closure(
+                self.svg_name('mouse'),
                 [('>&#8203;', '>' + btn_num)])]
       self._handle_event(self.images['MOUSE'], code, value)
 
@@ -699,7 +714,7 @@ class KeyMon:
     elif direction < 0:
       self._handle_event(self.images['MOUSE'], 'SCROLL_DOWN', 1)
     self.images['MOUSE'].switch_to_default()
-    return True
+    return
 
   def quit_program(self, *unused_args):
     """Quit the program."""
@@ -728,8 +743,8 @@ class KeyMon:
 
     toggle_chrome = Gtk.CheckMenuItem().new_with_mnemonic(_('Window _Chrome'))
     toggle_chrome.set_active(self.window.get_decorated())
-    toggle_chrome.connect_object('activate', self.toggle_chrome,
-       self.window.get_decorated())
+    toggle_chrome.connect_object(
+        'activate', self.toggle_chrome, self.window.get_decorated())
     toggle_chrome.show()
     menu.append(toggle_chrome)
 
@@ -765,7 +780,7 @@ class KeyMon:
 
   def settings_changed(self, unused_dlg):
     """Event received from the settings dialog."""
-    for img in self.IMAGES:
+    for img in self.images_constants:
       self._toggle_a_key(self.images[img], img, self.get_option(cstrf(img.lower)))
     self.create_buttons()
     self.layout_boxes()
@@ -797,7 +812,7 @@ class KeyMon:
 
     # reload keymap
     self.modmap = mod_mapper.safely_read_mod_map(
-            self.options.kbd_file, self.options.kbd_files)
+        self.options.kbd_file, self.options.kbd_files)
 
   def _toggle_a_key(self, image, name, show):
     """Toggle show/hide a key."""
@@ -818,10 +833,11 @@ class KeyMon:
     dlg = Gtk.AboutDialog()
     # Find the logo file
     logo_paths = (os.path.join(self.pathname, '../../icons'),)
-    logo_paths += tuple(logo_path + '/share/pixmaps' for logo_path in (
+    logo_paths += tuple(
+        logo_path + '/share/pixmaps' for logo_path in (
             os.path.expanduser('~'),
             '/usr', '/usr/local', '/opt/local',
-            ))
+        ))
     logo_paths = [logo_path + '/key-mon.xpm' for logo_path in logo_paths]
     for logo_path in logo_paths:
       if os.path.exists(logo_path):
@@ -1003,7 +1019,7 @@ def main():
         loglevel = sys.argv[idx + 1]
       level = getattr(logging, loglevel.upper(), None)
       if level is None:
-          raise ValueError(f'Invalid log level: {loglevel}')
+        raise ValueError(f'Invalid log level: {loglevel}')
       loglevel = level
     elif '--debug' in sys.argv or '-d' in sys.argv:
       loglevel = logging.DEBUG
