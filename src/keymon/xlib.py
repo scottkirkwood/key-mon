@@ -100,7 +100,9 @@ class XEvents(threading.Thread):
         code = getattr(XK, name)
         self.keycode_to_symbol[code] = 'KEY_' + name[3:].upper()
     locale.setlocale(locale.LC_CTYPE, old_ctype)
+    self.keycode_to_symbol[65106] = 'KEY_DEAD_CIRCUMFLEX'
     self.keycode_to_symbol[65027] = 'KEY_ISO_LEVEL3_SHIFT'
+    self.keycode_to_symbol[65041] = 'KEY_ISO_LEVEL5_SHIFT'
     self.keycode_to_symbol[269025062] = 'KEY_BACK'
     self.keycode_to_symbol[269025063] = 'KEY_FORWARD'
     self.keycode_to_symbol[16777215] = 'KEY_CAPS_LOCK'
