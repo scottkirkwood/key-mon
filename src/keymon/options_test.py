@@ -14,11 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-from . import options
 import io
+import unittest
+
+from . import options
 
 class TestOptionItem(unittest.TestCase):
+  """Unit tests for the option module"""
   def test_create_int(self):
     x = options.OptionItem(
         dest='x', _type='int', default=-99,
@@ -79,23 +81,28 @@ class TestOptionItem(unittest.TestCase):
 class TestOptions(unittest.TestCase):
   def setUp(self):
     self.options = options.Options()
-    self.options.add_option('x', 'bool', None,
+    self.options.add_option(
+        'x', 'bool', None,
         name='x variable', help='Help Varaible',
         opt_short='-x', opt_long='--xx',
         ini_group='options', ini_name='x')
-    self.options.add_option('tr', 'bool', True,
+    self.options.add_option(
+        'tr', 'bool', True,
         name='def true', help='Defaults to true',
         opt_short='-t', opt_long='--true',
         ini_group='options', ini_name='true')
-    self.options.add_option('fa', 'bool', False,
+    self.options.add_option(
+        'fa', 'bool', False,
         name='false variable', help='Defaults to false',
         opt_short='-f', opt_long='--false',
         ini_group='options', ini_name='false')
-    self.options.add_option('num', 'int', None,
+    self.options.add_option(
+        'num', 'int', None,
         name='num none', help='Number that returns None by default',
         opt_short='-n', opt_long='--num',
         ini_group='ints', ini_name='num')
-    self.options.add_option('num99', 'int', 99,
+    self.options.add_option(
+        'num99', 'int', 99,
         name='num 99', help='Number that defaults to 99',
         opt_short=None, opt_long='--num99',
         ini_group='ints', ini_name='num99')
@@ -103,12 +110,12 @@ class TestOptions(unittest.TestCase):
   def test_optparse(self):
     args = ['-x', '--true', '--num', '123']
     self.options.parse_args("Usage:", args)
-    o = self.options
-    self.assertTrue(o.x)
-    self.assertTrue(o.tr)
-    self.assertFalse(o.fa)
-    self.assertEqual(o.num, 123)
-    self.assertEqual(o.num99, 99)
+    opts = self.options
+    self.assertTrue(opts.x)
+    self.assertTrue(opts.tr)
+    self.assertFalse(opts.fa)
+    self.assertEqual(opts.num, 123)
+    self.assertEqual(opts.num99, 99)
 
   def test_from_ini(self):
     lines = []
@@ -120,16 +127,16 @@ class TestOptions(unittest.TestCase):
     lines.append('x = 0')
     lines.append('true = 0')
     lines.append('false = 1')
-    io = io.StringIO('\n'.join(lines))
-    self.options.parse_ini(io)
+    io_result = io.StringIO('\n'.join(lines))
+    self.options.parse_ini(io_result)
     self.options.parse_args("Usage", [])
 
-    o = self.options
-    self.assertFalse(o.x)
-    self.assertFalse(o.tr)
-    self.assertTrue(o.fa)
-    self.assertEqual(o.num, 345)
-    self.assertEqual(o.num99, 932)
+    opts = self.options
+    self.assertFalse(opts.x)
+    self.assertFalse(opts.tr)
+    self.assertTrue(opts.fa)
+    self.assertEqual(opts.num, 345)
+    self.assertEqual(opts.num99, 932)
 
   def test_override_ini(self):
     lines = []
@@ -141,8 +148,8 @@ class TestOptions(unittest.TestCase):
     lines.append('x = 0')
     lines.append('true = 0')
     lines.append('false = 1')
-    io = io.StringIO('\n'.join(lines))
-    self.options.parse_ini(io)
+    io_result = io.StringIO('\n'.join(lines))
+    self.options.parse_ini(io_result)
     args = [
         '--num99', '99',
         '--num', '456',
@@ -152,17 +159,17 @@ class TestOptions(unittest.TestCase):
     ]
     self.options.parse_args("Usage", args)
 
-    o = self.options
-    self.assertTrue(o.x)
-    self.assertTrue(o.tr)
-    self.assertFalse(o.fa)
-    self.assertEqual(o.num, 456)
-    self.assertEqual(o.num99, 99)
+    opts = self.options
+    self.assertTrue(opts.x)
+    self.assertTrue(opts.tr)
+    self.assertFalse(opts.fa)
+    self.assertEqual(opts.num, 456)
+    self.assertEqual(opts.num99, 99)
 
   def test_to_ini_empty(self):
-    io = io.StringIO()
-    self.options.write_ini(io)
-    contents = io.getvalue()
+    io_result = io.StringIO()
+    self.options.write_ini(io_result)
+    contents = io_result.getvalue()
     lines = []
     lines.append('[options]')
     lines.append('true = 1')
