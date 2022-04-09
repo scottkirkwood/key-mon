@@ -8,7 +8,7 @@ class TestOptionItem(unittest.TestCase):
   """Unit tests for the lazy_pixbuf_creator module"""
 
   def test_resize(self):
-      lazy_pixbuf = lazy_pixbuf_creator.LazyPixbufCreator(name_fnames=[], resize=1.5)
+    lazy_pixbuf = lazy_pixbuf_creator.LazyPixbufCreator(name_fnames=[], resize=1.5)
     sample = '''prefix <g
          inkscape:label="Layer 1"> suffix'''
     got = lazy_pixbuf._resize(sample)
@@ -16,11 +16,11 @@ class TestOptionItem(unittest.TestCase):
          inkscape:label="Layer 1"> suffix''')
 
     sample = '''prefix <g
-         inkscape:label="Layer 1"
+         inkscape:label="Layer 2"
          transform="translate(2, 2)"> suffix'''
     got = lazy_pixbuf._resize(sample)
     self.assertEqual(got, '''prefix <g
-         inkscape:label="Layer 1"
+         inkscape:label="Layer 2"
          transform="translate(2, 2) scale(1.5, 1.5)"> suffix''')
 
   def test_resize_svg(self):

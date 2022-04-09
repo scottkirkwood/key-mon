@@ -145,7 +145,7 @@ class LazyPixbufCreator():
     template = r'(<svg[^<]+)({}=")(\d+\.?\d*)'
     image_bytes = self._resize_text(image_bytes, template.format('width'))
     image_bytes = self._resize_text(image_bytes, template.format('height'))
-    if re.search(r'<g[^>]+?tb   ransform="', image_bytes):
+    if re.search(r'<g[^>]+?transform="', image_bytes):
         # If there's already a transform, add to it
         # Note: not checking if scale() is already there
         image_bytes = re.sub(
