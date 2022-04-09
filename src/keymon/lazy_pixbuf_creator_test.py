@@ -8,7 +8,7 @@ class TestOptionItem(unittest.TestCase):
   """Unit tests for the lazy_pixbuf_creator module"""
 
   def test_resize(self):
-    lazy_pixbuf = lazy_pixbuf_creator.LazyPixbufCreator(name_fnames=[], resize=1.5)
+      lazy_pixbuf = lazy_pixbuf_creator.LazyPixbufCreator(name_fnames=[], resize=1.5)
     sample = '''prefix <g
          inkscape:label="Layer 1"> suffix'''
     got = lazy_pixbuf._resize(sample)
