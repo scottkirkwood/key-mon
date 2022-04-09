@@ -38,7 +38,7 @@ import types
 
 import gi
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, GdkPixbuf
+from gi.repository import Gtk, GLib, GdkPixbuf
 
 class LazyPixbufCreator():
   """Class to create SVG images on the fly."""
@@ -128,8 +128,8 @@ class LazyPixbufCreator():
     os.close(fout)
     try:
       img = GdkPixbuf.Pixbuf.new_from_file(fname)
-    except:
-      logging.error('Unable to read %s: %d', fname, image_bytes)
+    except GLib.Error as e:
+      logging.error('Unable to read %s: %s', fname, e)
       sys.exit(-1)
 
     try:
@@ -145,12 +145,21 @@ class LazyPixbufCreator():
     template = r'(<svg[^<]+)({}=")(\d+\.?\d*)'
     image_bytes = self._resize_text(image_bytes, template.format('width'))
     image_bytes = self._resize_text(image_bytes, template.format('height'))
-    image_bytes = image_bytes.replace(
-        '<g', f'<g transform="scale({self.resize}, {self.resize})"', 1)
+    if re.search(r'<g[^>]+?tb   ransform="', image_bytes):
+        # If there's already a transform, add to it
+        # Note: not checking if scale() is already there
+        image_bytes = re.sub(
+            r'<g([^>]+?)transform="([^"]+?)"',
+            f'<g\\1transform="\\2 scale({self.resize}, {self.resize})"',
+            image_bytes, count=1)
+    else:
+        # Otherwise add a transform
+        image_bytes = image_bytes.replace(
+            '<g', f'<g transform="scale({self.resize}, {self.resize})"', 1)
     return image_bytes
 
   def _resize_text(self, image_bytes, regular_exp):
-    """Change the numeric value of some sizing text by regular expression."""
+    """Change the numeric value of some sizing text via regular expression."""
     re_x = re.compile(regular_exp)
     grps = re_x.search(image_bytes)
     if grps:
