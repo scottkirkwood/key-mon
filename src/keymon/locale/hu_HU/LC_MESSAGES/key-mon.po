@@ -1,0 +1,299 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2010-09-24 11:09+BRT\n"
+"PO-Revision-Date: 2023-04-13 16:20+0200\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"X-Generator: Poedit 2.4.3\n"
+"Last-Translator: Barcza Károly <kbarcza@blackpanther.hu>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: hu_HU\n"
+
+#: setup.py:65
+msgid "A screencast utility that displays your keyboard and mouse status"
+msgstr ""
+"Egy képernyőközvetítő segédprogram, amely megjeleníti a billentyűzet és az "
+"egér állapotát"
+
+#: setup.py:66
+msgid ""
+"Key-mon is useful for teaching since it shows the current status of your\n"
+"keyboard and mouse and you use them in another application.  No longer do "
+"you need to say\n"
+"'Now I'm pressing the Ctrl-D key', your students can just see the keystroke "
+"for themselves."
+msgstr ""
+"A Key-mon hasznos a tanításhoz, mivel megmutatja a billentyűzet és egér \n"
+"aktuális állapotát, és egy másik alkalmazásban használja őket. Többé nem "
+"kell azt mondanod\n"
+"\"Most megnyomom a Ctrl-D billentyűt\", mert a tanulók láthatják a "
+"billentyűleütést."
+
+#: src/keymon/key_mon.py:547
+msgid "Window _Chrome"
+msgstr "Ablakkeret"
+
+#: src/keymon/key_mon.py:554
+msgid "_Settings...\tCtrl-S"
+msgstr "_Beállítások...\tCtrl+S"
+
+#: src/keymon/key_mon.py:559
+msgid "_Quit\tCtrl-Q"
+msgstr "_Kilépés: „Ctrl+q”"
+
+#: src/keymon/key_mon.py:624
+msgid "Keymon version %s."
+msgstr "Keymon verzió: %s."
+
+#: src/keymon/key_mon.py:625
+msgid "Written by %s"
+msgstr "Írta: %s"
+
+#: src/keymon/key_mon.py:632
+msgid "Make the dialog 25% smaller than normal."
+msgstr "A párbeszédablak 25%-kal kisebb legyen a normálnál."
+
+#: src/keymon/key_mon.py:635
+msgid "Make the dialog 25% larger than normal."
+msgstr "A párbeszédablak 25%-kal nagyobb legyen a normálnál."
+
+#: src/keymon/key_mon.py:639
+msgid "Show the meta (windows) key."
+msgstr "Meta (windows billentyű) megjelenítése."
+
+#: src/keymon/key_mon.py:642 src/keymon/settings.py:215
+msgid "Show the mouse."
+msgstr "Egérkurzor megjelenítése."
+
+#: src/keymon/key_mon.py:645
+msgid "Show shift key."
+msgstr "A Shift billentyű megjelenítése."
+
+#: src/keymon/key_mon.py:648
+msgid "Show the ctrl key."
+msgstr "Ctrl billentyű megjelenítése"
+
+#: src/keymon/key_mon.py:651
+msgid "Show the alt key."
+msgstr "Az Alt billentyű megjelenítése."
+
+#: src/keymon/key_mon.py:654
+msgid ""
+"Scale the dialog. ex. 2.0 is 2 times larger, 0.5 is half the size. Defaults "
+"to %default"
+msgstr ""
+"Méretezze a párbeszédpanelt. volt. A 2.0 kétszer nagyobb, a 0.5 a fele. "
+"Alapértelmezés szerint %default"
+
+#: src/keymon/key_mon.py:659
+msgid "Show decoration"
+msgstr "Dekoráció megjelenítése"
+
+#: src/keymon/key_mon.py:663
+msgid "Show only key combos (ex. Control-A)"
+msgstr "Csak a billentyűkombinációk megjelenítése (pl. Control-A)"
+
+#: src/keymon/key_mon.py:667
+msgid "Show where you clicked"
+msgstr "Mutassa meg, hová kattintott"
+
+#: src/keymon/key_mon.py:671
+msgid "Use this kbd filename instead running xmodmap."
+msgstr "Használja ezt a kbd fájlnevet az xmodmap futtatása helyett."
+
+#: src/keymon/key_mon.py:675
+msgid "Swap the mouse buttons."
+msgstr "Egérgombok felcserélése."
+
+#: src/keymon/key_mon.py:679
+msgid ""
+"When you press the left, and right mouse buttons at the same time, it "
+"displays as a middle mouse button click. "
+msgstr ""
+"Ha egyszerre nyomja meg a bal és a jobb egérgombot, akkor középső "
+"egérkattintásként jelenik meg."
+
+#: src/keymon/key_mon.py:682
+msgid "Show version information and exit."
+msgstr "Verzióinformációk megjelenítése és kilépés."
+
+#: src/keymon/key_mon.py:685
+msgid "The theme to use when drawing status images (ex. \"-t apple\")."
+msgstr "Az állapotképek rajzolásakor használandó téma (pl. „-t apple”)."
+
+#: src/keymon/key_mon.py:687
+msgid "List available themes"
+msgstr "Elérhető témák listája"
+
+#: src/keymon/key_mon.py:690
+msgid "How many historical keypresses to show (defaults to %default)"
+msgstr ""
+"Hány billentyűlenyomás előzményt kell megjeleníteni (alapértelmezett: "
+"%default)"
+
+#: src/keymon/key_mon.py:693
+msgid "Reset all options to their defaults."
+msgstr "Állítsa vissza az összes beállítást az alapértelmezett értékre."
+
+#: src/keymon/key_mon.py:706
+msgid "Developer Options"
+msgstr "Fejlesztői opciók"
+
+#: src/keymon/key_mon.py:706
+msgid "These options are for developers."
+msgstr "Ezek a lehetőségek a fejlesztőknek szólnak."
+
+#: src/keymon/key_mon.py:709
+msgid "Output debugging information."
+msgstr "Hibakereső kimeneti információ."
+
+#: src/keymon/key_mon.py:711
+msgid ""
+"Create a \"screenshot.png\" and exit. Pass a comma separated list of keys to "
+"simulate(ex. \"KEY_A,KEY_LEFTCTRL\")."
+msgstr ""
+"Hozzon létre egy \"screenshot.png\" fájlt, és lépjen ki. Adja meg a "
+"szimulálandó kulcsok vesszővel elválasztott listáját (pl. \"KEY_A,"
+"KEY_LEFTCTRL\")."
+
+#: src/keymon/key_mon.py:721
+msgid "Usage: %prog [Options...]"
+msgstr "Használat: %prog [Opciók ...]"
+
+#: src/keymon/key_mon.py:738
+msgid "Available themes:"
+msgstr "Elérhető témák:"
+
+#: src/keymon/key_mon.py:757
+msgid "Theme %r does not exist"
+msgstr "%r téma nem létezik"
+
+#: src/keymon/key_mon.py:760
+msgid "Resetting to defaults."
+msgstr "Alapértelmezések visszaállítása"
+
+#: src/keymon/options.py:113
+msgid "Opposite of %s"
+msgstr "Ezzel szemben: %s"
+
+#: src/keymon/settings.py:50
+msgid "Buttons"
+msgstr "Gombok"
+
+#: src/keymon/settings.py:53
+msgid "Misc"
+msgstr "Egyéb"
+
+#: src/keymon/settings.py:160
+msgid "Swap left-right mouse buttons"
+msgstr "Cserélje fel a bal-jobb egérgombot"
+
+#: src/keymon/settings.py:161
+msgid "Swap the left and the right mouse buttons"
+msgstr "Cserélje fel a bal és a jobb egérgombot"
+
+#: src/keymon/settings.py:165
+msgid "Left+right buttons emulates middle mouse button"
+msgstr "A bal+jobb gombok a középső egérgombot emulálják"
+
+#: src/keymon/settings.py:166
+msgid "Clicking both mouse buttons emulates the middle mouse button."
+msgstr "Ha mindkét egérgombra kattint, akkor a középső egérgombot emulálja."
+
+#: src/keymon/settings.py:170
+msgid "Highly visible click"
+msgstr "Jól látható kattintás"
+
+#: src/keymon/settings.py:171
+msgid "Show a circle when the users clicks."
+msgstr "Mutasson egy kört, amikor a felhasználók rákattintnak."
+
+#: src/keymon/settings.py:175
+msgid "Window decoration"
+msgstr "Ablaktekoráció"
+
+#: src/keymon/settings.py:176
+msgid "Show the normal windows borders"
+msgstr "Mutassa meg a normál ablakkereteket"
+
+#: src/keymon/settings.py:180
+msgid "Only key combinations"
+msgstr "Csak billentyűkombinációk"
+
+#: src/keymon/settings.py:181
+msgid "Show a key only when used with a modifier key (like Control)"
+msgstr ""
+"Billentyű megjelenítése csak akkor, ha módosító billentyűvel (például a "
+"Controlt) használja"
+
+#: src/keymon/settings.py:187
+msgid "Scale:"
+msgstr "Méret:"
+
+#: src/keymon/settings.py:188
+msgid ""
+"How much larger or smaller than normal to make key-mon. Where 1.0 is normal "
+"sized."
+msgstr ""
+"Mennyivel nagyobb vagy kisebb a key-mon az eredetihez képest. Az 1.0 a "
+"normál méretű."
+
+#: src/keymon/settings.py:197
+msgid "Themes:"
+msgstr "Témák:"
+
+#: src/keymon/settings.py:198
+msgid "Which theme of buttons to show (ex. Apple)"
+msgstr "A megjelenítendő gombok témája (pl. Apple)"
+
+#: src/keymon/settings.py:214
+msgid "_Mouse"
+msgstr "_Egér"
+
+#: src/keymon/settings.py:219
+msgid "_Shift"
+msgstr "_Shift"
+
+#: src/keymon/settings.py:220
+msgid "Show the shift key when pressed."
+msgstr "A Shift billentyű megjelenítése, amikor megnyomja."
+
+#: src/keymon/settings.py:224
+msgid "_Ctrl"
+msgstr "_Ctrl"
+
+#: src/keymon/settings.py:225
+msgid "Show the Control key when pressed."
+msgstr "Megnyomásakor jelenítse meg a Control billentyűt."
+
+#: src/keymon/settings.py:229
+msgid "Meta (_windows keys)"
+msgstr "Meta (_windows billentyű)"
+
+#: src/keymon/settings.py:230
+msgid "Show the Window's key (meta key) when pressed."
+msgstr "Az ablak gomb (meta billentyű) megjelenítése lenyomásakor."
+
+#: src/keymon/settings.py:234
+msgid "_Alt"
+msgstr "Al_t"
+
+#: src/keymon/settings.py:235
+msgid "Show the Alt key when pressed."
+msgstr "Az Alt billentyű megjelenítése lenyomásakor."
+
+#: src/keymon/settings.py:239
+msgid "Old Keys:"
+msgstr "Régi billentyűk:"
+
+#: src/keymon/settings.py:240
+msgid "When typing fast show more than one key typed."
+msgstr "Gyors gépeléskor mutasson egynél több begépelt billentyűt."
