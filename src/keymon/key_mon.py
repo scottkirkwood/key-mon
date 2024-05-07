@@ -48,7 +48,7 @@ gi.require_version("Gtk", "3.0")
 gi.require_foreign("cairo")
 from gi.repository import Gtk, GdkPixbuf, GObject, GLib
 
-from configparser import SafeConfigParser
+from configparser import ConfigParser
 
 gettext.install('key-mon', 'locale')
 

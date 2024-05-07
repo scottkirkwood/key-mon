@@ -317,8 +317,8 @@ class Options(object):
   def parse_ini(self, fp):
     """Parser an ini file from fp, which is file-like class."""
 
-    config = configparser.SafeConfigParser()
-    config.readfp(fp)
+    config = configparser.ConfigParser()
+    config.read_file(fp)
     checker = {}
     for opt in list(self._options.values()):
       if opt.ini_group:
@@ -337,7 +337,7 @@ class Options(object):
   def write_ini(self, fp):
     """Parser an ini file from fp, which is file-like class."""
 
-    config = configparser.SafeConfigParser()
+    config = configparser.ConfigParser()
     for opt in list(self._options.values()):
       if not opt.ini_group:
         continue
